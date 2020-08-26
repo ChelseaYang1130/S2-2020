@@ -1,0 +1,55 @@
+---
+title: "w1 tut"
+author: "Jing Yang \ 480110301"
+date: "26/08/2020"
+output: html_document
+---
+
+```{r,tidy = TRUE,warning = FALSE,message=FALSE}
+library("ggplot2")
+library("dplyr")
+library("readr")
+library("tidyverse")
+```
+```{r,results='hide',tidy = TRUE,warning = FALSE,message=FALSE}
+library("bomrang")
+?bomrang
+?get_current_weather
+```
+
+```{r,tidy = TRUE,warning = FALSE,message=FALSE}
+sydney_weather = bomrang::get_current_weather("Sydney")
+```
+
+```{r,tidy = TRUE,warning = FALSE,message=FALSE}
+dplyr::glimpse(sydney_weather)
+```
+```{r, tidy = TRUE,warning = FALSE,message=FALSE}
+ggplot(data=sydney_weather,aes(x=local_date_time_full,y=air_temp))+geom_line()
+```
+2.2.1 Exercises
+```{r, tidy = TRUE,warning = FALSE,message=FALSE}
+get_current_weather("Melbourne")
+mel_weather = bomrang::get_current_weather("Melbourne")
+ggplot(data=mel_weather,aes(x=local_date_time_full,y=air_temp))+geom_line()
+
+ggsave(filename = "2.2.1 exercise.png")
+```
+```{r, tidy = TRUE,warning = FALSE,message=FALSE}
+#plotting wind speed in Melbourne
+ggplot(data=mel_weather,aes(x=local_date_time_full,y=wind_spd_kmh ))+geom_line()+labs(x="Local Date",y="Wind Speed / kmh")+theme_light()
+```
+```{r,tidy = TRUE,warning = FALSE,message=FALSE}
+write_csv(mel_weather,"mel_weather")
+```
+
+2.2.2
+```{r,tidy = TRUE,warning = FALSE,message=FALSE}
+library("plotly")
+
+myplot = ggplot(data = sydney_weather, 
+                aes(x = local_date_time_full, y = air_temp)) + 
+  geom_line()
+plotly::ggplotly(myplot)
+```
+
