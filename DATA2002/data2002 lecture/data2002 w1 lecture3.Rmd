@@ -1,0 +1,73 @@
+---
+title: "data2002 w1 lecture"
+author: "Jing Yang \ 480110301"
+date: "27/08/2020"
+output: html_document
+---
+
+## No linkage model
+
+```{r}
+# observed counts
+y = c(128,86,74,112)
+n = sum(y)
+
+#hypothesised proportions
+p = c(1/4,1/4,1/4,1/4)
+# alternatively:
+# p = c(1,1,1,1)/4
+# rep(1,4)/4
+
+# expected counts
+e = p*n
+```
+
+```{r}
+names = c("AB","Ab","aB","ab")
+```
+
+```{r}
+d = y-e
+d
+mean(d)
+```
+```{r}
+# test statistic
+(y-e)^2/e
+t0 = sum((y-e)^2/e)
+t0
+```
+
+```{r}
+# simulate
+n=400
+set.seed(1)
+siml = sample(x = names,
+              size = n,
+              replace = TRUE,
+              prob = c(0.25,0.25,0.25,0.25))
+table(siml)
+par(cex=2) # set the text value size
+barplot(table(siml),main="Simulation counts")
+```
+$$t_0 = \sum_{i=1}^{k} \frac{y_i-e_i)^2}{e_i}.$$
+```{r}
+sim_y = table(siml)
+sum((sim_y-e)^2/e)
+t0
+```
+
+Simulate test statistics from data generated when the null hypothesis is true.
+```{r}
+B = 3000
+sim_test_stsats = vector(mode = "numeric", length = B)
+
+for(i in 1:B){
+  sim = sample(x = names, size = n, replace = TRUE, prob = c(0.25,0.25,0.25,0.25))
+  sim_y = table(sim)
+  sim_test_stsats[i] = sum((sim_y-e)^2/e)
+}
+par(cex = 2, mar= c(4,4,0.5,0.5))
+hist(sim_test_stsats,main="",breaks = 20)
+mean(sim_test_stsats >=t0) # caluclating p-value
+```
