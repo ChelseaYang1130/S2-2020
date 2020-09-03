@@ -1,0 +1,146 @@
+---
+title: "data2002 lab2"
+author: "Jing Yang \ 480110301"
+date: "9/2/2020"
+output: html_document
+---
+```{r}
+library("tidyverse") 
+```
+
+## 4.1 Tablet devices
+```{r}
+y_i = c(102, 32, 12, 4)
+p_i = c(0.69, 0.21, 0.07, 0.03)
+n = sum(y_i)
+e_i = n * p_i
+e_i
+
+
+```
+
+## 4.2 Smoking rates
+
+```{r}
+df = 3 # number of categories-1
+y_i = c(44,24,13,19)
+p_i = c(0.5,0.2,0.1,0.2)
+n = sum(y_i)
+e_i1 = n*p_i
+e_i1>=5
+
+(t0 = sum((y_i-e_i1)^2/e))
+(pValue = 1 - pchisq(t0,df=3))
+```
+
+
+## 5 Australian road fatalities
+
+```{r message=FALSE}
+bitre_link = "https://data.gov.au/data/dataset/5b530fb8-526e-4fbf-b0f6-aa24e84e4277/resource/fd646fdc-7788-4bea-a736-e4aeb0dd09a8/download/ardd_fatalities.csv"
+fdata = readr::read_csv(bitre_link, na = "-9", guess_max = 1e6) %>% 
+  janitor::clean_names()
+cdata = fdata %>% 
+  select(-road_user, -gender, -age, -age_group) %>% 
+  distinct() %>%   
+  group_by(crash_id) %>% 
+  slice(1) %>% 
+  ungroup() %>%
+  mutate(hour = lubridate::hour(time))
+```
+
+### 1. How are missing values recorded, and why might they occur?
+The missing values are recorded as "-9". Missing values can be caused by the researcher when data collection is done improperly or mistakes are made in data entry. On the other hand, some statistics may be unavailable for the objectives therefore causing missing values.
+
+### 2. How many fatalities occurred since 1989? How many fatal crashes have there been since 1989?
+
+There are 2407 fatalities occured since 1989. There has been 2407 fatal crashes since 1989.
+```{r}
+(year1989 = cdata %>% filter(year==1989))
+nrow(year1989)
+year1989 %>% select(crash_type) %>% filter(!is.na(crash_type)) %>% count()
+```
+
+### 3. What is the most common hour of the day for a fatal crash?
+
+15 is the most common hour of the day for a fatal crash.
+```{r}
+(hour_f=table(cdata %>% select(hour)))
+max(hour_f)
+```
+
+### 4. What is the most common day of the week for a fatal crash?
+
+Saturday is the most common day of the week for a fatal crash.
+```{r}
+(day_f= table(cdata %>% select(dayweek)))
+max(day_f)
+```
+
+### 5. What is the most common month for a fatal crash?
+
+March is the most common month for a fatal crash.
+```{r}
+(month_f = table(cdata %>% select(month)))
+max(month_f)
+```
+
+### 6. Are fatal crashes uniformly distributed across the months of the year? Filter the data down to one year (e.g. 2019) to do this test. You should write out a full hypothesis test and make an appropriate conclusion.
+
+```{r}
+(year2019 = cdata %>% filter(year==2019))
+(monthFre = table(year2019 %>% select(month)))
+
+actual_f = c(109,87,101,92,97,86,81,94,84,95,79,98)
+n = sum(actual_f)
+p = c(1/12,1/12,1/12,1/12,1/12,1/12,1/12,1/12,1/12,1/12,1/12,1/12)
+e = p*n
+
+names = c("January","Feburary","March","April","May","June","July","August","September","October","November","December")
+par(mfrow = c(1,2))
+barplot(actual_f,names.arg = names,main="Observed counts")
+barplot(e,names.arg = names,main="Expected counts")
+```
+```{r}
+(t0 = sum((actual_f-e)^2/e))
+(pvalue = 1-pchisq(t0,df=11))
+```
+
+**Hypothesis:** $H_0:p_1=p_2=...=p_12~vs~H_1:$ at least one equality does not hold.
+
+**Assumption:** independent observations and $e_i=np_i0 \geq 5$.
+
+**Test statistic:** $T=\sum_{i=1}^k\frac{(Y_i-e_i)^2}{e_i}$. Under $H_0$, T~$X_{k-1-q}^2$ approximately where k is the number of groups and q is the number of parameters that needs to be estimated from the data.
+
+**Observed test statistic:** $t_0=\sum_{i=1}^k\frac{(y_i-e_i)^2}{e_i}=9.3$.
+
+**P-value:** $P(T \geq t_0)=P(x_{k-1-q}^2 \geq t_0) = 0.59 < \alpha$ 
+
+**Conclusion:** Does not reject $H_0$ as p-value$> \alpha$. There is no evidence that the probabilities of months equal to each other. Therefore, fatal crashes do not uniformly distribued acorss the months of the year.
+
+
+## 6.2 Pollution
+
+```{r}
+y_i = c(6,9,15)
+p_i = c(1/3,1/3,1/3)
+n = sum(y_i)
+(e_i = n*p_i)
+e_i>=5 # check the assumption
+y_i-e_i
+(y_i-e_i)^2/e_i
+(t0=sum((y_i-e_i)^2/e_i)) # test statistic
+(p_value = 1-pchisq(t0,2)) # p-value
+```
+
+**Hypothesis:** $H_0: p_1=p_2=p_3$ vs $H_1:$ at least one equality does not hold.
+
+**Assumption:** independent observations and $e_i=np_i0 \geq 5$.
+
+**Test statistic:** $T=\sum_{i=1}^k\frac{(Y_i-e_i)^2}{e_i}$. Under $H_0$, T~$X_{k-1-q}^2$ approximately where k is the number of groups and q is the number of parameters that needs to be estimated from the data.
+
+**Observed test statistic:** $t_0=\sum_{i=1}^k\frac{(y_i-e_i)^2}{e_i}=4.2$.
+
+**P-value:** $P(T \geq t_0)=P(x_{k-1-q}^2 \geq t_0) = 0.12$ 
+
+**Conclusion:** Does not reject $H_0$ as p-value is 0.12 $> \alpha$. There is no evidence that the probabilities of three proposals been chose are equal. Therefore, there is preference among the three proposals.
