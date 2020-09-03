@@ -1,0 +1,31 @@
+---
+title: "data2002 lecture 5"
+author: "Jing Yang \ 480110301"
+date: "9/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Palmer Penguins data
+```{r import_data,meassage=FALSE,results="hide"}
+library(tidyverse)
+library(palmerpenguins)
+glimpse(penguins)
+```
+
+## Plot bill length aginst depth
+
+```{r warning=FALSE,message=FALSE}
+penguins %>% group_by(species) %>% count()
+
+penguins %>% ggplot() + 
+  aes(x = bill_length_mm, y = bill_depth_mm) + 
+  geom_point(aes(colour=species)) + 
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_smooth(aes(colour = species),method = "lm", se=FALSE)
+```
+
+
