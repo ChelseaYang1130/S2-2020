@@ -1,0 +1,156 @@
+---
+title: "DATA2002 lab 3"
+author: "Jing Yang \ 480110301"
+date: "9/9/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 3.1 dishonest dice
+```{r}
+# Goodness of fit test
+y = c(1, 15, 42, 32, 10)  # input the observed counts
+x = 0:4  # define the corresponding groups
+
+n = 4 # total number of samples (sample size)
+p = 1/2
+
+(pi = dbinom(x,size = n, prob = p))
+
+chisq.test(x=y,p=pi)
+
+# or 
+
+ey = pi * sum(y)
+t0 = sum((y-ey)^2/ey)
+df = 5-1
+(pavl = pchisq(t0,4,lower.tail = FALSE))
+```
+
+## 3.2 Mammograms
+```{r}
+x = matrix(c(10, 20, 90, 99980), ncol = 2)
+colnames(x) = c("Breast cancer: yes", "Breast cancer: no")
+rownames(x) = c("Mammogram: positive", "Mammogram: negative")
+x
+```
+
+*1. Is it appropriate to use a relative risk to quantify the relationship between the risk factor (Mammogram result) and disease (Breast cancer)? If so calculate the relative risk.*
+
+It's a prospective study. It is appropriate to use a relative risk to quantify the relationship within a prospective study.
+
+```{r}
+(RR = (10*(20+99980))/(20*(10+90)))
+```
+With a Relative Risk of 500, if you test positive in a Mammogram you are 500 times more likely to have breast cancer.
+
+*2. Calculate the odds of having breast cancer for positive vs negative mammograms.*
+
+```{r}
+(OR = (10*99980)/(20*90))
+```
+
+*3. Calculate a confidence interval for the odds-ratio, is there evidence that there might be a relationship between mammogram test results and breast cancer diagnosis?*
+
+```{r}
+logOR = log(OR) # use log odds
+SE = sqrt(1/10+1/90+1/20+1/99980) # standard error
+
+(CI = logOR + c(-1,1)*1.96*SE)
+exp(CI)
+```
+
+## 3.3 Education
+
+```{r message=FALSE, warning=FALSE}
+## Reading in the data
+library("tidyverse")
+edu = readr::read_delim("https://raw.githubusercontent.com/DATA2002/data/master/education-by-age-census.txt", 
+    delim = "\t")
+edu = edu %>% janitor::clean_names()
+knitr::kable(edu)
+```
+
+```{r}
+edu %>% tidyr::spread(key = age_group, value = count)
+# an alternative approach is the xtabs function xtabs(count ~
+# education + age_group, data = edu)
+```
+
+```{r}
+edu %>% tidyr::spread(key = age_group, value = count)
+edu = edu %>% 
+  dplyr::mutate(
+    age_group = forcats::fct_relevel(age_group, ">64", after = 4),
+    education = forcats::fct_relevel(education, 
+                                     "Did not complete high school", 
+                                     "Completed high school", 
+                                     "College,1-3 years", 
+                                     "College,4 or more years"))
+tab = edu %>% tidyr::spread(key = age_group, value = count)
+# tab = xtabs(count ~ education + age_group, data = edu)
+tab
+```
+
+```{r}
+edu = edu %>% mutate(college = dplyr::if_else(stringr::str_detect(education, 
+    "College"), "College", "No college"))
+edu_college = edu %>% dplyr::group_by(age_group, college) %>% dplyr::summarise(count = sum(count)) %>% 
+    dplyr::ungroup()
+edu_college
+```
+
+*1. Which age category has the highest percentage of college graduates?*
+
+The age group of 35-44 has the highest percentage of college graduates.
+```{r}
+ggplot(edu_college, aes(x = age_group, y = count, fill = college)) + 
+    geom_bar(stat = "identity", position = "fill") + theme_bw() + 
+    labs(y = "Proportion")
+```
+
+*2. What percent of all Americans over age 25 never went to college?*
+ 
+```{r}
+samples = edu_college %>% summarise(total = sum(count))
+samples
+edu_college %>% filter(college=="College") %>% summarise(sum = sum(count), percent = sum/130794)
+```
+
+37.6% of Americans over age 25 never wen to college.
+
+*3. Based on this data, is there evidence of a relationship between age category and educational attainment? In other words, is there evidence that younger people are more likely to have finished college than older people? Use graphical representation to compare the percent of people in each age group who have completed college. What is the appropriate statistical test to use here?*
+
+It's a prospective study, therefore both Relative Risk and Odd Ratio are appropriate to use here.
+
+
+## Heart attacks and smoking
+
+```{r}
+x = matrix(c(33, 167, 18, 182), ncol = 2)
+colnames(x) = c("Heart attack: yes", "Heart attack: no")
+rownames(x) = c("Smoke: yes", "Smoke: no")
+x
+```
+
+*1. Is it appropriate to use a relative risk to quantify the relationship between the risk factor (Smoking) and disease (Heart attack)? If so calculate the relative risk.*
+
+It's a retrospectie study. it is not appropriate to use a relative risk because we cannot estimate $P(D^+|R^+),P(D^+|R^-)$, or $RR = \frac{P(D^+|R^+)}{P(D^+|R^-)}$.
+
+*2. Calculate the odds of having a heart attack for smokers compared to non-smokers.*
+```{r}
+(OR = (x[1,1]*x[2,2])/(x[1,2]*x[2,1]))
+```
+
+
+*3.Calculate a confidence interval for the odds-ratio, is there evidence that there might be a relationship between smoking and heart attacks?*
+
+```{r}
+se = sqrt(1/x[1,1]+1/x[2,1]+1/x[1,2]+1/x[2,2])
+(CI = exp(log(OR)+c(-1,1)*1.96*se))
+```
+
+The confidence interval doesn't contain 1, therefore the is a relationship between smoking and heart attacks.
