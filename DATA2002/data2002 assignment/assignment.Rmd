@@ -17,7 +17,7 @@ output:
 
 # Introduction
 
-# Data Cleaning
+
 This R Markdown file walks through some data cleaning for the assignment survey data. It does not represent a complete set of data cleaning code, there are many variables that haven't been cleaned and there are some decisions you might take for individual rows to possibly exclude them. You're welcome to use any of the code below in your assignment, but you will almost certainly need to adapt it and add to it.
 
 Your assignment is not about data cleaning, as such, but you will need to include the code that you use to clean your data and a couple of paragraphs describing what data cleaning was performed and justifying any decisions you made along the way.
@@ -35,16 +35,13 @@ library(visdat)
 library(gendercodeR)
 ```
 
-# Import the data
 
 ```{r, message=FALSE}
 # readr::read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTf8eDSN_2QbMTyVvO5bdYKZSEEF2bufDdYnLnL-TsR8LM-6x-xu1cxmDMohlbLrkMJn9DE7EG7pg5P/pub?gid=1724783278&single=true&output=csv")
 raw = read_csv("DATA2X02 class survey 2020 (Responses) - Form responses 1.csv")
 ```
 
-## Clean column names
 
-Here are the column names:
 
 ```{r}
 tibble(Position = 1:21, `Column names` = colnames(raw)) %>%
@@ -52,13 +49,13 @@ tibble(Position = 1:21, `Column names` = colnames(raw)) %>%
   gt::tab_source_note("Table 1: Questions asked in the DATA2002 survey.")
 ```
 
-First we'll clean the column names with the janitor package. 
 
 ```{r, results = "hide"}
 x = raw %>% janitor::clean_names()
 colnames(x)
 ```
 
+# Data Cleaning
 ```{r}
 colnames(x) = stringr::str_replace(string = colnames(x),
                                    pattern = "what_is_your_",
@@ -67,8 +64,6 @@ colnames(x) = stringr::str_replace(string = colnames(x),
                                    pattern = "on_average_how_many_hours_per_week_did_you_",
                                    replacement = "")
 ```
-
-In this case, it's probably easiest to go through and manually shorten them.
 
 ```{r}
 colnames(x)[2] = "covid_test"
@@ -95,37 +90,12 @@ tibble(Position = 1:21, `Variable name` = colnames(x), `Corresponding question` 
   gt::tab_source_note("Table 2: Variable names and the corresponding questions asked in the DATA2002 survey.")
 ```
 
-Later on in the data cleaning process we identified that postcode isn't really a numeric variable, so we've come back and `mutate()`d it to a character vector here. Similarly we found that `timestamp` appears as a character variable. The **lubridate** package has been used to convert it to a date time object.
-
-
-```{r}
-x = x %>% mutate(
-  postcode = as.character(postcode),
-  timestamp = lubridate::dmy_hms(timestamp)
-)
-```
-
-# Quick look at the data
-
-It's always a good idea to generate some basic summary statistics and visualisations when you get a new data set. There are almost always issues in the data that need to be dealt with.
-
-## skimr package
-
-```{r}
-x %>% skimr::skim()
-```
-
-## visdat package
-
-We can visualise the missingness in the data using the **visdat** package. In Figure \@ref(fig:missingness) below we can see that some missingness exists and we should probably go back and remove the rows that are completely empty (apart from a timestamp). To do this you might consider using the `filter()` function or the more specific `drop_na()` function.
+In Figure \@ref(fig:missingness) below we can see that some missingness exists and we should probably go back and remove the rows that are completely empty (apart from a timestamp). To do this you might consider using the `filter()` function or the more specific `drop_na()` function.
 
 ```{r missingness, fig.cap="Visualising the missingness in the data."}
-visdat::vis_miss(x)
+visdat::vis_miss(x)+theme(axis.text.x = element_text(angle = 90))
 x = x %>% drop_na()
 ```
-
-
-## Numeric variables
 
 ```{r, results = "hide", echo = FALSE}
 # this code chunk and it's result is hidden from the HTML document
@@ -145,45 +115,7 @@ p7 = x %>% ggplot(aes(x = height)) + geom_histogram()
 gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, p7, ncol = 3)
 ```
 
-### Height
-
-We can clean the height variable by making a reasonable guess that heights like 1.62 should be 162 and we implement this using the `case_when()` function.
-
-```{r}
-# table(x$height)
-x = x %>% 
-  dplyr::mutate(
-    height = dplyr::case_when(
-      height < 2.3 ~ height*100,
-      # if there were also heights in feet we could use this next:
-      # height < 7 ~ height* <conversion factor from feet to m>,
-      TRUE ~ height
-    )
-  )
-```
-
-
-```{r, fig.height = 3, fig.cap = "Distribution of heights after rescaling the heights reported in metres."}
-x %>% 
-  ggplot(aes(x = height)) +
-  geom_histogram() + 
-  labs(x = "Height (cm)", y = "Count") + 
-  theme_bw()
-```
-
-### Other continuous variables
-
-Cleaning the other continuous variables is left as an exercise for the reader.
-
-## Categorical variables
-
-```{r, echo = FALSE, results = "hide"}
-# x %>% select(where(is.character)) %>% colnames()
-```
-
 ### Gender
-
-Approach 2: using the [**gendercodeR** package](https://github.com/ropenscilabs/gendercoder) which is tailor made to help in this situation.
 
 ```{r}
 x = x %>% mutate(
@@ -197,30 +129,9 @@ x %>%
   gt::tab_source_note("Table 3: Summary of gender proportions.")
 ```
 
-### Eye colour
-
-With eye colour we've taken a different approach, using the `fct_lump()` function from the **forcats** package. See `fct_lump` for details.
-
-```{r}
-# x %>% janitor::tabyl(eye_colour)
-# x %>% filter(eye_colour == "Yellow")
-x = x %>% 
-  mutate(
-    eye_colour = tolower(eye_colour),
-    eye_colour = forcats::fct_lump(eye_colour, n = 6)
-  )
-x %>% 
-  janitor::tabyl(eye_colour) %>% 
-  arrange(desc(n)) %>% # arrange in descending order
-  gt::gt() %>% 
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>% 
-  gt::tab_source_note("Table 4: Summary of eye colour proportions.")
-```
-
 ### Exercising
 
-```{r}
+```{r results='hide'}
 x %>% janitor::tabyl(exercising) %>%
 arrange(desc(exercising)) %>% # arrange in descending order
   gt::gt() %>% 
@@ -263,16 +174,6 @@ x %>% ggplot() +
   labs(y = "", x = "Count")
 ```
 
-## Time variable
-
-If you ever get a dataset with a time variable, make sure you check out the distribution of observations over time. You can often notice oddities or gaps in the data this way.
-
-```{r, fig.cap="Distribution of responses over time."}
-x %>% ggplot() + aes(x = timestamp) + 
-  geom_histogram()
-```
-
-
 # Questions
 
 ## Is this a random sample of DATA2002 students?
@@ -291,7 +192,7 @@ To improve the questions, units should be specified in the questions so that num
 
 ## Does the number of COVID tests follow a Poisson distribution?
 
-```{r}
+```{r results='hide'}
 x %>% janitor::tabyl(covid_test) %>% 
   arrange(covid_test) %>% # arrange in descending order
   gt::gt() %>%
@@ -299,15 +200,15 @@ x %>% janitor::tabyl(covid_test) %>%
                   decimals = 0) %>%
   gt::tab_source_note("Table: Summary of covid test proportions.")
 ```
-
-```{r}
-x %>% ggplot() + aes(x = covid_test) + 
-  geom_bar()
+As shown in Figure \@ref(fig:covidplot), the peak of the number of times students have been tested for COVID lies to the left with a long tail extending to the right. Therefore the data is significantly right-skewed.
+```{r covidplot, fig.cap="Distribution of how many times students have been tested for COVID."}
+x %>% ggplot() + aes(x = as.factor(covid_test)) + 
+  geom_bar() + scale_x_discrete(name = "Number of COVID test",limits = c("0","1","2","3","4","5","6","7","8","9","10"))
 
 # p1 = x %>% ggplot(aes(x = covid_test)) + geom_bar()
 ```
 
-There are 8 groups of the number of COVID test: 1,2,3,4,5,6 and 10. The corresponding observed frequencies are 22, 8,3,1,2,1 and 1. $\lambda$ of the Poisson distribution is estimated to be 0.55.
+There are 8 groups of the number of COVID test: 1,2,3,4,5,6 and 10. The corresponding observed frequencies are 101, 22, 8,3,1,2,1 and 1. $\lambda$ of the Poisson distribution is estimated to be 0.55.
 
 ```{r}
 tab = as.data.frame(table(x$covid_test))
@@ -334,7 +235,6 @@ ey >= 5 # check assumption e_i >= 5 not all satisfied
 ```{r}
 (eyr = c(ey[1:3],sum(ey[4:8])))
 ```
-
 
 However, after combining the 8 classes into 4 classes (i.e. $0, 1, 2, \geq 3$), the expected frequency of group $\geq 3$ is still less than 5. Therefore we combine the group "2" and "$\geq 3$". The final adjacent groups are "0","1" and "$\geq 2$". The corresponding expected frequencies are 79.9, 44.2 and 14.9 while the observed frequencies are 101, 22,16 respectively. 
 
@@ -376,33 +276,37 @@ kr = length(yr) #number of combined classes
 
 ## Perform two other hypothesis tests. 
 
-### Are gender and favorite season on excercising independent?
+### Is stress level related to gender?
+
 ```{r}
 x %>% ggplot() + 
-  aes(y = fav_season, fill = gender) + 
+  aes(y = stress_level, fill = gender) + 
   geom_bar(position="fill") + 
-  labs(y = "", x = "Count")
+  labs(y = "Stress level", x = "Proportion of students", fill="Gender",
+       title = "DATA2002 students stress level") +
+  scale_x_continuous(labels = scales::percent_format())+theme(plot.title = element_text(hjust = 0.5))
 ```
-The dimensions of contingency table is $3 \times 4$. In this case, Fisher's exact test can be generalized to $3 \times 4$ two-way contingency tables but is very dificult to compute. Therefore we use Monte Carlo (i.e. random permutation) for the hypothesis testing.
+
+The size of contingency table is $3 \times 11$. In this case, Fisher's exact test can be generalized to $3 \times 11$ two-way contingency tables but is very dificult to compute. Therefore we use Monte Carlo (i.e. random permutation) for the hypothesis testing.
 
 *Frequency table:*
 ```{r}
-(y.mat = table(x$fav_season,x$gender))
+(y.mat = table(x$stress_level,x$gender))
 ```
 
-**Hypothsis:** $H_0:$ gender and favorite season are independent ($p_{ij} =p_ip_j, i=1,2, j=1,2,3,4$) **vs** $H_1:$ gender and favorite season are related (Not all equalities hold).
+**Hypothsis:** $H_0:$ gender and stress level are independent ($p_{ij} =p_ip_j, i=1,2, j=1,2,3,4$) **vs** $H_1:$ gender and stress level are related (Not all equalities hold).
 
 **Assumptions:** No assumptions are made
 
-**Test statistics:** $t_0=13.801$
+**Test statistics:** $t_0=19.258$
 ```{r}
 set.seed(100)
 chisq.test(y.mat, simulate.p.value = TRUE, B=10000)
 ```
 
-**P-value:** p = 0.0124
+**P-value:** p = 0.4552
 
-**Conclusion:** The p-value is 0.0124 < 0.05. We reject $H_0$ and therefore gender and favorite season are related.
+**Conclusion:** The p-value is greater than 0.05. The data is consistent with $H_0$ therefore we conclude that gender and stress level are independent.
 
 ### Are gender and favorite social media related?
 
@@ -463,11 +367,15 @@ arrange(desc(n)) %>% # arrange in descending order
                   decimals = 0) %>% 
   gt::tab_source_note("Table 4: Summary of favorite social media.")
 ```
+
 ```{r}
+media_f = as.data.frame(table(x1$social_media))
+sort = arrange(media_f, Freq)
 x1 %>% ggplot() + 
-  aes(y = social_media, fill = gender) + 
-  geom_bar(position=position_dodge()) + 
-  labs(y = "", x = "Count")
+  aes(y = social_media,fill = gender, stat = "count")   +
+  geom_bar() + 
+  scale_y_discrete(name=" ", limits=as.character(sort$Var1)) +
+  labs(y = "", x = "Count", title = "DATA2002 students' favorite social media")+theme(plot.title = element_text(hjust = 0.5))
 ```
 
 The size of contingency table is $3 \times 18$. Many expected frequencies in the contingency table are less than 5 therefore breaking the assumption of Chi-square test. In addition, it is difficult to compute such a large contingency table by Fisher's exact test. Thus, we use an alternative method **Yates' continuity correction** to test in small samples.
@@ -529,3 +437,6 @@ citation()
 - Waring E, Michael Quinn, Amelia McNamara, Eduardo Arino de la Rubia, Hao Zhu and Shannon Ellis (2020). skimr: Compact and Flexible Summaries of Data. R package version 2.1.2. https://CRAN.R-project.org/package=skimr
 - Wickham H et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, doi: [10.21105/joss.01686](https://doi.org/10.21105/joss.01686)
 
+https://www.codecademy.com/learn/learn-statistics-with-python/modules/describe-a-histogram#:~:text=In%20a%20histogram%2C%20the%20distribution,a%20symmetric%20dataset%20are%20similar.
+
+https://socratic.org/questions/what-is-the-difference-between-a-chi-square-test-of-independence-and-a-chi-squar#:~:text=Test%20for%20independence%20is%20concerned,samples%20come%20from%20same%20population.
