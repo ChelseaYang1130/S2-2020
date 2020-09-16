@@ -13,6 +13,11 @@ output:
     css: style.css
 ---
 
+# Executive Summary
+
+# Introduction
+
+# Data Cleaning
 This R Markdown file walks through some data cleaning for the assignment survey data. It does not represent a complete set of data cleaning code, there are many variables that haven't been cleaned and there are some decisions you might take for individual rows to possibly exclude them. You're welcome to use any of the code below in your assignment, but you will almost certainly need to adapt it and add to it.
 
 Your assignment is not about data cleaning, as such, but you will need to include the code that you use to clean your data and a couple of paragraphs describing what data cleaning was performed and justifying any decisions you made along the way.
@@ -389,6 +394,7 @@ The dimensions of contingency table is $3 \times 4$. In this case, Fisher's exac
 
 **Assumptions:** No assumptions are made
 
+**Test statistics:** $t_0=13.801$
 ```{r}
 set.seed(100)
 chisq.test(y.mat, simulate.p.value = TRUE, B=10000)

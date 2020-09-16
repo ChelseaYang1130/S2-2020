@@ -1,0 +1,147 @@
+---
+title: "DATA2002 Tut 4"
+author: "Jing Yang \ 480110301"
+date: "9/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE,warning=FALSE}
+library(tidyverse)
+```
+
+# Exercise
+
+## Personality type
+
+**Hypothesis:** $H_0: p_{1j}=p_{2j}$ for $j=1,2,3,4,5$ **vs** $H_1:$ Not all equalities hold.
+
+**Assumptions:** $e_{ij}=\frac{y_iy_j}{n}\geq 5$.
+**Test statistic:** $t_0=\sum^2_{i=1}\sum^3_{j=1}{\frac{y_{ij}-e_{ij})^2}{e_{ij}}}=3.006$
+
+**P-value:** $P(T\geq t_0)=P(x^2_2 \geq 3.006)=0.5568$
+
+**Decision:** The p-value is greater than 0.05, there is not enough evidence to reject $H_0$. The data is consistent with $H_0$ therefore we conclude that personality types are homogeneous across Business and Social Science majors.
+
+```{r}
+counts = c(41, 52, 46, 61, 58, 72, 75, 63, 80, 65)
+c_mat = matrix(counts, nrow = 2, byrow = TRUE)
+colnames(c_mat) = c("Open", "Conscientious", "Extrovert", "Agreeable", 
+    "Neurotic")
+rownames(c_mat) = c("Business", "Social Science")
+# c_mat
+chisq.test(c_mat,correct = FALSE)
+```
+
+## Shcoking
+
+### Fisher’s exact test
+```{r}
+counts = c(12,5,4,9)
+y.mat = matrix(counts,nrow = 2, byrow = TRUE)
+colnames(y.mat) = c("Wait together", "Wait alone")
+rownames(y.mat) = c("High anxiety","Low anxiety")
+
+fisher.test(y.mat)
+```
+
+### A chi-squared test for independence without a continuity correction
+
+```{r}
+chisq.test(y.mat, correct=FALSE)
+```
+### A chi-squared test for independence with a continuity correction
+
+```{r}
+chisq.test(y.mat, correct=TRUE)
+```
+
+### A chi-squared test for independence using a Monte Carlo p-value (i.e. using simulation).
+
+```{r}
+chisq.test(y.mat, simulate.p.value = TRUE, B=10000)
+```
+
+## Asbestos
+```{r}
+asbestos = matrix(c(310, 212, 21, 25, 7, 36, 158, 35, 102, 35, 0, 9, 17, 49, 51, 0, 0, 4, 18, 28), nrow = 5)
+colnames(asbestos) = c("None", "Grade 1", "Grade 2", "Grade 3")
+rownames(asbestos) = c("0-9", "10-19", "20-29", "30-39", "40+")
+y = asbestos %>% as.data.frame() %>% 
+  tibble::rownames_to_column(var = "years") %>% 
+  tidyr::gather(key = grade, value = count, -years)
+y$grade = factor(y$grade, levels = c("None", "Grade 1", "Grade 2", "Grade 3"), ordered = TRUE)
+ggplot(y, aes(x = years, y = count, fill = grade)) + 
+  geom_bar(stat = "identity") + 
+  theme_bw(base_size = 16) + 
+  scale_fill_brewer(palette = "Set1") + 
+  labs(fill = "", y = "Count", x = "Occupational exposure (yrs)")
+```
+### Adapt the ggplot2 code above such that the y-axis is a proportion within each exposure length group. Does it look like there’s a relationship between the two variables?
+```{r}
+ggplot(y, aes(x = years, y = count, fill = grade)) + 
+  geom_bar(stat = "identity",position="fill") + 
+  theme_bw(base_size = 16) + 
+  scale_fill_brewer(palette = "Set1") + 
+  labs(fill = "", y = "Count", x = "Occupational exposure (yrs)")
+```
+
+It does loke like there's a reltationship between the two variables.
+
+### Use the function chisq.test() to perform a standard chi-squared test of independence to determine whether there exists a statistically significant association between years of exposure to asbestos fibres and the severity of asbestosis that they were diagnosed with.
+
+```{r}
+chisq.test(asbestos)
+```
+
+### Use x = r2dtable(____) to randomly generate a contingency table with the same row and column totals as asbestos. Perform a chi-squared test and extract the test statistic using chisq.test(x[[1]])$statistic.
+
+```{r}
+r = rowSums(asbestos)
+c = colSums(asbestos)
+x = r2dtable(100,r,c)
+
+chisq.test(x[[1]])
+chisq.test(x[[1]])$statistic
+```
+
+### By using the r2dtable() function, perform a Monte-Carlo simulation to determine the p-value for the chi-squared test of independence. Generate 10,000 bootstrap resamples. Note: if doing this in an Rmd script, you might want to wrap your chisq.test(___)$statistic in suppressWarnings() so they don’t slow down your computer, e.g. suppressWarnings(chisq.test(___)$statistic). Plot a histogram of your Monte Carlo test statistics.
+
+```{r}
+chisq.test(x[[1]], simulate.p.value = TRUE, B=10000)
+```
+
+### Use the chisq.test() function to perform a Monte-Carlo simulation that obtains a p-value. Do so using 10,000 bootstrap resamples.
+
+```{r}
+chisq.test(asbestos, simulate.p.value = TRUE, B =10000)
+```
+
+# For after the lab
+
+## IQ and Income
+
+```{r}
+mat = matrix(c(14,18,25,8,23,15),nrow = 3)
+mat
+```
+```{r}
+chisq.test(mat)
+```
+
+## Eating habits and living arrangements
+
+```{r}
+mat = matrix(c(2,25,23,146,7,124),nrow = 3)
+chisq.test(mat)
+```
+
+### TV violence
+```{r}
+mat = matrix(c(8,12,21,18,15,7),nrow = 2)
+chisq.test(mat)
+```
+
