@@ -1,6 +1,6 @@
 ---
 title: "DATA2002 Assignment"
-author: "Jing Yang"
+author: "Jing Yang \ 480110301"
 output:
   bookdown::html_document2: # note that this requires bookdown
     toc: yes
@@ -17,15 +17,6 @@ output:
 
 # Introduction
 
-
-This R Markdown file walks through some data cleaning for the assignment survey data. It does not represent a complete set of data cleaning code, there are many variables that haven't been cleaned and there are some decisions you might take for individual rows to possibly exclude them. You're welcome to use any of the code below in your assignment, but you will almost certainly need to adapt it and add to it.
-
-Your assignment is not about data cleaning, as such, but you will need to include the code that you use to clean your data and a couple of paragraphs describing what data cleaning was performed and justifying any decisions you made along the way.
-
-You don't need to go step by step through the process like I've done below, a single "data cleaning" code chunk that performs all the cleaning at once and a couple of paragraphs describing the rationale are all that's required. 
-
-I've put a bit of effort making the tables look nice and the plots are OK - they have captions, but the legends/colours/theming of some could still be tidied up, I wouldn't get 10/10 for this effort. Every figure or table you include in your assignment should also be referenced and discussed in the text. If you don't talk about a table/figure then it shouldn't be included. They don't "speak for themselves". [This is also something I haven't always done below, another reason that I wouldn't get 10/10.]
-
 ```{r setup, include=TRUE, message = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
@@ -33,29 +24,16 @@ library(janitor)
 library(skimr)
 library(visdat)
 library(gendercodeR)
-```
+library(kableExtra)
+library(coin)
 
-
-```{r, message=FALSE}
-# readr::read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTf8eDSN_2QbMTyVvO5bdYKZSEEF2bufDdYnLnL-TsR8LM-6x-xu1cxmDMohlbLrkMJn9DE7EG7pg5P/pub?gid=1724783278&single=true&output=csv")
 raw = read_csv("DATA2X02 class survey 2020 (Responses) - Form responses 1.csv")
-```
 
-
-
-```{r}
-tibble(Position = 1:21, `Column names` = colnames(raw)) %>%
-  gt::gt() %>% 
-  gt::tab_source_note("Table 1: Questions asked in the DATA2002 survey.")
-```
-
-
-```{r, results = "hide"}
 x = raw %>% janitor::clean_names()
-colnames(x)
 ```
 
 # Data Cleaning
+
 ```{r}
 colnames(x) = stringr::str_replace(string = colnames(x),
                                    pattern = "what_is_your_",
@@ -63,9 +41,7 @@ colnames(x) = stringr::str_replace(string = colnames(x),
 colnames(x) = stringr::str_replace(string = colnames(x),
                                    pattern = "on_average_how_many_hours_per_week_did_you_",
                                    replacement = "")
-```
 
-```{r}
 colnames(x)[2] = "covid_test"
 colnames(x)[4] = "postcode"
 colnames(x)[5] = "dentist"
@@ -82,12 +58,16 @@ colnames(x)[17] = "floss_frequency"
 colnames(x)[18] = "glasses"
 colnames(x)[20] = "steak_preference"
 colnames(x)[21] = "stress_level"
+
+x = x %>% mutate(
+  gender = gendercodeR::recode_gender(gender)
+)
 ```
 
 ```{r}
-tibble(Position = 1:21, `Variable name` = colnames(x), `Corresponding question` = colnames(raw)) %>%
-  gt::gt() %>% 
-  gt::tab_source_note("Table 2: Variable names and the corresponding questions asked in the DATA2002 survey.")
+detail = data.frame(Position=1:21, "Survey question"=colnames(raw),"Variable name"=colnames(x))
+colnames(detail)=c("Position","Survey question","Variable name")
+knitr::kable(detail,align="cll",caption = "Table of survey questions and corresponding variable names for data processing.") %>% kable_paper(full_width = F,html_font = "Cambria")
 ```
 
 In Figure \@ref(fig:missingness) below we can see that some missingness exists and we should probably go back and remove the rows that are completely empty (apart from a timestamp). To do this you might consider using the `filter()` function or the more specific `drop_na()` function.
@@ -95,83 +75,6 @@ In Figure \@ref(fig:missingness) below we can see that some missingness exists a
 ```{r missingness, fig.cap="Visualising the missingness in the data."}
 visdat::vis_miss(x)+theme(axis.text.x = element_text(angle = 90))
 x = x %>% drop_na()
-```
-
-```{r, results = "hide", echo = FALSE}
-# this code chunk and it's result is hidden from the HTML document
-# x %>% dplyr::select(where(is.numeric)) %>% colnames()
-```
-
-Figure \@ref(fig:overviewplot) presents an overview of all the numeric variables before any cleaning has been preformed.
-
-```{r overviewplot, message=FALSE, warning = FALSE, fig.cap="Histograms and bar charts for the numeric variables."}
-p1 = x %>% ggplot(aes(x = covid_test)) + geom_bar()
-p2 = x %>% ggplot(aes(x = stress_level)) + geom_bar()
-p3 = x %>% ggplot(aes(x = university_work)) + geom_histogram()
-p4 = x %>% ggplot(aes(x = exercising)) + geom_histogram()
-p5 = x %>% ggplot(aes(x = paid_work)) + geom_histogram()
-p6 = x %>% ggplot(aes(x = shoe_size)) + geom_histogram()
-p7 = x %>% ggplot(aes(x = height)) + geom_histogram()
-gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, p7, ncol = 3)
-```
-
-### Gender
-
-```{r}
-x = x %>% mutate(
-  gender = gendercodeR::recode_gender(gender)
-)
-x %>% 
-  janitor::tabyl(gender) %>% 
-  gt::gt() %>% 
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>% 
-  gt::tab_source_note("Table 3: Summary of gender proportions.")
-```
-
-### Exercising
-
-```{r results='hide'}
-x %>% janitor::tabyl(exercising) %>%
-arrange(desc(exercising)) %>% # arrange in descending order
-  gt::gt() %>% 
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>% 
-  gt::tab_source_note("Table 4: Summary of exercising.")
-```
-
-### Stress level
-
-```{r}
-x %>% janitor::tabyl(stress_level) %>%
-arrange(stress_level) %>% # arrange in descending order
-  gt::gt() %>% 
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>% 
-  gt::tab_source_note("Table 4: Summary of stress level.")
-```
-
-### Steak preference
-
-There's a natural ordering to the cooking preferences, we we'll make sure that's respected in Figure \@ref(fig:steakplot) by `mutate()`ing it to a factor and specifing the `levels` in the correct order.
-
-```{r}
-steak_levels = c("Rare", "Medium-rare", "Medium", 
-                 "Medium-well done", "Well done", 
-                 "I don't eat beef")
-x = x %>% 
-  mutate(
-    steak_preference = factor(steak_preference, levels = steak_levels)
-  )
-```
-
-
-```{r steakplot, fig.height=3, fig.cap="Distribution of how well cooked people prefered their steak."}
-x %>% ggplot() + 
-  aes(y = steak_preference, fill = steak_preference) + 
-  geom_bar() + 
-  theme(legend.position = "none") + 
-  labs(y = "", x = "Count")
 ```
 
 # Questions
@@ -200,7 +103,9 @@ x %>% janitor::tabyl(covid_test) %>%
                   decimals = 0) %>%
   gt::tab_source_note("Table: Summary of covid test proportions.")
 ```
-As shown in Figure \@ref(fig:covidplot), the peak of the number of times students have been tested for COVID lies to the left with a long tail extending to the right. Therefore the data is significantly right-skewed.
+
+As shown in Figure \@ref(fig:covidplot), the peak of the number of times students have been tested for COVID lies to the left with a long tail extending to the right. Therefore the data is significantly right-skewed. A goodness of fit test is performed to test whether these observations follow a Poisson distribution.
+
 ```{r covidplot, fig.cap="Distribution of how many times students have been tested for COVID."}
 x %>% ggplot() + aes(x = as.factor(covid_test)) + 
   geom_bar() + scale_x_discrete(name = "Number of COVID test",limits = c("0","1","2","3","4","5","6","7","8","9","10"))
@@ -224,10 +129,12 @@ k = length(covid_count) # number of groups
 **Assumptions:** The expected frequencies, $e_i=np_i \geq 5$. Observations are independent.
 
 The expected frequencies are 79.9, 44.2, 12.3, 2.3, 0.3, 0.03, 0.003 and 0. The expected frequencies $e_4, e_5, e_6, e_7, e_8$ are less than 5, therefore we conbine these 4 classes to satisfy assumption. 
+
 ```{r}
 p = dpois(groups, lambda = lam) # obtain the p_i from the Poisson omf
 (ey = n*round(p,5)) # calculate the expected frequencies
 ```
+
 ```{r}
 ey >= 5 # check assumption e_i >= 5 not all satisfied
 ```
@@ -241,21 +148,29 @@ However, after combining the 8 classes into 4 classes (i.e. $0, 1, 2, \geq 3$), 
 ```{r}
 (eyr = c(ey[1:2],sum(ey[3:8])))
 ```
+
 ```{r}
 (yr = c(covid_count[1:2],sum(covid_count[3:8])))
 (pr = c(p[1:2],sum(p[3:8])))
 ```
 
-```{r}
+```{r covidF, fig.cap="Distribution of the observed and expected frequencies for different number of COVID tests"}
 xr = c("0","1",">=3") # group labels
 par(mfrow=c(1,2), cex = 1.5)
-barplot(yr, names.arg = xr,
-        main = "Observed frequency")
-barplot(eyr, names.arg = xr,
-        main = "Expected frequency")
+data = data.frame("xr" = xr, "yr" = yr,"eyr" =eyr)
+
+times = c("0","1",">=3")
+data = data %>% 
+  mutate(
+    xr = factor(xr, levels = times)
+  )
+
+ob = ggplot(data, aes(x=xr,y=yr))+geom_bar(stat="identity")+labs(x="Number of COVID tests", y="Observed frequency")
+ex = ggplot(data, aes(x=xr,y=eyr))+geom_bar(stat="identity")+labs(x="Number of COVID tests", y="Expected frequency")
+gridExtra::grid.arrange(ob, ex, ncol = 2)
 ```
 
-The expected frequencies all are greater than 5 so that the assumption $e_i \geq 5$ is met. As this is a random sampling research, the assumption of independence is met.
+The expected frequencies are all greater than 5 so that the assumption $e_i \geq 5$ is met. As this is a random sampling research, the assumption of independence is met.
 
 **Test statistic:**$T=\sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$.
 
@@ -274,52 +189,45 @@ kr = length(yr) #number of combined classes
 
 **Conclusion:** There p-value is $4e^{-5} < 0.05$. The $H_0$ is rejected therefore the number of COVID test follows a Poisson distribution.
 
-## Perform two other hypothesis tests. 
+## Perform other hypothesis tests. 
 
-### Is stress level related to gender?
+### Are men more likely to spend time on exercising compared to women?
 
-```{r}
-x %>% ggplot() + 
-  aes(y = stress_level, fill = gender) + 
-  geom_bar(position="fill") + 
-  labs(y = "Stress level", x = "Proportion of students", fill="Gender",
-       title = "DATA2002 students stress level") +
-  scale_x_continuous(labels = scales::percent_format())+theme(plot.title = element_text(hjust = 0.5))
+From Figure \@ref(fig:exercising) , the means are different
+the right plot removes outliers so that the patterns within boxes are more easily observed and compared. 
+```{r exercising, fig.cap="Number of hours spent on exercising by different genders. The left boxplot shows all data including outliers while the right plot removes outliers. The means are shown by the blue dots in the right plots."}
+
+x_gender = x %>% filter(gender!="non-binary")
+
+p1 = x_gender %>% ggplot() + 
+  aes(y = as.factor(gender), x = exercising) + 
+  geom_boxplot() + 
+  labs(y = "Gender", x = "Number of hours spent on exercising" ) +
+  theme(legend.position = "none") + coord_flip()
+
+p2 = x_gender %>% ggplot() + 
+  aes(y = as.factor(gender), x = exercising) + 
+  geom_boxplot(outlier.shape=NA) + 
+  labs(y = "Gender", x = "Number of hours spent on exercising" ) +
+  theme(legend.position = "none") + xlim(0, 15)+stat_summary(fun.y=mean, geom="point", shape=20, size=2, color="blue", fill="red") + coord_flip()
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
 ```
 
-The size of contingency table is $3 \times 11$. In this case, Fisher's exact test can be generalized to $3 \times 11$ two-way contingency tables but is very dificult to compute. Therefore we use Monte Carlo (i.e. random permutation) for the hypothesis testing.
+```{r mean}
+dat = x_gender%>% select(gender,exercising)
+dat$gender = as.factor(dat$gender)
 
-*Frequency table:*
-```{r}
-(y.mat = table(x$stress_level,x$gender))
-```
+sum = dat %>% group_by(gender) %>%
+      summarise(Mean = mean(exercising), 
+      Median = median(exercising),
+      SD = sd(exercising),
+      Variance = var(exercising),
+      n = n())
 
-**Hypothsis:** $H_0:$ gender and stress level are independent ($p_{ij} =p_ip_j, i=1,2, j=1,2,3,4$) **vs** $H_1:$ gender and stress level are related (Not all equalities hold).
+colnames(sum)=c("Gender","Mean","Median","SD","Variance","Number of students")
+knitr::kable(sum,digits = 1, align="cccccc",caption = "Statistics of number of hours spent on exercising by different genders.") %>% kable_paper(full_width = F, position = "float_right",html_font = "Cambria")
 
-**Assumptions:** No assumptions are made
-
-**Test statistics:** $t_0=19.258$
-```{r}
-set.seed(100)
-chisq.test(y.mat, simulate.p.value = TRUE, B=10000)
-```
-
-**P-value:** p = 0.4552
-
-**Conclusion:** The p-value is greater than 0.05. The data is consistent with $H_0$ therefore we conclude that gender and stress level are independent.
-
-### Are gender and favorite social media related?
-
-```{r results=FALSE}
-x %>% janitor::tabyl(social_media) %>%
-arrange(social_media) %>% # arrange in descending order
-  gt::gt() %>% 
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>% 
-  gt::tab_source_note("Table 4: Summary of stress level.")
-
-```
-```{r}
 x1 = x %>% mutate(social_media = case_when(
     social_media == "Youtube" ~ "Youtube",
     social_media == "youtube" ~ "Youtube",
@@ -359,46 +267,108 @@ x1 = x %>% mutate(social_media = case_when(
     social_media == "Discord" ~ "Discord",
     social_media =="Ed" ~ "Ed",
     social_media =="bilibili" ~ "Bilibili"
-  ) ) %>% drop_na()
-x1 %>% janitor::tabyl(social_media) %>%
-arrange(desc(n)) %>% # arrange in descending order
-  gt::gt() %>% 
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>% 
-  gt::tab_source_note("Table 4: Summary of favorite social media.")
+  ) )
 ```
 
+Table \@ref(tab:mean) shows that both mean and median number of hours spent on exercising are higher for males compared to females. The variance of males' exercising hour is also much greater than that of females.
+
+Two hypothesis testing applying two-sample t-test and Mood's median test are performed to validate whether means and medians of exercising hour for different genders differ.
+
+#### Two-sample t-test
+
+The variances of two samples are different, violating the assumption of regular two-sample t-test of equal population variances. Thus, in stead of a regular two-sample t-test, we apply the Welch two-sample t-test which does not assume equal population variances.
+
+**Hypothesis:** $H_0:$ Gender and number of hours spent on exercising are independent $(\mu_F=\mu_M)$ **vs** $H_1:$ Gender and number of hours spent on exercising are related (Not all equalities hold). 
+
+**Assumptions:** $X_1,...,X_{n_x}$ are iid $N(\mu_X,\sigma^2),$ $Y_1,...,Y_{n_y}$ are iid $N(\mu_Y,\sigma^2)$ and $X_i$'s are independent of $Y_i$'s.
+
+This is a random sample of DATA2002 students therefore obserations are supposed to be independent and identically distributed. As such, all assumptions are fulfilled.
+
+Under $H_0,T$~$T_{n_x+n_y-2}$,
+**Test statistics:** $T=\frac{\overline{X}-\overline{Y}}{\sqrt{\frac{S_x^2}{n_X}+\frac{S_y^2}{n_Y}}}$.
+
+**Observed test statistic:** $t_0=\frac{92-46}{ \sqrt{\frac{7.6^2}{92}+\frac{2.9^2}{46}}}=2.58.$
 ```{r}
+ny = sum[[1,5]] # female
+nx = sum[[2,5]] # male
+
+sy = sum[[1,4]]
+sx = sum[[2,4]]
+
+y_mean = sum[[1,2]]
+x_mean = sum[[2,2]]
+(t0 = (x_mean-y_mean)/sqrt(sx^2/nx+sy^2/ny))
+```
+
+**P-value:** $P(t_{n_x+n_y-2}\geq |2.58|)=0.01086.$
+```{r}
+female = x %>% filter(gender == "female") %>% select(exercising)
+male = x %>% filter(gender == "male") %>% select(exercising)
+t.test(male,female, alternative = "two.sided")
+```
+
+**Decision:** As p-value is small than 0.05, we reject $H_0$ and conclude that the mean number of hours spent on exercising by males is differrent from the mean exercising hours spent by females. Therefore gender and number of hours spent in exercising is related.
+
+#### Median test
+
+**Hypothesis:** $H_0:$ Gender and number of hours spent on exercising are independent $(\widetilde{x}= \widetilde{y})$ **vs** $H_1:$ Gender and number of hours spent on exercising are related $(\widetilde{x}\neq \widetilde{y})$.
+
+**Assumptions:** $X_1,...,X_{n_x}$ are iid $N(\mu_X,\sigma^2),$ $Y_1,...,Y_{n_y}$ are iid $N(\mu_Y,\sigma^2)$ and $X_i$'s are independent of $Y_i$'s.
+
+This is a random sample of DATA2002 students therefore obserations are supposed to be independent and identically distributed. As such, all assumptions are fulfilled.
+
+Under $H_0,T$~$T_{(r-1)(c-1)}$ where r is the number of rows and c is the number of columns in contingency table,
+
+**Test statistics:**
+
+$T=\sum{\frac{(O-E)}{E}}=-3.0066$, where and O is the observed frequencie E is the expected frequencie in the contingency table.
+
+**P-value:** $P(t_{(r-1)(c-1)}\geq |-3|)=0.002642$
+```{r}
+median_test(exercising ~ gender, data=dat)
+```
+
+**Decision:** As p-value is less than 0.05, we reject $H_0$ and conclude that the median exercising hours spent by males is different from that for females. Therefore exercising hour is related to gender. 
+
+As discussed above by the two hypotheses, both mean and median exercising hours by different genders do not equal. Although both two-sample t-test and two-sample Mood's median test give the same result that exercising hour is related to gender, we regard the median test as the more reliable test compared to t-test in this case. Due to the existence of outliers, the two-sample t-test testing means may be affected by the extreme valeus while the Mood's median test is more robust to outliers and the shapes of the population distribution.
+
+### Are gender and favorite social media related?
+
+From Figure \@ref(fig:media), Instagram, Facebood and Reddit are the most popular social media within DATA2002 students. It appears that females and males favor different kinds of social media as the distribution of green and red bars are different. In particular, females are more likely to use Instagram while more males prefer other social media.
+
+```{r media, fig.cap="DATA2002 students' favorite social media"}
 media_f = as.data.frame(table(x1$social_media))
 sort = arrange(media_f, Freq)
 x1 %>% ggplot() + 
   aes(y = social_media,fill = gender, stat = "count")   +
   geom_bar() + 
   scale_y_discrete(name=" ", limits=as.character(sort$Var1)) +
-  labs(y = "", x = "Count", title = "DATA2002 students' favorite social media")+theme(plot.title = element_text(hjust = 0.5))
+  labs(y = "", x = "Count")+theme(plot.title = element_text(hjust = 0.5))
 ```
 
-The size of contingency table is $3 \times 18$. Many expected frequencies in the contingency table are less than 5 therefore breaking the assumption of Chi-square test. In addition, it is difficult to compute such a large contingency table by Fisher's exact test. Thus, we use an alternative method **Yates' continuity correction** to test in small samples.
+To perform a hypothesis testing, a contingency table with size of  $3 \times 18$ is obtained. From Table \@ref(tab:contingency), many expected frequencies in the contingency table are less than 5, obeying the assumption of Chi-square test. In addition, it is difficult to compute such a large contingency table by Fisher's exact test. Thus, we use an alternative method **Yates' continuity correction** to test in these small samples.
 
-*Frequency table:*
-```{r}
-(y.mat1 = table(x1$social_media,x1$gender))
-```
+```{r contingency}
+y.mat1 = table(x1$social_media,x1$gender)
 
-*Contingency table:*
-```{r}
 r1 = nrow(y.mat1)
 c1 = ncol(y.mat1)
 yr1 = apply(y.mat1,1,sum) #rowSums(y.mat1)
 yc1 = apply(y.mat1,2,sum) #colSums(y.mat1)
 yr.mat1 = matrix(yr1, r1, c1, byrow = FALSE)
 yc.mat1 = matrix(yc1, r1, c1, byrow = TRUE)
-(ey.mat1 = yr.mat1 * yc.mat1 / sum(y.mat1))
+ey.mat1 = yr.mat1 * yc.mat1 / sum(y.mat1)
+rownames(ey.mat1)=rownames(y.mat1)
+colnames(ey.mat1) = colnames(y.mat1)
+knitr::kable(ey.mat1, align = "lccc",caption ="Contingency table",digits = 1) %>%
+  kable_classic(full_width = F, html_font = "Cambria",position = "float_right")
 ```
 
 **Hypothesis:** $H_0:$ gender and favorite social media are independent ($p_{ij}=p_ip_j$ where $i=1,2,3$ and $j=1,2,3,...,18$) **vs** $H_1:$ gender and favorite social media are related (not all equalities hold).
 
 **Assumptions:** Observations are independent.
+
+As data is obtained form random sampling, we suppose the observations are independent. Thus the only assumption is met.
 
 Under $H_0$, $T$ ~ $\sum^2_{i=1}\sum^2_{j=1}{\frac{(|Y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}}$
 
@@ -415,7 +385,7 @@ res.yates1 = (abs(y.mat1 - ey.mat1)-0.5)^2/ey.mat1
 pchisq(t0,1,lower.tail=FALSE)
 ```
 
-**Conclusion:** As p-value < 0.05, we reject $H_0$. Therefore gender and favorite social media are related.
+**Decision:** As p-value < 0.05, we reject $H_0$. Therefore gender and favorite social media are related.
 
 # References
 
@@ -436,7 +406,5 @@ citation()
 - Tierney N (2017). "visdat: Visualising Whole Data Frames." _JOSS_, *2*(16), 355. doi: [10.21105/joss.00355](https://doi.org/10.21105/joss.00355)
 - Waring E, Michael Quinn, Amelia McNamara, Eduardo Arino de la Rubia, Hao Zhu and Shannon Ellis (2020). skimr: Compact and Flexible Summaries of Data. R package version 2.1.2. https://CRAN.R-project.org/package=skimr
 - Wickham H et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, doi: [10.21105/joss.01686](https://doi.org/10.21105/joss.01686)
-
-https://www.codecademy.com/learn/learn-statistics-with-python/modules/describe-a-histogram#:~:text=In%20a%20histogram%2C%20the%20distribution,a%20symmetric%20dataset%20are%20similar.
-
-https://socratic.org/questions/what-is-the-difference-between-a-chi-square-test-of-independence-and-a-chi-squar#:~:text=Test%20for%20independence%20is%20concerned,samples%20come%20from%20same%20population.
+- Hao Zhu, Thomas Travison, Timothy Tsai, Will Beasley, Yihui Xie and  GuangChuang Yu (2020). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.2.1. https://cran.r-project.org
+- Torsten Hothorn, Henric Winell, Kurt Hornik, Mark A. van de Wiel and Achim Zeileis (2019). coin: Conditional Inference Procedures in a Permutation Test Framework. R package version 1.3.1. https://cran.r-project.org
