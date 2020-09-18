@@ -15,7 +15,17 @@ output:
 
 # Executive Summary
 
+This project aims to explore the *DATA2X02 class survey 2020 (Responses)* dataset and discover how DATA2X02 students' habits differ based on their genders. 
+
+The properties of the survey are discussesed in this report. Although the data is a random sample of DATA2002 students, non-response bias, measurement bias and voluntary response bias can occur due to the imperfact survey design, resulting in potentially biased variables in the data.
+
+Furthermore, the poor design of some questions results in generation of invalid data which are responses with different measurement scales. To improve the question design, a suggestions that clearly specify units in questions requesting numeric responses is given.
+
+Four hypothesis tests in total are conducted in this project. One of them is a goodness of fit test concluding that the number of COVID tests follow a Poisson distribution. The dependency between the number of hours spent on exercising and student's gender is validated by two hypothesis tests with the Welch two-sample t-test and the Mood's two-sample median test. The other hypothesis test applies chi-square test with yate's continuity correction, confirming that students' preference of social media is related to their genders. 
+
 # Introduction
+
+The dataset used in this analysis `DATA2X02 class survey 2020 (Responses)` is obtained from a voluntary survey designing by DATA20X0 teaching staffs in the University of Sydney. The interviewees of this survey are students enrolling in DATA2X02 in semester 2, 2020. As shown in Table \@ref(tab:questions), there are 20 questions asking about students' personal information, habits and current status in the survey. These questions contribute to 20 variables in the dataset with an additional variable of time stamp. 174 students have answered the survey before the survey was closed.
 
 ```{r setup, include=TRUE, message = FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -34,6 +44,11 @@ x = raw %>% janitor::clean_names()
 
 # Data Cleaning
 
+The raw data takes the questions in survey as the variable names. It could be problematic to use such long variable names when processing data. Therefore the long questions are changed into some representative words as the variable names in the dataset. The variable names and the corresponding questions can be found in \@ref(tab:questions).
+
+As some of the questions are provided by a text input box to answer, we may get all kinds of responds. One of the variables used in the report which is the "social media" suffer from this issue. Students typing in different letter cases, misspelling the name of media can results in various form of responses for the same social media. For example, for the social media "Instagram", there are 7 types of typing -- "Instagram", "instragram", "INSTAGRAM", "instangram", "instagram", "insta" and "ins" in the survey responses. To clean these data, all the misspelling and case sensitive responses for the same media are changed into one spelling "Instagram". Responses for other media are also cleaned in this way. In addition, there are a few students type in two kinds of media, or type in "NA". All of these responses are treated as invalid responses and are set to be null value as we cannot classify these responses into one kind of media. 
+
+The responses of gender are cleaned by `recode_gender` function in order to deal with the case inconsistency of responses. As the responses numeric responses of the number of hours spent on exercising is well formatted in a reasonable range, no cleaning step is perform with the responses.
 ```{r}
 colnames(x) = stringr::str_replace(string = colnames(x),
                                    pattern = "what_is_your_",
@@ -59,175 +74,11 @@ colnames(x)[18] = "glasses"
 colnames(x)[20] = "steak_preference"
 colnames(x)[21] = "stress_level"
 
+
 x = x %>% mutate(
   gender = gendercodeR::recode_gender(gender)
 )
-```
-
-```{r}
-detail = data.frame(Position=1:21, "Survey question"=colnames(raw),"Variable name"=colnames(x))
-colnames(detail)=c("Position","Survey question","Variable name")
-knitr::kable(detail,align="cll",caption = "Table of survey questions and corresponding variable names for data processing.") %>% kable_paper(full_width = F,html_font = "Cambria")
-```
-
-In Figure \@ref(fig:missingness) below we can see that some missingness exists and we should probably go back and remove the rows that are completely empty (apart from a timestamp). To do this you might consider using the `filter()` function or the more specific `drop_na()` function.
-
-```{r missingness, fig.cap="Visualising the missingness in the data."}
-visdat::vis_miss(x)+theme(axis.text.x = element_text(angle = 90))
-x = x %>% drop_na()
-```
-
-# Questions
-
-## Is this a random sample of DATA2002 students?
-
-A random sample is a sample chosen from a larger set. Each individual is chosen randomly and entirely by enchange, such that each individual has the same proability of being chosen. This is a voluntary survey. No students are forced to answer the survey therefore every DATA2002 student has the same probability to complete the survey at any stage during the sampling process. Thus this is a random sample of DATA2002 students.
-
-## What are the potential biases? Which variables are most likely to be subjected to this bias?
-
-Voluntary Response Bias can occur in this research as sample members are self-selected volunteer. 
-
-## Are there any questions that needed improvement to generate useful data?
-
-The questions "How tall are you?" and "What is your shoe size?" shold be improved. Height and shoe size should have a natual limited range. However, In the responses of these questions, every extreme values exist and the standard deviation is quite large. This might because students answered questions with numeric responses in different units. For example, for the height respones less than 2.3, the unit used is obviously "meter" whereas the unit for height respones greater than 100 is centimeter.  When speccifying shoe sizes, students may refer to different sizing system (UK, US, Europe, Modopoint, etc.). 
-
-To improve the questions, units should be specified in the questions so that numeric responses fall in reasonable ranges.The question "How tall are you?" can be changed to "What's your height in centimeter?" while the question "What is your shoe size?" can be changed to "What is your shoe size in UK sizing system?". 
-
-## Does the number of COVID tests follow a Poisson distribution?
-
-```{r results='hide'}
-x %>% janitor::tabyl(covid_test) %>% 
-  arrange(covid_test) %>% # arrange in descending order
-  gt::gt() %>%
-  gt::fmt_percent(columns = c("percent"),
-                  decimals = 0) %>%
-  gt::tab_source_note("Table: Summary of covid test proportions.")
-```
-
-As shown in Figure \@ref(fig:covidplot), the peak of the number of times students have been tested for COVID lies to the left with a long tail extending to the right. Therefore the data is significantly right-skewed. A goodness of fit test is performed to test whether these observations follow a Poisson distribution.
-
-```{r covidplot, fig.cap="Distribution of how many times students have been tested for COVID."}
-x %>% ggplot() + aes(x = as.factor(covid_test)) + 
-  geom_bar() + scale_x_discrete(name = "Number of COVID test",limits = c("0","1","2","3","4","5","6","7","8","9","10"))
-
-# p1 = x %>% ggplot(aes(x = covid_test)) + geom_bar()
-```
-
-There are 8 groups of the number of COVID test: 1,2,3,4,5,6 and 10. The corresponding observed frequencies are 101, 22, 8,3,1,2,1 and 1. $\lambda$ of the Poisson distribution is estimated to be 0.55.
-
-```{r}
-tab = as.data.frame(table(x$covid_test))
-covid_count = tab$Freq
-groups = as.numeric(as.character(tab$Var1))
-n=sum(covid_count) # sample size
-k = length(covid_count) # number of groups
-(lam = sum(covid_count * groups)/n) # estimate the lambda parameter
-```
-
-**Hypothesis:** $H_0:$ the data come from a Poisson distribution vs $H_1:$ the data do not come from a Poisson distribution.
-
-**Assumptions:** The expected frequencies, $e_i=np_i \geq 5$. Observations are independent.
-
-The expected frequencies are 79.9, 44.2, 12.3, 2.3, 0.3, 0.03, 0.003 and 0. The expected frequencies $e_4, e_5, e_6, e_7, e_8$ are less than 5, therefore we conbine these 4 classes to satisfy assumption. 
-
-```{r}
-p = dpois(groups, lambda = lam) # obtain the p_i from the Poisson omf
-(ey = n*round(p,5)) # calculate the expected frequencies
-```
-
-```{r}
-ey >= 5 # check assumption e_i >= 5 not all satisfied
-```
-
-```{r}
-(eyr = c(ey[1:3],sum(ey[4:8])))
-```
-
-However, after combining the 8 classes into 4 classes (i.e. $0, 1, 2, \geq 3$), the expected frequency of group $\geq 3$ is still less than 5. Therefore we combine the group "2" and "$\geq 3$". The final adjacent groups are "0","1" and "$\geq 2$". The corresponding expected frequencies are 79.9, 44.2 and 14.9 while the observed frequencies are 101, 22,16 respectively. 
-
-```{r}
-(eyr = c(ey[1:2],sum(ey[3:8])))
-```
-
-```{r}
-(yr = c(covid_count[1:2],sum(covid_count[3:8])))
-(pr = c(p[1:2],sum(p[3:8])))
-```
-
-```{r covidF, fig.cap="Distribution of the observed and expected frequencies for different number of COVID tests"}
-xr = c("0","1",">=3") # group labels
-par(mfrow=c(1,2), cex = 1.5)
-data = data.frame("xr" = xr, "yr" = yr,"eyr" =eyr)
-
-times = c("0","1",">=3")
-data = data %>% 
-  mutate(
-    xr = factor(xr, levels = times)
-  )
-
-ob = ggplot(data, aes(x=xr,y=yr))+geom_bar(stat="identity")+labs(x="Number of COVID tests", y="Observed frequency")
-ex = ggplot(data, aes(x=xr,y=eyr))+geom_bar(stat="identity")+labs(x="Number of COVID tests", y="Expected frequency")
-gridExtra::grid.arrange(ob, ex, ncol = 2)
-```
-
-The expected frequencies are all greater than 5 so that the assumption $e_i \geq 5$ is met. As this is a random sampling research, the assumption of independence is met.
-
-**Test statistic:**$T=\sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$.
-
-Under $H_0$, T~$x_2^2$ approximately.
-
-**Observed test statistic:** $t_0=16.86$
-```{r}
-kr = length(yr) #number of combined classes
-(t0 = sum((yr - eyr)^2/eyr))
-```
-
-**P-value:** $P(T \geq t_0)=P(x_2^2\geq 16.86)=4e^{-5}$
-```{r}
-(pval = 1 - pchisq(t0, df = kr-1-1))
-```
-
-**Conclusion:** There p-value is $4e^{-5} < 0.05$. The $H_0$ is rejected therefore the number of COVID test follows a Poisson distribution.
-
-## Perform other hypothesis tests. 
-
-### Are men more likely to spend time on exercising compared to women?
-
-From Figure \@ref(fig:exercising) , the means are different
-the right plot removes outliers so that the patterns within boxes are more easily observed and compared. 
-```{r exercising, fig.cap="Number of hours spent on exercising by different genders. The left boxplot shows all data including outliers while the right plot removes outliers. The means are shown by the blue dots in the right plots."}
-
-x_gender = x %>% filter(gender!="non-binary")
-
-p1 = x_gender %>% ggplot() + 
-  aes(y = as.factor(gender), x = exercising) + 
-  geom_boxplot() + 
-  labs(y = "Gender", x = "Number of hours spent on exercising" ) +
-  theme(legend.position = "none") + coord_flip()
-
-p2 = x_gender %>% ggplot() + 
-  aes(y = as.factor(gender), x = exercising) + 
-  geom_boxplot(outlier.shape=NA) + 
-  labs(y = "Gender", x = "Number of hours spent on exercising" ) +
-  theme(legend.position = "none") + xlim(0, 15)+stat_summary(fun.y=mean, geom="point", shape=20, size=2, color="blue", fill="red") + coord_flip()
-
-gridExtra::grid.arrange(p1, p2, ncol = 2)
-```
-
-```{r mean}
-dat = x_gender%>% select(gender,exercising)
-dat$gender = as.factor(dat$gender)
-
-sum = dat %>% group_by(gender) %>%
-      summarise(Mean = mean(exercising), 
-      Median = median(exercising),
-      SD = sd(exercising),
-      Variance = var(exercising),
-      n = n())
-
-colnames(sum)=c("Gender","Mean","Median","SD","Variance","Number of students")
-knitr::kable(sum,digits = 1, align="cccccc",caption = "Statistics of number of hours spent on exercising by different genders.") %>% kable_paper(full_width = F, position = "float_right",html_font = "Cambria")
-
+x
 x1 = x %>% mutate(social_media = case_when(
     social_media == "Youtube" ~ "Youtube",
     social_media == "youtube" ~ "Youtube",
@@ -270,9 +121,179 @@ x1 = x %>% mutate(social_media = case_when(
   ) )
 ```
 
-Table \@ref(tab:mean) shows that both mean and median number of hours spent on exercising are higher for males compared to females. The variance of males' exercising hour is also much greater than that of females.
+As shown in Figure \@ref(fig:missingness), there are 3.3% of missingness in the dataset. Post code contribute to the most of the missingness with missing value of 10.23%. The rows containing any missing value are removed by `drop_na()` function in order to remove all the missing values.
 
-Two hypothesis testing applying two-sample t-test and Mood's median test are performed to validate whether means and medians of exercising hour for different genders differ.
+```{r missingness, fig.cap="Visualising the missingness in the data."}
+visdat::vis_miss(x)+theme(axis.text.x = element_text(angle = 90))
+x = x %>% drop_na()
+```
+
+# Questions
+
+## Is this a random sample of DATA2002 students?
+
+A random sample is a sample chosen from a larger set. Each individual is chosen randomly and entirely by chance, such that each individual has the same probability of being chosen. This is a voluntary survey. No students are forced to answer the survey therefore every DATA2002 student has the same probability to complete the survey at any stage during the sampling process. Thus this is a random sample of DATA2002 students.
+
+## What are the potential biases? Which variables are most likely to be subjected to this bias?
+
+The variable "postcode" is the most likely to be subjected to non-response bias. As shown in the missingness plot, postcode contributes to 10.34% of missing values which is the highest missing rate among the whole dataset. Some people may be afraid of personal information leakage thus being unwilling to answer questions related to privacy such as the address and postcode of where they live.
+
+The variable "university work" is the most likely to be subject to measurement bias. Because this survey is published by the course lecturer, some students may think that teaching staffs want their studying hour to be as many as possible, or teaching staffs will be happy about students spending lots of time on this course. To meet this idea or to prove their hard-working, some students may exaggerate the number of hours they spend on university work per week. 
+
+Voluntary response bias can occur as this survey is voluntary. Students are self-selected volunteer, resulting in the resulting sample tends to over-represent students who have strong opinions.
+
+## Are there any questions that needed improvement to generate useful data?
+
+The questions "How tall are you?" and "What is your shoe size?" should be improved. Height and shoe size should have a natural limited range. However, In the responses of these questions, every extreme values exist and the standard deviation is quite large. This might because students answered questions with numeric responses in different units. For example, for the height response less than 2.3, the unit used is obviously "meter" whereas the unit for height response greater than 100 is centimeter.  When specifying shoe sizes, students may refer to different sizing system (UK, US, Europe, Modopoint, etc.). 
+
+To improve the questions, units should be specified in the questions so that numeric responses fall in reasonable ranges.The question "How tall are you?" can be changed to "What's your height in centimeter?" while the question "What is your shoe size?" can be changed to "What is your shoe size in UK sizing system?". 
+
+## Does the number of COVID tests follow a Poisson distribution?
+
+```{r results='hide'}
+x %>% janitor::tabyl(covid_test) %>% 
+  arrange(covid_test) %>% # arrange in descending order
+  gt::gt() %>%
+  gt::fmt_percent(columns = c("percent"),
+                  decimals = 0) %>%
+  gt::tab_source_note("Table: Summary of covid test proportions.")
+```
+
+As shown in Figure \@ref(fig:covidplot), the peak of the number of times students have been tested for COVID lies to the left with a long tail extending to the right. Therefore the data is significantly right-skewed. A goodness of fit test is performed to test whether these observations follow a Poisson distribution.
+
+```{r covidplot, fig.cap="Distribution of how many times students have been tested for COVID."}
+x %>% ggplot() + aes(x = as.factor(covid_test)) + 
+  geom_bar() + scale_x_discrete(name = "Number of COVID test",limits = c("0","1","2","3","4","5","6","7","8","9","10"))
+
+# p1 = x %>% ggplot(aes(x = covid_test)) + geom_bar()
+```
+
+There are 11 groups of the number of COVID test:0,1,2,3,4,5,6,7,8,9 and 10. The corresponding observed frequencies are 101, 22,8,3,1,2,1,0,0 and 1. $\lambda$ of the Poisson distribution is estimated to be 0.55.
+
+```{r}
+tab = as.data.frame(table(x$covid_test))
+tab$Var1 = as.numeric(as.character(tab$Var1))
+var = as.data.frame(c(7,8,9))
+fre = as.data.frame(c(0,0,0))
+add = cbind(var,fre)
+colnames(add) = c("Var1", "Freq")
+tab = rbind(tab,add)
+tab = tab[order(tab$Var1),]
+covid_count = tab$Freq
+groups = as.numeric(as.character(tab$Var1))
+n=sum(covid_count) # sample size
+k = length(covid_count) # number of groups
+(lam = sum(covid_count * groups)/n) # estimate the lambda parameter
+```
+
+**Hypothesis:** $H_0:$ the data come from a Poisson distribution vs $H_1:$ the data do not come from a Poisson distribution.
+
+**Assumptions:** The expected frequencies, $e_i=np_i \geq 5$. Observations are independent.
+
+The expected frequencies are 79.9, 44.2, 12.3, 2.3, 0.3, 0.03, 0.003, 0, 0, 0 and 0. The expected frequencies $e_3, e_4, e_5, e_6, e_7, e_8, e_9, e_10$ are less than 5, therefore we combine these 8 groups with the number of COVID test greater than 3 to satisfy assumption. 
+
+```{r}
+p = dpois(groups, lambda = lam) # obtain the p_i from the Poisson omf
+(ey = n*round(p,5)) # calculate the expected frequencies
+```
+
+```{r}
+ey >= 5 # check assumption e_i >= 5 not all satisfied
+```
+
+```{r}
+(eyr = c(ey[1:3],sum(ey[4:11])))
+```
+
+However, after combining the 11 classes into 4 classes (i.e. $0, 1, 2, \geq 3$), the expected frequency of group $\geq 3$ is still less than 5. Therefore we combine group "2" and group "$\geq 3$". The final adjacent groups are "0","1" and "$\geq 2$". The corresponding expected frequencies are 79.9, 44.2 and 14.9 while the observed frequencies are 101, 22,16 respectively. The probability of students haven't been tested for COVID is 0.57, probability of 0.32 for student having 1 COVID test and probability of 0.11 for student having more than 2 COVID test.
+
+```{r}
+(eyr = c(ey[1:2],sum(ey[3:11])))
+```
+
+```{r}
+(yr = c(covid_count[1:2],sum(covid_count[3:11])))
+(pr = c(p[1:2],sum(p[3:8])))
+```
+
+```{r covidF, fig.cap="Distribution of the observed and expected frequencies for different number of COVID tests"}
+xr = c("0","1",">=3") # group labels
+par(mfrow=c(1,2), cex = 1.5)
+data = data.frame("xr" = xr, "yr" = yr,"eyr" =eyr)
+
+times = c("0","1",">=3")
+data = data %>% 
+  mutate(
+    xr = factor(xr, levels = times)
+  )
+
+ob = ggplot(data, aes(x=xr,y=yr))+geom_bar(stat="identity")+labs(x="Number of COVID tests", y="Observed frequency")
+ex = ggplot(data, aes(x=xr,y=eyr))+geom_bar(stat="identity")+labs(x="Number of COVID tests", y="Expected frequency")
+gridExtra::grid.arrange(ob, ex, ncol = 2)
+```
+
+The expected frequencies are all greater than 5 so that the assumption $e_i \geq 5$ is met. As this is a random sampling research, the assumption of independence is met.
+
+**Test statistic:**$T=\sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$.
+
+Under $H_0$, T~$x_2^2$ approximately.
+
+**Observed test statistic:** $t_0=16.86$
+```{r}
+kr = length(yr) #number of combined classes
+(t0 = sum((yr - eyr)^2/eyr))
+```
+
+**P-value:** $P(T \geq t_0)=P(x_2^2\geq 16.86)=4e^{-5}$
+```{r}
+(pval = 1 - pchisq(t0, df = kr-1-1))
+```
+
+**Conclusion:** There p-value is $4e^{-5} < 0.05$. The $H_0$ is rejected therefore the number of COVID test follows a Poisson distribution.
+
+## Perform other hypothesis tests. 
+
+### Are men more likely to spend time on exercising compared to women?
+
+From Figure \@ref(fig:exercising) , the left boxplot show all observations of exercising hours including outliers while the right boxplot removes the outliers. The right plot aims to shows the patterns within boxes more clearly. As shown in the boxplot, both mean and median of exercising hour are greater for males compared to females. 
+
+The exact statistics of exercising hours are calculated and shown in Table \@ref(tab:mean). The means and medians patterns shown in the table are inline with \@ref(tab:mean), showing that males generally spend more time on exercising than females. In addition, the standard deviation and variance of males' exercising hour are also much greater than that of females.
+
+```{r exercising, fig.cap="Number of hours spent on exercising by different genders. The left boxplot shows all data including outliers while the right plot removes outliers. The means are shown by the blue dots in the right plots."}
+
+x_gender = x %>% filter(gender!="non-binary")
+
+p1 = x_gender %>% ggplot() + 
+  aes(y = as.factor(gender), x = exercising) + 
+  geom_boxplot() + 
+  labs(y = "Gender", x = "Number of hours spent on exercising" ) +
+  theme(legend.position = "none") + coord_flip()
+
+p2 = x_gender %>% ggplot() + 
+  aes(y = as.factor(gender), x = exercising) + 
+  geom_boxplot(outlier.shape=NA) + 
+  labs(y = "Gender", x = "Number of hours spent on exercising" ) +
+  theme(legend.position = "none") + xlim(0, 15)+stat_summary(fun.y=mean, geom="point", shape=20, size=2, color="blue", fill="red") + coord_flip()
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+```{r mean}
+dat = x_gender%>% select(gender,exercising)
+dat$gender = as.factor(dat$gender)
+
+sum = dat %>% group_by(gender) %>%
+      summarise(Mean = mean(exercising), 
+      Median = median(exercising),
+      SD = sd(exercising),
+      Variance = var(exercising),
+      n = n())
+
+colnames(sum)=c("Gender","Mean","Median","SD","Variance","Number of students")
+knitr::kable(sum,digits = 1, align="cccccc",caption = "Statistics of number of hours spent on exercising by different genders.") %>% kable_paper(full_width = F, position = "float_right",html_font = "Cambria")
+```
+
+Two hypothesis tests applying two-sample t-test and Mood's median test are performed to validate whether means and medians of exercising hour for different genders are different.
 
 #### Two-sample t-test
 
@@ -282,23 +303,12 @@ The variances of two samples are different, violating the assumption of regular 
 
 **Assumptions:** $X_1,...,X_{n_x}$ are iid $N(\mu_X,\sigma^2),$ $Y_1,...,Y_{n_y}$ are iid $N(\mu_Y,\sigma^2)$ and $X_i$'s are independent of $Y_i$'s.
 
-This is a random sample of DATA2002 students therefore obserations are supposed to be independent and identically distributed. As such, all assumptions are fulfilled.
+This is a random sample of DATA2002 students therefore observations are supposed to be independent and identically distributed. As such, all assumptions are fulfilled.
 
 Under $H_0,T$~$T_{n_x+n_y-2}$,
 **Test statistics:** $T=\frac{\overline{X}-\overline{Y}}{\sqrt{\frac{S_x^2}{n_X}+\frac{S_y^2}{n_Y}}}$.
 
 **Observed test statistic:** $t_0=\frac{92-46}{ \sqrt{\frac{7.6^2}{92}+\frac{2.9^2}{46}}}=2.58.$
-```{r}
-ny = sum[[1,5]] # female
-nx = sum[[2,5]] # male
-
-sy = sum[[1,4]]
-sx = sum[[2,4]]
-
-y_mean = sum[[1,2]]
-x_mean = sum[[2,2]]
-(t0 = (x_mean-y_mean)/sqrt(sx^2/nx+sy^2/ny))
-```
 
 **P-value:** $P(t_{n_x+n_y-2}\geq |2.58|)=0.01086.$
 ```{r}
@@ -307,21 +317,23 @@ male = x %>% filter(gender == "male") %>% select(exercising)
 t.test(male,female, alternative = "two.sided")
 ```
 
-**Decision:** As p-value is small than 0.05, we reject $H_0$ and conclude that the mean number of hours spent on exercising by males is differrent from the mean exercising hours spent by females. Therefore gender and number of hours spent in exercising is related.
+**Decision:** As p-value is small than 0.05, we reject $H_0$ and conclude that the mean number of hours spent on exercising by males is different from that for females. Therefore gender and number of hours spent in exercising is related.
 
 #### Median test
 
-**Hypothesis:** $H_0:$ Gender and number of hours spent on exercising are independent $(\widetilde{x}= \widetilde{y})$ **vs** $H_1:$ Gender and number of hours spent on exercising are related $(\widetilde{x}\neq \widetilde{y})$.
+A two-sample Mood's median test is applied to test whether the medians of exercising hours for males and females differ.
+
+**Hypothesis:** $H_0: \widetilde{x}= \widetilde{y}$ **vs** $H_1: \widetilde{x}\neq \widetilde{y}$.
 
 **Assumptions:** $X_1,...,X_{n_x}$ are iid $N(\mu_X,\sigma^2),$ $Y_1,...,Y_{n_y}$ are iid $N(\mu_Y,\sigma^2)$ and $X_i$'s are independent of $Y_i$'s.
 
-This is a random sample of DATA2002 students therefore obserations are supposed to be independent and identically distributed. As such, all assumptions are fulfilled.
+This is a random sample of DATA2002 students therefore observations are supposed to be independent and identically distributed. As such, all assumptions are fulfilled.
 
 Under $H_0,T$~$T_{(r-1)(c-1)}$ where r is the number of rows and c is the number of columns in contingency table,
 
 **Test statistics:**
 
-$T=\sum{\frac{(O-E)}{E}}=-3.0066$, where and O is the observed frequencie E is the expected frequencie in the contingency table.
+$T=\sum{\frac{(O-E)}{E}}=-3.0066$, where and O is the observed frequencies E is the expected frequencies in the contingency table.
 
 **P-value:** $P(t_{(r-1)(c-1)}\geq |-3|)=0.002642$
 ```{r}
@@ -330,11 +342,11 @@ median_test(exercising ~ gender, data=dat)
 
 **Decision:** As p-value is less than 0.05, we reject $H_0$ and conclude that the median exercising hours spent by males is different from that for females. Therefore exercising hour is related to gender. 
 
-As discussed above by the two hypotheses, both mean and median exercising hours by different genders do not equal. Although both two-sample t-test and two-sample Mood's median test give the same result that exercising hour is related to gender, we regard the median test as the more reliable test compared to t-test in this case. Due to the existence of outliers, the two-sample t-test testing means may be affected by the extreme valeus while the Mood's median test is more robust to outliers and the shapes of the population distribution.
+As discussed above by the two hypotheses, both mean and median exercising hours for different genders do not equal. Due to the existence of outliers, the two-sample t-test testing means may be affected by the extreme values while the Mood's median test is more robust to outliers and the shapes of the population distribution.Therefore although two-sample t-test and two-sample Mood's median test give the same result that exercising hour is related to gender, we regard the median test as the more reliable test compared to t-test in this case. 
 
 ### Are gender and favorite social media related?
 
-From Figure \@ref(fig:media), Instagram, Facebood and Reddit are the most popular social media within DATA2002 students. It appears that females and males favor different kinds of social media as the distribution of green and red bars are different. In particular, females are more likely to use Instagram while more males prefer other social media.
+From Figure \@ref(fig:media), Instagram, Facebook and Reddit are the most popular social media among DATA2002 students. It appears that females and males favor different kinds of social media as the distribution of green and red bars differ. In particular, females are more likely to use Instagram while more males prefer other social media.
 
 ```{r media, fig.cap="DATA2002 students' favorite social media"}
 media_f = as.data.frame(table(x1$social_media))
@@ -346,7 +358,7 @@ x1 %>% ggplot() +
   labs(y = "", x = "Count")+theme(plot.title = element_text(hjust = 0.5))
 ```
 
-To perform a hypothesis testing, a contingency table with size of  $3 \times 18$ is obtained. From Table \@ref(tab:contingency), many expected frequencies in the contingency table are less than 5, obeying the assumption of Chi-square test. In addition, it is difficult to compute such a large contingency table by Fisher's exact test. Thus, we use an alternative method **Yates' continuity correction** to test in these small samples.
+To perform a hypothesis testing, a contingency table with a size of  $3 \times 18$ is obtained. From Table \@ref(tab:contingency), many expected frequencies in the contingency table are less than 5, obeying the assumption of Chi-square test. In addition, it is difficult to compute such a large contingency table by Fisher's exact test. Thus, we use an alternative method **Yates' continuity correction** to test in these small samples.
 
 ```{r contingency}
 y.mat1 = table(x1$social_media,x1$gender)
@@ -386,6 +398,22 @@ pchisq(t0,1,lower.tail=FALSE)
 ```
 
 **Decision:** As p-value < 0.05, we reject $H_0$. Therefore gender and favorite social media are related.
+
+# Conclusion
+
+Despite a random sample of DATA2002 students, the data can surfer from non-response bias, measurement bias and voluntary response bias. These bias can subject to variables postcode of where student live and the number of hours student spend on university work. 
+
+The survey questions asking students' height and shoe size need to be improved. As the units of requested numeric responses are not specified in the questions, students gave their answers in different measurement scales, resulting in unreasonable ranges of responses. The units used for responses should be clarified in the questions so that numeric responses fall in reasonable ranges.
+
+In terms of results of hypothesis tests, the number of COVID tests is proved to follow a Poisson distribution with a lambda of 0.55 and a peak at 0 COVID test. Moreover, students' genders are found to be dependent with both exercising hours and social media preferences.
+
+# Appendix
+
+```{r questions}
+detail = data.frame(Position=1:21, "Survey question"=colnames(raw),"Variable name"=colnames(x))
+colnames(detail)=c("Position","Survey question","Variable name")
+knitr::kable(detail,align="cll",caption = "Table of survey questions and corresponding variable names for data processing.") %>% kable_paper(full_width = F,html_font = "Cambria")
+```
 
 # References
 
