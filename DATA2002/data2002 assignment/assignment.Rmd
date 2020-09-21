@@ -17,7 +17,7 @@ output:
 
 This project aims to explore the *DATA2X02 class survey 2020 (Responses)* dataset and discover how DATA2X02 students' habits differ based on their genders. 
 
-The properties of the survey are discussesed in this report. Although the data is a random sample of DATA2002 students, non-response bias, measurement bias and voluntary response bias can occur due to the imperfact survey design, resulting in potentially biased variables in the data.
+The properties of the survey are discussed in this report. Although the data is a random sample of DATA2002 students, non-response bias, measurement bias and voluntary response bias can occur due to the imperfect survey design, resulting in potentially biased variables in the data.
 
 Furthermore, the poor design of some questions results in generation of invalid data which are responses with different measurement scales. To improve the question design, a suggestions that clearly specify units in questions requesting numeric responses is given.
 
@@ -406,6 +406,10 @@ Despite a random sample of DATA2002 students, the data can surfer from non-respo
 The survey questions asking students' height and shoe size need to be improved. As the units of requested numeric responses are not specified in the questions, students gave their answers in different measurement scales, resulting in unreasonable ranges of responses. The units used for responses should be clarified in the questions so that numeric responses fall in reasonable ranges.
 
 In terms of results of hypothesis tests, the number of COVID tests is proved to follow a Poisson distribution with a lambda of 0.55 and a peak at 0 COVID test. Moreover, students' genders are found to be dependent with both exercising hours and social media preferences.
+
+Although the data does provide valid evidence of the above research questions, some limitations exist with the research design. The survey is distributed online without presenting questions to students face-to-face, and as discussed above some of the questions are not clear enough in text. As such, without orally explaining the questions or stating detail in text, respondents can have different interpretations of the questions. On the other hand, the existence of missingness reflects that some questions are frequently be ignored or left unanswered in this survey. This results in abundant loss of valid data. 
+
+There are several potential solutions for the existing limitations. First, it could be helpful to pose a video explaining each question prior to the survey, otherwise, clear explanation should be involved in the survey by text. Second, making answering the question required can also decrease the rate of missingness. Third, shortening the length of survey can also help getting higher completion rates.
 
 # Appendix
 
