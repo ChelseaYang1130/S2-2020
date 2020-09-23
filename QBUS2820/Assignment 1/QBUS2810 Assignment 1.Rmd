@@ -1,0 +1,62 @@
+---
+title: "QBUS2820 Assignment 1 "
+author: "SID: 480110301"
+
+# Abstract
+#abstract: |
+# Paper size for the document, values of letter and a4
+papersize: letter
+
+# Font size of the document, values of 9pt (default), 10pt, 11pt and 12pt
+fontsize: 11pt
+
+# Optional: Force one-column layout, default is two-column
+one_column: true
+
+# Optional: Enables lineo mode, but only if one_column mode is also true
+#lineno: true
+
+# Optional: Enable one-sided layout, default is two-sided
+#one_sided: true
+
+# Optional: Specify the depth of section number, default is 5
+secnumdepth: 3
+
+# Optional: include-after
+#include-after: somefile.tex
+
+# Optional: Skip inserting final break between acknowledgements, default is false
+skip_final_break: true
+
+# Optional: Bibliography 
+bibliography: pinp
+
+# Customize footer, eg by referencing the vignette
+footer_contents: "Graft Survival Predictor"
+
+# Produce a pinp document
+output: 
+  pinp::pinp:
+    latex_engine: xelatex
+
+# Required: Vignette metadata for inclusion in a package.
+vignette: >
+  %\VignetteIndexEntry{YourPackage-vignetteentry}
+  %\VignetteKeywords{YourPackage, r, anotherkeyword}
+  %\VignettePackage{YourPackage}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+# Introduction
+
+# Data processing and exploratory data analysis
+
+# Feature engineering
+
+# Methodology of the linear regression and kNN regression models
+
+# Methodology of the model that is not covered in this unit
+
+# Test set performance
+
+# Analysis and conclusions
