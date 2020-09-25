@@ -1,0 +1,160 @@
+---
+title: "DATA Lab 5"
+author: "Jing Yang \ 480110301"
+date: "9/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+bac = c(12.3, 12.7, 12.6, 13.1, 13.2, 12.8, 13.1, 12.9, 13.1, 12.4, 
+    13.6, 12.7, 12.6, 13.1, 12.4, 12.6, 13.3, 12.6, 12.4, 13.1, 12.9, 
+    12.6, 12.7, 12.5, 12.4, 12.4, 12.6, 12.7, 12.4, 12.9)
+n = length(bac)
+xbar = mean(bac)
+s = sd(bac)
+c(n, xbar, s)
+```
+
+# Blood alcohol readings
+
+**a.**
+
+**Hypothesis:** $H_0: \mu=12.6$ vs $H_1: \mu \neq 12.6$
+
+
+**b.**
+Assumptions: $X_i$ are *iid* varialbes and follow $N(\mu,\sigma^2)$.
+
+The assumption is violated as the boxplot and Normal Q-Q plot shows right-skewness of the data.
+```{r}
+boxplot(bac,horzontal = TRUE, xlab="Blood alcohol")
+
+qqnorm(bac);qqline(bac)
+```
+
+**c.** 29 degree of freedom
+
+
+**d.** 
+
+Test statistic: $T=\frac{\overline{X}-\mu_{0}}{S/\sqrt{n}}$. Under $H_0$, T~$t_{n-1}$.
+
+Observed test statistic: $t_0=\frac{12.76-12.6}{0.32/\sqrt{30}}=2.64$
+
+**e** 
+
+Critical value: $t_{0.05}=2.045$. i.e. reject if $t_0$ is greater than $2.045$
+
+```{r}
+qt(c(0.9, 0.95, 0.975), 30) # calculating T0
+```
+
+Decision: the observed test statistic $t_0=2.64$ is greater than 2.045, so reject $H_0$. Thus we conclude that the Analyzer GTE-10 is faulty.
+
+**f**
+```{r}
+t.test(bac, mu = 12.6, alternative = "two.sided", conf.level = 0.95)
+```
+
+# Life satisfaction
+
+```{r message=FALSE} 
+library("tidyverse")
+Young = c(24, 26, 40, 29, 29, 41, 32, 19, 23, 25, 37, 31, 31, 29, 24, 
+          42, 32, 13, 33, 25, 20, 26, 20, 23, 23, 15, 34, 29, 20, 38)
+Old = c(27, 26, 45, 34, 34, 45, 36, 20, 22, 24, 35, 31, 26, 41, 31, 
+        37, 31, 12, 38, 26, 22, 27, 21, 31, 23, 24, 27, 33, 22, 40)
+
+dat = tibble(
+  satisfaction = c(Young, Old),
+  age = c(rep("Young", length(Young)),
+          rep("Old", length(Old)))
+)
+
+dat %>% 
+  group_by(age) %>%
+  summarise(
+    n = n(),
+    mean = mean(satisfaction),
+    sd = sd(satisfaction)
+  )
+```
+
+```{r}
+par(mfrow = c(1,2))
+boxplot(Young,Old,names = c('Young','Old'))
+boxplot(Old - Young)
+axis(1, at = 1, labels = 'Old - Young')
+```
+
+**a.** A hypothesis with two-sample Mann-Whitney U test should be performed.
+
+**b.** $H_0: \mu_x=\mu_y$ vs $H_1:\mu_x \neq \mu_y$
+
+**c.** Assumptions: $x_i$ and $y_i$ are independent and follow the ame kind of distribution but differ by a shift.
+
+```{r warning=FALSE}
+wilcox.test(Old,Young,alternative = 'two.sided', correct = FALSE)
+```
+
+**d.** Test statistic: $W=R_1+R_2+...R_{n_x}$ (the sum of the ranks of observations in old adults. Under $H_0$, W~$WRS'(30,30)$.
+
+Observed test statistic: $w=r_1+r_2+...+r_{n_x}=513.5$
+
+**e.** Decision: as p-value is 0.34, which is greater than 0.05, we do not reject $H_0$ and conclude that there is no difference of life satisfaction between old adults and young adults.
+
+**f.** 
+```{r}
+t.test(Old, Young, alternative = 'two.sided')
+```
+
+```{r}
+paired_dat = tibble(Young, Old) %>%
+  mutate(
+    Difference = Old - Young
+  )
+glimpse(paired_dat)
+
+statistics = paired_dat %>% 
+  summarise(
+    n = n(),
+    mean_old = mean(Old),
+    mean_young = mean(Young),
+    mean_diff = mean(Difference),
+    sd_old = sd(Old),
+    sd_young = sd(Young),
+    sd_diff = sd(Difference)
+  )
+```
+
+g. Because the data are obtained from the same group of objectives, the variables are now dependent, breaking the assumption of independence of the previous test.
+
+**h.** A hypothesis test using critical value can be used.
+
+**i.** 
+
+**Hypothesis:** $H_0: \mu=0$ vs $H_1: \mu \neq 0$
+
+**Assumptions:** $X_i$ are iid varlables and follow $N(\mu,\sigma^2)$.
+
+**Test statistic:** $T=\frac{\overline{X}-\mu_{0}}{S/\sqrt{n}}$. Under $H_0$, T~$t_{n-1}$.
+
+**Observed test statistic:** $t_0=\frac{1.93-0}{4.18/\sqrt{30}}=0.084$
+```{r}
+(statistics$mean_diff - 0)/(statistics$sd_diff * sqrt(statistics$n))
+
+qt(c(0.95),30)
+```
+
+**Decision:** the observed test statistic $t_0=0.084$ is smaller than 1.6972, so we reject $H_0$ and conclude that there is difference of satisfaction between old adults and younger adults.
+
+**j.**
+
+```{r}
+t.test(paired_dat$Difference, mu = 0, conf.level = 0.95)
+```
+
