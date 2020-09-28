@@ -1,18 +1,18 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.6.2)  22 SEP 2020 16:30
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.9.28)  29 SEP 2020 00:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **QBUS2810-Assignment-1.tex
 (./QBUS2810-Assignment-1.tex
 LaTeX2e <2020-02-02> patch level 5
-L3 programming layer <2020-05-15> (./pinp.cls
+L3 programming layer <2020-09-24> (./pinp.cls
 Document Class: pinp 2019-Sep-07, based on pnas-new 2018/05/06, v1.44
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/extsizes/extarticle.c
 ls
 Document Class: extarticle 1996/10/08 v1.0 Non Standard LaTeX document class
-(/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/base/size11.clo
-File: size11.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+(/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/base/exscale.sty
 Package: exscale 2018/09/24 v2.1i Standard LaTeX package exscale
 LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 57.
@@ -22,14 +22,14 @@ LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
 (Font)                  OMX/cmex/m/n --> OMX/cmex/m/n on input line 57.
 \big@size=\dimen134
 )
-\c@part=\count163
-\c@section=\count164
-\c@subsection=\count165
-\c@subsubsection=\count166
-\c@paragraph=\count167
-\c@subparagraph=\count168
-\c@figure=\count169
-\c@table=\count170
+\c@part=\count164
+\c@section=\count165
+\c@subsection=\count166
+\c@subsubsection=\count167
+\c@paragraph=\count168
+\c@subparagraph=\count169
+\c@figure=\count170
+\c@table=\count171
 \abovecaptionskip=\skip47
 \belowcaptionskip=\skip48
 \bibindent=\dimen135
@@ -41,17 +41,17 @@ Package: inputenc 2018/08/11 v1.3c Input encoding file
 Package inputenc Warning: inputenc package ignored with utf8 based engines.
 
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2020/05/13 3.44 The Babel package
+Package: babel 2020/09/01 3.48 The Babel package
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2020/05/13 3.44 Babel common definitions
-\babel@savecnt=\count171
+File: babel.def 2020/09/01 3.48 Babel common definitions
+\babel@savecnt=\count172
 \U@D=\dimen136
 \l@babelnohyphens=\language3
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/babel/xebabel.def (
 /Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/babel/txtbabel.def))
 \bbl@readstream=\read2
 )
-\bbl@dirlevel=\count172
+\bbl@dirlevel=\count173
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/babel-english/engli
 sh.ldf
@@ -83,13 +83,13 @@ Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count173
+\inf@bad=\count174
 LaTeX Info: Redefining \frac on input line 227.
-\uproot@=\count174
-\leftroot@=\count175
+\uproot@=\count175
+\leftroot@=\count176
 LaTeX Info: Redefining \overline on input line 389.
-\classnum@=\count176
-\DOTSCASE@=\count177
+\classnum@=\count177
+\DOTSCASE@=\count178
 LaTeX Info: Redefining \ldots on input line 486.
 LaTeX Info: Redefining \dots on input line 489.
 LaTeX Info: Redefining \cdots on input line 610.
@@ -98,15 +98,15 @@ LaTeX Info: Redefining \cdots on input line 610.
 \big@size=\dimen139
 LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
-\macc@depth=\count178
-\c@MaxMatrixCols=\count179
+\macc@depth=\count179
+\c@MaxMatrixCols=\count180
 \dotsspace@=\muskip16
-\c@parentequation=\count180
-\dspbrk@lvl=\count181
+\c@parentequation=\count181
+\dspbrk@lvl=\count182
 \tag@help=\toks18
-\row@=\count182
-\column@=\count183
-\maxfields@=\count184
+\row@=\count183
+\column@=\count184
+\maxfields@=\count185
 \andhelp@=\toks19
 \eqnshift@=\dimen140
 \alignsep@=\dimen141
@@ -182,18 +182,18 @@ File: lettrine.sty 2020-03-14 v2.23 (Daniel Flipo)
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/minifp/minifp.sty
 Package: minifp 2013/12/30 v0.96. Macros for real number operations and a stack
 -based programing language.
-\MFP@loopctr=\count185
+\MFP@loopctr=\count186
 )
-\c@DefaultLines=\count186
-\c@DefaultDepth=\count187
+\c@DefaultLines=\count187
+\c@DefaultDepth=\count188
 \DefaultFindent=\dimen146
 \DefaultNindent=\dimen147
 \DefaultSlope=\dimen148
 \DiscardVskip=\dimen149
 \L@lbox=\box47
 \L@tbox=\box48
-\c@L@lines=\count188
-\c@L@depth=\count189
+\c@L@lines=\count189
+\c@L@depth=\count190
 \L@Pindent=\dimen150
 \L@Findent=\dimen151
 \L@Nindent=\dimen152
@@ -237,7 +237,7 @@ Package xcolor Info: Driver file: xetex.def on input line 225.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/graphics-def/xetex.de
 f
-File: xetex.def 2017/06/24 v5.0h Graphics/color driver for xetex
+File: xetex.def 2020/08/26 v5.0i Graphics/color driver for xetex
 )
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
 Package xcolor Info: Model `RGB' extended on input line 1364.
@@ -322,14 +322,14 @@ ysfiltered.code.tex
 \pgf@yd=\dimen178
 \w@pgf@writea=\write3
 \r@pgf@reada=\read3
-\c@pgf@counta=\count190
-\c@pgf@countb=\count191
-\c@pgf@countc=\count192
-\c@pgf@countd=\count193
+\c@pgf@counta=\count191
+\c@pgf@countb=\count192
+\c@pgf@countc=\count193
+\c@pgf@countd=\count194
 \t@pgf@toka=\toks29
 \t@pgf@tokb=\toks30
 \t@pgf@tokc=\toks31
-\pgf@sys@id@count=\count194
+\pgf@sys@id@count=\count195
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
 .cfg
@@ -349,13 +349,13 @@ File: pgfsys-dvipdfmx.def 2020/01/08 v3.1.5b (3.1.5b)
 sys-common-pdf.def
 File: pgfsys-common-pdf.def 2020/01/08 v3.1.5b (3.1.5b)
 )
-\pgfsys@objnum=\count195
+\pgfsys@objnum=\count196
 )))
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
 syssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfsyssoftpath@smallbuffer@items=\count196
-\pgfsyssoftpath@bigbuffer@items=\count197
+\pgfsyssoftpath@smallbuffer@items=\count197
+\pgfsyssoftpath@bigbuffer@items=\count198
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
 sysprotocol.code.tex
@@ -374,7 +374,7 @@ l.code.tex)
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathpar
 ser.code.tex
 \pgfmath@dimen=\dimen179
-\pgfmath@count=\count198
+\pgfmath@count=\count199
 \pgfmath@box=\box52
 \pgfmath@toks=\toks32
 \pgfmath@stack@operand=\toks33
@@ -400,7 +400,7 @@ ctions.misc.code.tex)
 ctions.integerarithmetics.code.tex)))
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathflo
 at.code.tex
-\c@pgfmathroundto@lastzeros=\count199
+\c@pgfmathroundto@lastzeros=\count266
 ))
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfint.cod
 e.tex)
@@ -440,7 +440,7 @@ File: pgfcorescopes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \pgfpic=\box53
 \pgf@hbox=\box54
 \pgf@layerbox@main=\box55
-\pgf@picture@serial@count=\count266
+\pgf@picture@serial@count=\count267
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
 oregraphicstate.code.tex
@@ -475,8 +475,8 @@ File: pgfcorearrows.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 oreshade.code.tex
 File: pgfcoreshade.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \pgf@max=\dimen259
-\pgf@sys@shading@range@num=\count267
-\pgf@shadingcount=\count268
+\pgf@sys@shading@range@num=\count268
+\pgf@shadingcount=\count269
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
 oreimage.code.tex
@@ -549,7 +549,7 @@ Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/libraries/pgfli
 braryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@plot@mark@count=\count269
+\pgf@plot@mark@count=\count270
 \pgfplotmarksize=\dimen264
 )
 \tikz@lastx=\dimen265
@@ -564,19 +564,19 @@ File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \tikz@figbox@bg=\box59
 \tikz@tempbox=\box60
 \tikz@tempbox@bg=\box61
-\tikztreelevel=\count270
-\tikznumberofchildren=\count271
-\tikznumberofcurrentchild=\count272
-\tikz@fig@count=\count273
+\tikztreelevel=\count271
+\tikznumberofchildren=\count272
+\tikznumberofcurrentchild=\count273
+\tikz@fig@count=\count274
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmodu
 lematrix.code.tex
 File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfmatrixcurrentrow=\count274
-\pgfmatrixcurrentcolumn=\count275
-\pgf@matrix@numberofcolumns=\count276
+\pgfmatrixcurrentrow=\count275
+\pgfmatrixcurrentcolumn=\count276
+\pgf@matrix@numberofcolumns=\count277
 )
-\tikz@expandcount=\count277
+\tikz@expandcount=\count278
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/t
 ikz/libraries/tikzlibrarytopaths.code.tex
@@ -590,7 +590,7 @@ ty
 Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
-Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/kvsetkeys/kvsetkeys
 .sty
@@ -599,28 +599,28 @@ Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xpa
 rse.sty (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/l3kernel/expl
 3.sty
-Package: expl3 2020-05-15 L3 programming layer (loader) 
+Package: expl3 2020-09-24 L3 programming layer (loader) 
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-x
-dvipdfmx.def
-File: l3backend-xdvipdfmx.def 2020-05-05 L3 backend support: xdvipdfmx
-\g__graphics_track_int=\count278
+etex.def
+File: l3backend-xetex.def 2020-09-24 L3 backend support: XeTeX
+\g__graphics_track_int=\count279
 \l__pdf_internal_box=\box62
-\g__pdf_backend_object_int=\count279
-\g__pdf_backend_annotation_int=\count280
+\g__pdf_backend_object_int=\count280
+\g__pdf_backend_annotation_int=\count281
 ))
 Package: xparse 2020-05-15 L3 Experimental document command parser
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xpa
 rse-generic.tex
-\l__xparse_current_arg_int=\count281
-\g__xparse_grabber_int=\count282
-\l__xparse_m_args_int=\count283
-\l__xparse_v_nesting_int=\count284
+\l__xparse_current_arg_int=\count282
+\g__xparse_grabber_int=\count283
+\l__xparse_m_args_int=\count284
+\l__xparse_v_nesting_int=\count285
 ))
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty
-Package: etoolbox 2019/09/21 v2.5h e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count285
+Package: etoolbox 2020/08/24 v2.5j e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count286
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/zref/zref-abspage.sty
 Package: zref-abspage 2020-05-28 v2.31 Module abspage for zref (HO)
@@ -635,9 +635,9 @@ Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 nekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
 )
-(/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/pdftexcmds/pdftexcmds
-.sty
-Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
+(/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcm
+ds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
@@ -657,7 +657,7 @@ Package zref Info: New property: page on input line 765.
 ty
 Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
 )
-\c@abspage=\count286
+\c@abspage=\count287
 Package zref Info: New property: abspage on input line 66.
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/needspace/needspace.s
@@ -665,7 +665,7 @@ ty
 Package: needspace 2010/09/12 v1.3d reserve vertical space
 )
 \mdf@templength=\skip52
-\c@mdf@globalstyle@cnt=\count287
+\c@mdf@globalstyle@cnt=\count288
 \mdf@skipabove@length=\skip53
 \mdf@skipbelow@length=\skip54
 \mdf@leftmargin@length=\skip55
@@ -742,16 +742,16 @@ File: md-frame-1.mdf 2013/07/01\ 1.9b: md-frame-1
 \mdf@horizontalspaceofbox=\skip116
 \mdfsubtitleheight=\skip117
 \mdfsubsubtitleheight=\skip118
-\c@mdfcountframes=\count288
+\c@mdfcountframes=\count289
 
 ****** mdframed patching \endmdf@trivlist
 
 ****** -- success******
 
-\mdf@envdepth=\count289
-\c@mdf@env@i=\count290
-\c@mdf@env@ii=\count291
-\c@mdf@zref@counter=\count292
+\mdf@envdepth=\count290
+\c@mdf@env@i=\count291
+\c@mdf@env@ii=\count292
+\c@mdf@zref@counter=\count293
 Package zref Info: New property: mdf@pagevalue on input line 895.
 )
 Document Class: pinp 
@@ -760,7 +760,7 @@ Package: flushend 2017/03/27 v3.3 Balancing columns in twocolumn mode
 \flushend@@lastskip@a=\skip119
 \flushend@@lastskip@b=\skip120
 \flushend@@lastskip@c=\skip121
-\flushend@@penalty@a=\count293
+\flushend@@penalty@a=\count294
 \flushend@@lastkern@a=\dimen273
 \var@@temp@spread=\dimen274
 \var@@temp@a=\dimen275
@@ -783,7 +783,7 @@ Package: cuted 2012/10/04 v1.5 Mixing onecolumn and twocolumn modes
 \lastskip@d=\skip124
 \lastbox@a=\box76
 \stripsep=\skip125
-\viper@penalty=\count294
+\viper@penalty=\count295
 \ht@viper=\dimen277
 )
 \@parindent=\skip126
@@ -802,15 +802,15 @@ ro.sty
 Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
 )
 \@linkdim=\dimen278
-\Hy@linkcounter=\count295
-\Hy@pagecounter=\count296
+\Hy@linkcounter=\count296
+\Hy@pagecounter=\count297
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2020-05-15 v7.00e Hyperref: PDFDocEncoding definition (HO)
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count297
+\Hy@SavedSpaceFactor=\count298
 Package hyperref Info: Option `colorlinks' set `true' on input line 4338.
 Package hyperref Info: Hyper figures OFF on input line 4464.
 Package hyperref Info: Link nesting OFF on input line 4469.
@@ -819,7 +819,7 @@ Package hyperref Info: Plain pages OFF on input line 4479.
 Package hyperref Info: Backreferencing OFF on input line 4484.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4717.
-\c@Hy@tempcnt=\count298
+\c@Hy@tempcnt=\count299
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
@@ -834,7 +834,7 @@ lc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count299
+\Fld@menulength=\count300
 \Field@Width=\dimen280
 \Fld@charsize=\dimen281
 Package hyperref Info: Hyper figures OFF on input line 6347.
@@ -846,9 +846,9 @@ Package hyperref Info: Link coloring with OCG OFF on input line 6372.
 Package hyperref Info: PDF/A mode OFF on input line 6377.
 LaTeX Info: Redefining \ref on input line 6417.
 LaTeX Info: Redefining \pageref on input line 6421.
-\Hy@abspage=\count300
-\c@Item=\count301
-\c@Hfootnote=\count302
+\Hy@abspage=\count301
+\c@Item=\count302
+\c@Hfootnote=\count303
 )
 Package hyperref Info: Driver (autodetected): hxetex.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hxetex.def
@@ -862,10 +862,10 @@ Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
 )
 )
 \pdfm@box=\box77
-\c@Hy@AnnotLevel=\count303
-\HyField@AnnotCount=\count304
-\Fld@listcount=\count305
-\c@bookmark@seq@number=\count306
+\c@Hy@AnnotLevel=\count304
+\HyField@AnnotCount=\count305
+\Fld@listcount=\count306
+\c@bookmark@seq@number=\count307
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunf
 ilecheck.sty
@@ -889,22 +889,22 @@ y
 Package: authblk 2001/02/27 1.3 (PWD)
 \affilsep=\skip128
 \@affilsep=\skip129
-\c@Maxaffil=\count307
-\c@authors=\count308
-\c@affil=\count309
+\c@Maxaffil=\count308
+\c@authors=\count309
+\c@affil=\count310
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/xifthen/xifthen.sty
 Package: xifthen 2015/11/05 v1.4.0 Extended ifthen features
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count310
-\calc@Bcount=\count311
+\calc@Acount=\count311
+\calc@Bcount=\count312
 \calc@Adimen=\dimen282
 \calc@Bdimen=\dimen283
 \calc@Askip=\skip130
 \calc@Bskip=\skip131
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count312
+\calc@Ccount=\count313
 \calc@Cskip=\skip132
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
@@ -940,12 +940,12 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \cmidrulesep=\dimen293
 \cmidrulekern=\dimen294
 \defaultaddspace=\dimen295
-\@cmidla=\count313
-\@cmidlb=\count314
+\@cmidla=\count314
+\@cmidlb=\count315
 \@aboverulesep=\dimen296
 \@belowrulesep=\dimen297
-\@thisruleclass=\count315
-\@lastruleclass=\count316
+\@thisruleclass=\count316
+\@lastruleclass=\count317
 \@thisrulewidth=\dimen298
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/algorithms/algorithm.
@@ -955,14 +955,14 @@ Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
 nment
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count317
+\c@float@type=\count318
 \float@exts=\toks42
 \float@box=\box80
 \@float@everytoks=\toks43
 \@floatcapt=\box81
 )
 \@float@every@algorithm=\toks44
-\c@algorithm=\count318
+\c@algorithm=\count319
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/algorithmicx/algpseud
 ocode.sty
@@ -972,15 +972,15 @@ Package: algpseudocode
 micx.sty
 Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
 Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
-\c@ALG@line=\count319
-\c@ALG@rem=\count320
-\c@ALG@nested=\count321
+\c@ALG@line=\count320
+\c@ALG@rem=\count321
+\c@ALG@nested=\count322
 \ALG@tlm=\skip136
 \ALG@thistlm=\skip137
-\c@ALG@Lnr=\count322
-\c@ALG@blocknr=\count323
-\c@ALG@storecount=\count324
-\c@ALG@tmpcounter=\count325
+\c@ALG@Lnr=\count323
+\c@ALG@blocknr=\count324
+\c@ALG@storecount=\count325
+\c@ALG@tmpcounter=\count326
 \ALG@tmplength=\skip138
 )
 Document Style - pseudocode environments for use with the `algorithmicx' style
@@ -988,17 +988,17 @@ Document Style - pseudocode environments for use with the `algorithmicx' style
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/changepage/changepage
 .sty
 Package: changepage 2009/10/20 v1.0c check page and change page layout
-\c@cp@cntr=\count326
-\cp@tempcnt=\count327
+\c@cp@cntr=\count327
+\cp@tempcnt=\count328
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 )
-\Gm@cnth=\count328
-\Gm@cntv=\count329
-\c@Gm@tempcnt=\count330
+\Gm@cnth=\count329
+\Gm@cntv=\count330
+\c@Gm@tempcnt=\count331
 \Gm@bindingoffset=\dimen299
 \Gm@wd@mp=\dimen300
 \Gm@odd@mp=\dimen301
@@ -1009,10 +1009,9 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@layoutvoffset=\dimen306
 \Gm@dimlist=\toks45
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/caption/caption.sty
-Package: caption 2020/05/10 v3.4j Customizing captions (AR)
+Package: caption 2020/09/12 v3.5b Customizing captions (AR)
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/caption/caption3.sty
-Package: caption3 2020/05/10 v1.11 caption3 kernel (AR)
-Package caption3 Info: TeX engine: e-TeX on input line 61.
+Package: caption3 2020/09/17 v2.1b caption3 kernel (AR)
 \captionmargin=\dimen307
 \captionmargin@=\dimen308
 \captionwidth=\dimen309
@@ -1023,13 +1022,16 @@ Package caption3 Info: TeX engine: e-TeX on input line 61.
 Package caption Info: Standard document class detected.
 )
 Package caption Info: Option `figurename' requires the `newfloat' package on in
-put line 266.
+put line 174.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/newfloat/newfloat.sty
 Package: newfloat 2019/09/02 v1.1l Defining new floating environments (AR)
 )
-\c@caption@flags=\count331
-\c@continuedfloat=\count332
+\c@caption@flags=\count332
+\c@continuedfloat=\count333
+Package caption Info: changepage package is loaded.
+\caption@adjustwidth@hsize=\dimen314
+\caption@adjustwidth@linewidth=\dimen315
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 ) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
@@ -1037,7 +1039,7 @@ Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip139
 \bibsep=\skip140
 LaTeX Info: Redefining \cite on input line 694.
-\c@NAT@ctr=\count333
+\c@NAT@ctr=\count334
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
 Package: fancyhdr 2019/01/31 v3.10 Extensive control of page headers and footer
@@ -1060,40 +1062,40 @@ Package: titlesec 2019/10/16 v2.13 Sectioning titles
 \ttl@box=\box82
 \beforetitleunit=\skip150
 \aftertitleunit=\skip151
-\ttl@plus=\dimen314
-\ttl@minus=\dimen315
+\ttl@plus=\dimen316
+\ttl@minus=\dimen317
 \ttl@toksa=\toks46
-\titlewidth=\dimen316
-\titlewidthlast=\dimen317
-\titlewidthfirst=\dimen318
+\titlewidth=\dimen318
+\titlewidthlast=\dimen319
+\titlewidthfirst=\dimen320
 )
-\c@ttlp@side=\count334
-\ttlp@side=\count335
+\c@ttlp@side=\count335
+\ttlp@side=\count336
 \pnas@vertadjust=\skip152
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/lineno/lineno.sty
 Package: lineno 2005/11/02 line numbers on paragraphs v4.41
 Invalid UTF-8 byte or sequence at line 296 replaced by U+FFFD.
-\linenopenalty=\count336
+\linenopenalty=\count337
 \output=\toks47
-\linenoprevgraf=\count337
-\linenumbersep=\dimen319
-\linenumberwidth=\dimen320
-\c@linenumber=\count338
-\c@pagewiselinenumber=\count339
-\c@LN@truepage=\count340
-\c@internallinenumber=\count341
-\c@internallinenumbers=\count342
-\quotelinenumbersep=\dimen321
-\bframerule=\dimen322
-\bframesep=\dimen323
+\linenoprevgraf=\count338
+\linenumbersep=\dimen321
+\linenumberwidth=\dimen322
+\c@linenumber=\count339
+\c@pagewiselinenumber=\count340
+\c@LN@truepage=\count341
+\c@internallinenumber=\count342
+\c@internallinenumbers=\count343
+\quotelinenumbersep=\dimen323
+\bframerule=\dimen324
+\bframesep=\dimen325
 \bframebox=\box83
 LaTeX Info: Redefining \\ on input line 3056.
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/footmisc/footmisc.sty
 Package: footmisc 2011/06/06 v5.5b a miscellany of footnote facilities
 \FN@temptoken=\toks48
-\footnotemargin=\dimen324
-\c@pp@next@reset=\count343
+\footnotemargin=\dimen326
+\c@pp@next@reset=\count344
 Package footmisc Info: Declaring symbol style bringhurst on input line 855.
 Package footmisc Info: Declaring symbol style chicago on input line 863.
 Package footmisc Info: Declaring symbol style wiley on input line 872.
@@ -1103,30 +1105,30 @@ Package footmisc Info: Declaring symbol style lamport* on input line 903.
 Package footmisc Info: Declaring symbol style lamport*-robust on input line 924
 .
 )
-\c@acknow@section=\count344
-\c@matmethods@section=\count345
+\c@acknow@section=\count345
+\c@matmethods@section=\count346
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/enumitem/enumitem.sty
 Package: enumitem 2019/06/20 v3.9 Customized lists
 \labelindent=\skip153
-\enit@outerparindent=\dimen325
+\enit@outerparindent=\dimen327
 \enit@toks=\toks49
 \enit@inbox=\box84
-\enit@count@id=\count346
-\enitdp@description=\count347
+\enit@count@id=\count347
+\enitdp@description=\count348
 )
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2020/05/03 v3.6 verbatim text (tvz,hv)
-\FV@CodeLineNo=\count348
+\FV@CodeLineNo=\count349
 \FV@InFile=\read4
 \FV@TabBox=\box85
-\c@FancyVerbLine=\count349
-\FV@StepNumber=\count350
+\c@FancyVerbLine=\count350
+\FV@StepNumber=\count351
 \FV@OutFile=\write4
 )
 Document Class: pinp 
 \@float@every@sigstatement=\toks50
-\c@sigstatement=\count351
+\c@sigstatement=\count352
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mathdesign
 .sty
@@ -1296,7 +1298,7 @@ x
 \XKV@toks=\toks51
 \XKV@tempa@toks=\toks52
 )
-\XKV@depth=\count352
+\XKV@depth=\count353
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 ))
 LaTeX Font Info:    Trying to load font information for T1+mdbch on input line 
@@ -1307,7 +1309,7 @@ bch.fd
 File: t1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for T1/mdbch.
 )
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 186.
+(Font)              scaled to size 11.52008pt on input line 186.
 LaTeX Font Info:    Redeclaring math accent \widetilde on input line 449.
 LaTeX Font Info:    Redeclaring math accent \widehat on input line 450.
 \symmathdesignA=\mathgroup9
@@ -1333,11 +1335,11 @@ tim
 ty
 Package: microtype 2019/11/18 v2.7d Micro-typographical refinements (RS)
 \MT@toks=\toks53
-\MT@count=\count353
+\MT@count=\count354
 LaTeX Info: Redefining \textls on input line 790.
-\MT@outer@kern=\dimen326
+\MT@outer@kern=\dimen328
 LaTeX Info: Redefining \textmicrotypecontext on input line 1354.
-\MT@listname@count=\count354
+\MT@listname@count=\count355
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/microtype/microtype-x
 etex.def
@@ -1351,51 +1353,80 @@ fg
 File: microtype.cfg 2019/11/18 v2.7d microtype main configuration file (RS)
 )) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
-) (./QBUS2810-Assignment-1.aux)
+) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen329
+\WF@size=\dimen330
+\c@WF@wrappedlines=\count356
+\WF@box=\box86
+\WF@everypar=\toks54
+Package: wrapfig 2003/01/31  v 3.6
+)
+(/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/caption/subcaption.st
+y
+Package: subcaption 2020/08/23 v1.3g Sub-captions (AR)
+\c@subfigure=\count357
+\c@subtable=\count358
+) (./QBUS2810-Assignment-1.aux
+
+LaTeX Warning: Label `fig:figure2' multiply defined.
+
+
+LaTeX Warning: Label `fig:subim1' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:subim1' multiply defined.
+
+
+LaTeX Warning: Label `fig:subim2' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:subim2' multiply defined.
+
+)
 \openout1 = `QBUS2810-Assignment-1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 47.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 48.
 LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 4
-7.
+8.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 47.
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for MDA/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 48.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for MDA/cmr/m/n on input line 48.
 LaTeX Font Info:    Trying to load font information for MDA+cmr on input line 4
-7.
+8.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdacmr.fd
 File: mdacmr.fd 
 )
-LaTeX Font Info:    ... okay on input line 47.
-LaTeX Font Info:    Checking defaults for MDB/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 48.
+LaTeX Font Info:    Checking defaults for MDB/cmr/m/n on input line 48.
 LaTeX Font Info:    Trying to load font information for MDB+cmr on input line 4
-7.
+8.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbcmr.fd
 File: mdbcmr.fd 
 )
-LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    ... okay on input line 48.
 ABD: EveryShipout initializing macros
-\AtBeginShipoutBox=\box86
-Package hyperref Info: Link coloring ON on input line 47.
+\AtBeginShipoutBox=\box87
+Package hyperref Info: Link coloring ON on input line 48.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 
@@ -1406,11 +1437,11 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 itlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count355
+\c@section@level=\count359
 )
-LaTeX Info: Redefining \ref on input line 47.
-LaTeX Info: Redefining \pageref on input line 47.
-LaTeX Info: Redefining \nameref on input line 47.
+LaTeX Info: Redefining \ref on input line 48.
+LaTeX Info: Redefining \pageref on input line 48.
+LaTeX Info: Redefining \nameref on input line 48.
 (./QBUS2810-Assignment-1.out) (./QBUS2810-Assignment-1.out)
 \@outlinefile=\write5
 \openout5 = `QBUS2810-Assignment-1.out'.
@@ -1435,12 +1466,12 @@ LaTeX Info: Redefining \nameref on input line 47.
 * \topmargin=-24.75754pt
 * \headheight=0.0pt
 * \headsep=10.0pt
-* \topskip=11.0pt
+* \topskip=12.0pt
 * \footskip=25.0pt
 * \marginparwidth=38.0pt
 * \marginparsep=10.0pt
 * \columnsep=13.5pt
-* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -1451,20 +1482,22 @@ LaTeX Info: Redefining \nameref on input line 47.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package newfloat Info: `float' package detected.
+Package newfloat Info: `wrapfig' package detected.
 Package lastpage Info: Please have a look at the pageslts package at
 (lastpage)             https://www.ctan.org/pkg/pageslts
-(lastpage)             ! on input line 47.
+(lastpage)             ! on input line 48.
 
 Package mathdesign/mdbch Warning: Package 'amssymb' shouldn't be used in conjon
-ction with package mdbch, on input line 47.
+ction with package mdbch, on input line 48.
 
 
 Package mathdesign/mdbch Warning: Package 'amsfonts' shouldn't be used in conjo
-nction with package mdbch, on input line 47.
+nction with package mdbch, on input line 48.
 
-LaTeX Info: Redefining \microtypecontext on input line 47.
+LaTeX Info: Redefining \microtypecontext on input line 48.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: No adjustment of tracking.
@@ -1475,85 +1508,85 @@ File: mt-bch.cfg 2007/03/03 v1.5 microtype config. file: Bitstream Charter (RS)
 
 )
 LaTeX Font Info:    Trying to load font information for T1+lmss on input line 5
-3.
+4.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <10.95> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 53.
+LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <12> not available
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 54.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmss' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/lmss/b/n' in size <22> not available
-(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 53.
+(Font)              Font shape `T1/lmss/bx/n' tried instead on input line 54.
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 9.6688pt on input line 53.
+(Font)              scaled to size 10.59595pt on input line 54.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `phv' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 9.6688pt on input line 53.
+(Font)              scaled to size 10.59595pt on input line 54.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 7.94696pt on input line 53.
+(Font)              scaled to size 7.94696pt on input line 54.
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 6.18097pt on input line 53.
+(Font)              scaled to size 6.18097pt on input line 54.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 7.06396pt on input line 55.
+(Font)              scaled to size 7.06396pt on input line 56.
 LaTeX Font Info:    Trying to load font information for OT1+mdbch on input line
- 55.
+ 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ot1m
 dbch.fd
 File: ot1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OT1/mdbch.
 )
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
 LaTeX Font Info:    Trying to load font information for OML+mdbch on input line
- 55.
+ 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/omlm
 dbch.fd
 File: omlmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OML/mdbch.
 )
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
-(Font)              scaled to size 5.76004pt on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
 LaTeX Font Info:    Trying to load font information for OMS+mdbch on input line
- 55.
+ 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/omsm
 dbch.fd
 File: omsmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OMS/mdbch.
 )
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
 LaTeX Font Info:    Trying to load font information for OMX+mdbch on input line
- 55.
+ 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/omxm
 dbch.fd
 File: omxmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for OMX/mdbch.
 )
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 55.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -1561,7 +1594,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 g
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 55.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -1570,75 +1603,109 @@ g
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
 LaTeX Font Info:    Trying to load font information for MDA+mdbch on input line
- 55.
+ 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/mdam
 dbch.fd
 File: mdamdbch.fd 2013/08/29 Fontinst v1.933 font definitions for MDA/mdbch.
 )
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
 LaTeX Font Info:    Trying to load font information for MDB+mdbch on input line
- 55.
+ 56.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/mdbm
 dbch.fd
 File: mdbmdbch.fd 2013/08/29 Fontinst v1.933 font definitions for MDB/mdbch.
 )
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
-(Font)              scaled to size 10.51207pt on input line 55.
+(Font)              scaled to size 11.52008pt on input line 56.
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 55.
+(Font)              scaled to size 7.68005pt on input line 56.
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 55.
+(Font)              scaled to size 5.76004pt on input line 56.
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 6.72005pt on input line 55.
+(Font)              scaled to size 6.72005pt on input line 56.
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 11.52008pt on input line 61.
+(Font)              scaled to size 13.82408pt on input line 62.
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 10.59595pt on input line 61.
+(Font)              scaled to size 12.71512pt on input line 62.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 10.59595pt on input line 61.
+(Font)              scaled to size 12.71512pt on input line 62.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/generic/stringenc/se-ascii-
 print.def
 File: se-ascii-print.def 2019/11/29 v1.12 stringenc: Printable ASCII characters
 
 )
-No file QBUS2810-Assignment-1.bbl.
-
-AED: lastpage setting LastPage
+File: corr_matrix.png Graphic file (type bmp)
+<corr_matrix.png>
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 6.18097pt on input line 90.
+(Font)              scaled to size 6.18097pt on input line 70.
+File: scatter.png Graphic file (type bmp)
+<scatter.png>
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 [1
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 90.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 90.
+File: team_box.png Graphic file (type bmp)
+<team_box.png>
+LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
+(Font)              scaled to size 10.51207pt on input line 83.
+LaTeX Font Info:    Font shape `T1/phv/m/n' will be
+(Font)              scaled to size 9.6688pt on input line 83.
+File: position_box.png Graphic file (type bmp)
+<position_box.png>
+
+Overfull \hbox (2.15425pt too wide) in paragraph at lines 81--91
+[]$[]$ $[]$ 
+ []
+
+[2]
+File: knn_models.png Graphic file (type bmp)
+<knn_models.png>
+File: poly_models.png Graphic file (type bmp)
+<poly_models.png>
+
+Overfull \hbox (2.15425pt too wide) in paragraph at lines 105--115
+[]$[]$ $[]$ 
+ []
+
+No file QBUS2810-Assignment-1.bbl.
+
+AED: lastpage setting LastPage
+[3]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 134.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 134.
 (./QBUS2810-Assignment-1.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 90.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 90.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 134.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 134.
 Package rerunfilecheck Info: File `QBUS2810-Assignment-1.out' has not changed.
-(rerunfilecheck)             Checksum: 3EA966426136F2210178268157375D72;503.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 90.
+(rerunfilecheck)             Checksum: 9BEB7037020622EC2D699CC2DAE30B9A;531.
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 134.
  ) 
 Here is how much of TeX's memory you used:
- 29725 strings out of 481274
- 529246 string characters out of 5923673
- 817431 words of memory out of 5000000
- 46643 multiletter control sequences out of 15000+600000
- 570894 words of font info for 67 fonts, out of 8000000 for 9000
+ 30007 strings out of 481673
+ 534815 string characters out of 5931647
+ 828246 words of memory out of 5000000
+ 46512 multiletter control sequences out of 15000+600000
+ 577455 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 68i,11n,64p,464b,432s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 68i,12n,68p,464b,649s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on QBUS2810-Assignment-1.pdf (1 page).
+Output written on QBUS2810-Assignment-1.pdf (3 pages).

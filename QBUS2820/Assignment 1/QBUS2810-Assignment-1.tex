@@ -1,4 +1,4 @@
-\documentclass[letterpaper,11pt,twoside,]{pinp}
+\documentclass[letterpaper,12pt,twoside,]{pinp}
 
 %% Some pieces required from the pandoc template
 \providecommand{\tightlist}{%
@@ -19,6 +19,7 @@
 \definecolor{pnasbluetext}{RGB}{101,0,0} %
 
 
+\usepackage{wrapfig,subcaption}
 
 \title{QBUS2820 Assignment 1}
 
@@ -42,7 +43,7 @@
 % initially we use doi so keep for backwards compatibility
 % new name is doi_footer
 
-\pinpfootercontents{Graft Survival Predictor}
+\pinpfootercontents{QBUS2820 Assignment 1}
 
 \begin{document}
 
@@ -64,12 +65,55 @@
 \section{Data processing and exploratory data
 analysis}\label{data-processing-and-exploratory-data-analysis}}
 
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{corr_matrix.png}
+\caption{Caption}
+\label{fig:figure2}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{scatter.png}
+\caption{Caption}
+\label{fig:figure2}
+\end{figure}
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{team_box.png} 
+\caption{Salaries for players in different teams.}
+\label{fig:subim1}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
+\caption{Salaries for players in different positions.}
+\label{fig:subim2}
+\end{subfigure}
+\caption{Boxplots of salaries for players in different teams and positions.}
+\end{figure}
+
+As shown in Figuredsgi jsafoisjdf oifj salkadfj oij
+lfjsadfisoijfosfijsafdsnglkjgsdifjoasdj dsfjladkfeknwafka
+
 \hypertarget{feature-engineering}{%
 \section{Feature engineering}\label{feature-engineering}}
 
 \hypertarget{methodology-of-the-linear-regression-and-knn-regression-models}{%
 \section{Methodology of the linear regression and kNN regression
 models}\label{methodology-of-the-linear-regression-and-knn-regression-models}}
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{knn_models.png} 
+\caption{Top 5 K nearest neighbbour models with the highest validation errors.}
+\label{fig:subim1}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{poly_models.png}
+\caption{Top 5 polynomial linear regression models with the highest validation errors.}
+\label{fig:subim2}
+\end{subfigure}
+\caption{Validation errors of 10 models developed.}
+\end{figure}
 
 \hypertarget{methodology-of-the-model-that-is-not-covered-in-this-unit}{%
 \section{Methodology of the model that is not covered in this
