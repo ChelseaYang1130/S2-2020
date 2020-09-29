@@ -60,7 +60,7 @@ library(EBImage)
 
 Although the NBA is known for being a sport league across globe, it is a vast economic entity as well. Undoubtedly, it has been a major impact in the past decades, and it does not seem to be slowing down anytime soon. Hence, economy is also a huge part of the business. Beside the League’s branding, its commercial success is contributed by the players at large as they make the trends on social media and attract costumers to buy their products in a constance. However, the most important attribute of a player is none other than his performance on the court. Performance is what NBA players thrive for as it decides their salary level. How much salary a player is worth can be a hard estimation to the teams because the performance of athlete fluctuates. Furthermore, the salary cap of the League as a whole, too, fluctuate every year. Fortunately, the League records players’ data in various categories which include field goal attempted, field goal percentage, offensive and defensive ratings, etc. Data is a powerful tool because it can reflect a player’s contribution on the court with precision. Accompanied by the comparison of the salaries given to a certain level of player, data can serve as a strong reference that allows objective calculations. 
 
-This project aims to develop several predictive models salary for NBA basketball players. Three models including , k-nearest neignbour model, a linear regression model and a lasso regression model are involved. Root mean square error is used as the performance metric to select models with the best performance regarding predictions of NBA players' salaries.
+This project aims to develop several predictive models of salary for NBA basketball players. Three models including , k-nearest neignbour model, a linear regression model and a lasso regression model are involved. 
 
 # Data processing and exploratory data analysis
 
@@ -83,20 +83,22 @@ To discover any missing values involved in the datasets, barcharts of missingnes
 \label{fig:missingness}
 \end{figure}
 
+Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win sahre and win share.
 
 \begin{figure}[H]
-\includegraphics[width=0.6\linewidth]{correlation.png}
+\includegraphics[width=0.8\linewidth]{correlation.png}
 \centering
 \caption{Correlations between numeric variables based on correlation coefficients.}
-\label{fig:corr}
+\label{fig:correlation}
 \end{figure}
 
+The relationships between salary and the six relative variables as well as the distributation of numeric variables are further visualised by a scatter plot matrix Figure \ref{fig:scatter}. The linearity between
 
 \begin{figure}[H]
 \includegraphics[width=0.8\textwidth]{scatter.png}
 \centering
 \caption{Caption}
-\label{fig:figure2}
+\label{fig:scatter}
 \end{figure}
 
 \begin{figure}[H]
