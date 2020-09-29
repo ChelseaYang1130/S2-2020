@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.9.28)  29 SEP 2020 13:48
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.9.28)  29 SEP 2020 17:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1366,6 +1366,15 @@ y
 Package: subcaption 2020/08/23 v1.3g Sub-captions (AR)
 \c@subfigure=\count357
 \c@subtable=\count358
+) (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/tools/tabularx.sty
+Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
+\TX@col@width=\dimen331
+\TX@old@table=\dimen332
+\TX@old@col=\dimen333
+\TX@target=\dimen334
+\TX@delta=\dimen335
+\TX@cols=\count359
+\TX@ftn=\toks55
 ) (./QBUS2810-Assignment-1.aux
 
 LaTeX Warning: Label `fig:subim1' multiply defined.
@@ -1434,7 +1443,7 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 itlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count359
+\c@section@level=\count360
 )
 LaTeX Info: Redefining \ref on input line 48.
 LaTeX Info: Redefining \pageref on input line 48.
@@ -1645,8 +1654,10 @@ print.def
 File: se-ascii-print.def 2019/11/29 v1.12 stringenc: Printable ASCII characters
 
 )
+LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
+(Font)              scaled to size 11.52008pt on input line 87.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 9
-1.
+3.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
@@ -1654,78 +1665,18 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-File: nbaTrain_miss.png Graphic file (type bmp)
-<nbaTrain_miss.png>
-LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 113.
-LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 113.
-LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 5.29797pt on input line 113.
-LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 6.18097pt on input line 113.
-File: nbaTest_miss.png Graphic file (type bmp)
-<nbaTest_miss.png>
-
-Overfull \hbox (52.72697pt too wide) in paragraph at lines 111--121
-[]$[]$ $[]$ 
- []
-
-LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 7.06396pt on input line 121.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-[1
-
-]
-File: correlation.png Graphic file (type bmp)
-<correlation.png>
-File: scatter.png Graphic file (type bmp)
-<scatter.png>
-[2]
-File: team_box.png Graphic file (type bmp)
-<team_box.png>
-File: position_box.png Graphic file (type bmp)
-<position_box.png>
-
-Overfull \hbox (52.72697pt too wide) in paragraph at lines 150--160
-[]$[]$ $[]$ 
- []
-
-File: knn_models.png Graphic file (type bmp)
-<knn_models.png>
-File: poly_models.png Graphic file (type bmp)
-<poly_models.png>
-
-Overfull \hbox (2.15425pt too wide) in paragraph at lines 171--181
-[]$[]$ $[]$ 
- []
-
-[3]
-No file QBUS2810-Assignment-1.bbl.
-
-AED: lastpage setting LastPage
-[4]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 200.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 200.
-(./QBUS2810-Assignment-1.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 200.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 200.
-Package rerunfilecheck Info: File `QBUS2810-Assignment-1.out' has not changed.
-(rerunfilecheck)             Checksum: 39B5DDF5D2850E6B4061864ACDE49074;531.
-
-LaTeX Warning: There were multiply-defined labels.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 200.
- ) 
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   \unhbox 
+l.114 \includegraphics
+                      [width=0.6\linewidth]{correlation.png} \centering 
 Here is how much of TeX's memory you used:
- 30181 strings out of 481673
- 540139 string characters out of 5931647
- 831903 words of memory out of 5000000
- 46679 multiletter control sequences out of 15000+600000
- 581575 words of font info for 77 fonts, out of 8000000 for 9000
+ 30149 strings out of 481673
+ 539425 string characters out of 5931647
+ 832045 words of memory out of 5000000
+ 46657 multiletter control sequences out of 15000+600000
+ 574663 words of font info for 73 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 68i,11n,68p,464b,717s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 68i,4n,68p,464b,315s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on QBUS2810-Assignment-1.pdf (4 pages).
+No pages of output.

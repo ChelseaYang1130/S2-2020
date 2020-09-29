@@ -47,8 +47,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   
 header-includes: 
-   \usepackage{wrapfig,subcaption}
+   \usepackage{wrapfig,subcaption,array,tabularx}  
    \captionsetup[figure]{font=scriptsize}
+   \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
@@ -62,9 +63,48 @@ Although the NBA is known for being a sport league across globe, it is a vast ec
 
 This project aims to develop several predictive models of salary for NBA basketball players. Three models including , k-nearest neignbour model, a linear regression model and a lasso regression model are involved. 
 
+**summarising findings**
+
 # Data processing and exploratory data analysis
 
 Two datasets `NBA_train.csv` and `NBA_test.csv` are analysed in this project. The data is collected by NBA, with the corresponding raw data and metadata being publicly accessible on the NBA websites. There are 2 categorical variables and 19 numeric variables regarding players' personal information and game performance, with an additional unique ID of each record in the datasets. The numeric variables includes salary, age, number of games played , number of minutes played, personal efficiency rate , true shooting percentage , offensive rebounds , defensive rebounds , turnover percentage , assists , steals, blocks , turnover percentage , usage percentage , offensive rating, defensive rating and win shares while the categorical variables are the position and the team a player in.
+
+Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win share and win share.
+
+s
+\begin{wrapfigutr}{r}{0.25\textwidth}
+\includegraphics[width=0.6\linewidth]{correlation.png}
+\centering
+\caption{Correlations between numeric variables based on correlation coefficients.}
+\label{fig:correlation}
+\end{wrapfigure}
+
+The relationships between salary and the six relative variables as well as the distributation of numeric variables are further visualized by a scatter plot matrix Figure \ref{fig:scatter}. The linearity between numeric variables and salary shown in Figure \ref{fig:scatter} is in line with the correlation matrix. Salary, win share, defenssive win share and offensive win share are significantly right-skewed while usage percentage and  personal efficiency rate are slightly right-skewed. Moreover, the distributiotion demonstrates a small variance of number of minutes played.
+
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{scatter.png}
+\centering
+\caption{Distribution of numeric variables.}
+\label{fig:scatter}
+\end{figure}
+
+\begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{team_box.png}
+\centering
+\caption{Salaries for players in different teams.}
+\label{fig:subim1}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
+\centering
+\caption{Salaries for players in different positions.}
+\label{fig:subim2}
+\end{subfigure}
+\caption{Box plots of salaries for players in different teams and positions.}
+\end{figure}
+
+# Feature engineering
 
 To discover any missing values involved in the datasets, barcharts of missingness are generated to visualize missingness. As shown in Figure \ref{fig:missingness}, both `NBA_train` and `NBA_test` are complete without any missing values. Therefore no data cleaning process is performed.
 
@@ -82,40 +122,6 @@ To discover any missing values involved in the datasets, barcharts of missingnes
 \caption{Visualizing the missingness of two datasets used.}
 \label{fig:missingness}
 \end{figure}
-
-Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win sahre and win share.
-
-\begin{figure}[H]
-\includegraphics[width=0.8\linewidth]{correlation.png}
-\centering
-\caption{Correlations between numeric variables based on correlation coefficients.}
-\label{fig:correlation}
-\end{figure}
-
-The relationships between salary and the six relative variables as well as the distributation of numeric variables are further visualised by a scatter plot matrix Figure \ref{fig:scatter}. The linearity between
-
-\begin{figure}[H]
-\includegraphics[width=0.8\textwidth]{scatter.png}
-\centering
-\caption{Caption}
-\label{fig:scatter}
-\end{figure}
-
-\begin{figure}[H]
-\begin{subfigure}{0.55\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{team_box.png} 
-\caption{Salaries for players in different teams.}
-\label{fig:subim1}
-\end{subfigure}
-\begin{subfigure}{0.55\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
-\caption{Salaries for players in different positions.}
-\label{fig:subim2}
-\end{subfigure}
-\caption{Box plots of salaries for players in different teams and positions.}
-\end{figure}
-
-# Feature engineering
 
 # Methodology of the linear regression and kNN regression models
 
