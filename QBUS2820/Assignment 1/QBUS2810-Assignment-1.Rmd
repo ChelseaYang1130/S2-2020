@@ -46,67 +46,72 @@ vignette: >
   %\VignettePackage{YourPackage}
   %\VignetteEngine{knitr::rmarkdown}
   
-header-includes: \usepackage{wrapfig,subcaption}
+header-includes: 
+   \usepackage{wrapfig,subcaption}
+   \captionsetup[figure]{font=scriptsize}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.pos = 'H')
-# knitr::opts_chunk$set(fig.pos = "!H", out.extra = "")
-# knitr::knit_hooks$set(plot = function (x, options) {
-#   float_correct <- function(f, y, opts)  {
-#     if (is.null(opts$regfloat) || opts$regfloat==FALSE)
-#       paste0(f(y, opts), "\n\n\\FloatBarrier\n")
-#     else
-#       f(y, opts)
-#   }
-#   if (!is.null(options$out.width) || !is.null(options$out.height) ||
-#       !is.null(options$out.extra) || options$fig.align != "default" ||
-#       !is.null(options$fig.subcap)) {
-#     if (is.null(options$fig.scap))
-#       options$fig.scap = NA
-#     return(float_correct(knitr:::hook_plot_tex, x, options))
-#   }
-#   return(float_correct(knitr:::hook_plot_md_base, x, options))
-# })
-
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.pos = 'H', fig.align = 'center')
 library(EBImage)
 ```
 
 # Introduction
 
+Although the NBA is known for being a sport league across globe, it is a vast economic entity as well. Undoubtedly, it has been a major impact in the past decades, and it does not seem to be slowing down anytime soon. Hence, economy is also a huge part of the business. Beside the League’s branding, its commercial success is contributed by the players at large as they make the trends on social media and attract costumers to buy their products in a constance. However, the most important attribute of a player is none other than his performance on the court. Performance is what NBA players thrive for as it decides their salary level. How much salary a player is worth can be a hard estimation to the teams because the performance of athlete fluctuates. Furthermore, the salary cap of the League as a whole, too, fluctuate every year. Fortunately, the League records players’ data in various categories which include field goal attempted, field goal percentage, offensive and defensive ratings, etc. Data is a powerful tool because it can reflect a player’s contribution on the court with precision. Accompanied by the comparison of the salaries given to a certain level of player, data can serve as a strong reference that allows objective calculations. 
+
+This project aims to develop several predictive models salary for NBA basketball players. Three models including , k-nearest neignbour model, a linear regression model and a lasso regression model are involved. Root mean square error is used as the performance metric to select models with the best performance regarding predictions of NBA players' salaries.
 
 # Data processing and exploratory data analysis
 
+Two datasets `NBA_train.csv` and `NBA_test.csv` are analysed in this project. The data is collected by NBA, with the corresponding raw data and metadata being publicly accessible on the NBA websites. There are 2 categorical variables and 19 numeric variables regarding players' personal information and game performance, with an additional unique ID of each record in the datasets. The numeric variables includes salary, age, number of games played , number of minutes played, personal efficiency rate , true shooting percentage , offensive rebounds , defensive rebounds , turnover percentage , assists , steals, blocks , turnover percentage , usage percentage , offensive rating, defensive rating and win shares while the categorical variables are the position and the team a player in.
+
+To discover any missing values involved in the datasets, barcharts of missingness are generated to visualize missingness. As shown in Figure \ref{fig:missingness}, both `NBA_train` and `NBA_test` are complete without any missing values. Therefore no data cleaning process is performed.
 
 \begin{figure}[H]
-\includegraphics[width=0.8\textwidth]{corr_matrix.png}
-\caption{Caption}
-\label{fig:figure2}
+\begin{subfigure}{0.55\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{nbaTrain_miss.png} 
+\caption{Missingness barchart of the `NBA train` dataset.}
+\label{fig:trainMiss}
+\end{subfigure}
+\begin{subfigure}{0.55\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{nbaTest_miss.png}
+\caption{Missingness barchart of the `NBA test` dataset.}
+\label{fig:testMiss}
+\end{subfigure}
+\caption{Visualizing the missingness of two datasets used.}
+\label{fig:missingness}
 \end{figure}
+
+
+\begin{figure}[H]
+\includegraphics[width=0.6\linewidth]{correlation.png}
+\centering
+\caption{Correlations between numeric variables based on correlation coefficients.}
+\label{fig:corr}
+\end{figure}
+
 
 \begin{figure}[H]
 \includegraphics[width=0.8\textwidth]{scatter.png}
+\centering
 \caption{Caption}
 \label{fig:figure2}
 \end{figure}
 
 \begin{figure}[H]
-\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{team_box.png} 
 \caption{Salaries for players in different teams.}
 \label{fig:subim1}
 \end{subfigure}
-\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
 \caption{Salaries for players in different positions.}
 \label{fig:subim2}
 \end{subfigure}
-\caption{Boxplots of salaries for players in different teams and positions.}
+\caption{Box plots of salaries for players in different teams and positions.}
 \end{figure}
-
-
-As shown in Figuredsgi jsafoisjdf oifj salkadfj oij lfjsadfisoijfosfijsafdsnglkjgsdifjoasdj
-dsfjladkfeknwafka
 
 # Feature engineering
 
@@ -116,7 +121,7 @@ dsfjladkfeknwafka
 \begin{figure}[H]
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{knn_models.png} 
-\caption{Top 5 K nearest neighbbour models with the highest validation errors.}
+\caption{Top 5 K nearest neighbor models with the highest validation errors.}
 \label{fig:subim1}
 \end{subfigure}
 \begin{subfigure}{0.5\textwidth}
