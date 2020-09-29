@@ -19,7 +19,7 @@
 \definecolor{pnasbluetext}{RGB}{101,0,0} %
 
 
-\usepackage{wrapfig,subcaption,array,tabularx} \captionsetup[figure]{font=scriptsize} \usepackage[utf8]{inputenc}
+\usepackage{wrapfig,subcaption,array,tabularx} \captionsetup[figure]{font=scriptsize}
 
 \title{QBUS2820 Assignment 1}
 
@@ -84,24 +84,30 @@ This project aims to develop several predictive models of salary for NBA
 basketball players. Three models including , k-nearest neignbour model,
 a linear regression model and a lasso regression model are involved.
 
-\textbf{summarising findings}
+\textbf{summarizing findings}
 
 \hypertarget{data-processing-and-exploratory-data-analysis}{%
 \section{Data processing and exploratory data
 analysis}\label{data-processing-and-exploratory-data-analysis}}
 
-Two datasets \texttt{NBA\_train.csv} and \texttt{NBA\_test.csv} are
-analysed in this project. The data is collected by NBA, with the
-corresponding raw data and metadata being publicly accessible on the NBA
-websites. There are 2 categorical variables and 19 numeric variables
-regarding players' personal information and game performance, with an
-additional unique ID of each record in the datasets. The numeric
-variables includes salary, age, number of games played , number of
-minutes played, personal efficiency rate , true shooting percentage ,
-offensive rebounds , defensive rebounds , turnover percentage , assists
-, steals, blocks , turnover percentage , usage percentage , offensive
-rating, defensive rating and win shares while the categorical variables
-are the position and the team a player in.
+Two datasets \texttt{NBA\_train} and \texttt{NBA\_test} are analysed in
+this project. The data is collected by NBA, with the corresponding raw
+data and metadata being publicly accessible on the NBA websites.
+
+There are 2 categorical variables and 19 numeric variables regarding
+players' personal information and game performance, with an additional
+unique ID of each record in the datasets. The numeric variables includes
+salary, age, number of games played , number of minutes played, personal
+efficiency rate , true shooting percentage , offensive rebounds ,
+defensive rebounds , turnover percentage , assists , steals, blocks ,
+turnover percentage , usage percentage , offensive rating, defensive
+rating and win shares while the categorical variables are the position
+and the team a player in.
+
+The \texttt{NBA\_train} dataset is used for training and validating
+predictive models in this project while the \texttt{NBA\_test} dataset
+is used for testing selected models. Therefore the exploratory data
+analysis is conducted based on the \texttt{NBA\_train} dataset.
 
 Figure \ref{fig:correlation} illustrate that win share, defensive win
 share, offensive win share, number of minutes played and personal
@@ -110,23 +116,23 @@ having the strongest linear relationship with salary at a correlation
 coefficient of 0.68. It also provides evidences of linearity between
 offensive win share, defensive win share and win share.
 
-\textbackslash{}begin\{wrapfigutr\}\{r\}\{0.25\textwidth\}
-\includegraphics[width=0.6\linewidth]{correlation.png} \centering
-
+\begin{wrapfigure}{l}{0.5\textwidth}
+\includegraphics[width=0.8\linewidth]{correlation.png}
+\centering
 \caption{Correlations between numeric variables based on correlation coefficients.}
 \label{fig:correlation}
-
-\textbackslash{}end\{wrapfigure\}
+\end{wrapfigure}
 
 The relationships between salary and the six relative variables as well
-as the distributation of numeric variables are further visualized by a
+as the distribution of numeric variables are further visualized by a
 scatter plot matrix Figure \ref{fig:scatter}. The linearity between
-numeric variables and salary shown in Figure \ref{fig:scatter} is in
-line with the correlation matrix. Salary, win share, defenssive win
-share and offensive win share are significantly right-skewed while usage
-percentage and personal efficiency rate are slightly right-skewed.
-Moreover, the distributiotion demonstrates a small variance of number of
-minutes played.
+numeric variables and salary shown in the scatter plot matrix is in line
+with the correlation matrix Figure \ref{fig:correlation}. Salary, win
+share, defensive win share and offensive win share are significantly
+right-skewed while usage percentage and personal efficiency rate are
+slightly right-skewed. Moreover, the distributions demonstrates a small
+variance of number of minutes played. The variables discussed above
+would be the main focus of the predictive model development.
 
 \begin{figure}[H]
 \includegraphics[width=0.8\textwidth]{scatter.png}
@@ -135,45 +141,72 @@ minutes played.
 \label{fig:scatter}
 \end{figure}
 
+Figure \ref{fig:position} describes how salary varies for players in
+different positions. Although the median salaries are similar at \$4-6
+millions for the five positions, the variance of salaries are different.
+The salaries for players in the center and small forward position vary
+significantly without any outliers whereas variances of salary for both
+power forward and shooting guard are much smaller with an outlier. As
+the distributions of salary differ for different positions, the position
+a player in could be the potential predictors of salaries.
+
+Outlining in Figure \ref{fig:team}, salary varies across different
+teams, which is reasonable in a business entity. There are many
+basketball teams within the NBA, resulting in small sample size of
+salaries in each group. Some groups, such as Los Angeles Clippers,
+Phoenix Surs and Denver Nuggets, have information of only one player
+being recorded in this dataset, making the team variable uninformative.
+Therefore, despite the different distributions of salary for players in
+different teams, the team variable is not involved in development of
+predictive models.
+
 \begin{figure}[H]
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{team_box.png}
-\centering
-\caption{Salaries for players in different teams.}
-\label{fig:subim1}
-\end{subfigure}
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
 \centering
 \caption{Salaries for players in different positions.}
-\label{fig:subim2}
+\label{fig:position}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{team_box.png}
+\centering
+\caption{Salaries for players in different teams.}
+\label{fig:team}
 \end{subfigure}
 \caption{Box plots of salaries for players in different teams and positions.}
+\label{fig:boxes}
 \end{figure}
 
 \hypertarget{feature-engineering}{%
 \section{Feature engineering}\label{feature-engineering}}
 
-To discover any missing values involved in the datasets, barcharts of
+To discover any missing values involved in the datasets, bar charts of
 missingness are generated to visualize missingness. As shown in Figure
 \ref{fig:missingness}, both \texttt{NBA\_train} and \texttt{NBA\_test}
-are complete without any missing values. Therefore no data cleaning
-process is performed.
+are complete without any missing values. Moreover, Figure
+\ref{fig:scatter} does not show any noticeable outliers of the numeric
+variables. Therefore no data removal and data imputation is performed.
 
 \begin{figure}[H]
 \begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{nbaTrain_miss.png} 
-\caption{Missingness barchart of the `NBA train` dataset.}
+\caption{Missingness bar chart of the `NBA train` dataset.}
 \label{fig:trainMiss}
 \end{subfigure}
 \begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{nbaTest_miss.png}
-\caption{Missingness barchart of the `NBA test` dataset.}
+\caption{Missingness bar chart of the `NBA test` dataset.}
 \label{fig:testMiss}
 \end{subfigure}
 \caption{Visualizing the missingness of two datasets used.}
 \label{fig:missingness}
 \end{figure}
+
+In order to involve the categorical variable in predictive models, the
+variable position played is encoded by a dummy variable whose values of
+\texttt{1}, \texttt{2}, \texttt{3}, \texttt{4}, \texttt{5} represent
+center(C), power forward(PF), point guard(PG), small forward(SF) and
+shooting guard(SG) respectively.
 
 \hypertarget{methodology-of-the-linear-regression-and-knn-regression-models}{%
 \section{Methodology of the linear regression and kNN regression
@@ -200,10 +233,32 @@ unit}\label{methodology-of-the-model-that-is-not-covered-in-this-unit}}
 \hypertarget{test-set-performance}{%
 \section{Test set performance}\label{test-set-performance}}
 
+\hypertarget{analysis-and-conclusions}{%
+\section{Analysis and conclusions}\label{analysis-and-conclusions}}
+
+\hypertarget{appendix}{%
+\section{Appendix}\label{appendix}}
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\begin{itemize}
+\item
+  Bilogur, (2018). Missingno: a missing data visualization suite.
+  Journal of Open Source Software, 3(22), 547,
+  \url{https://doi.org/10.21105/joss.00547}.
+\item
+  NBA Stats. (2018). NBA Stats. {[}online{]} Available at:
+  \url{https://stats.nba.com/}.
+\item
+  Rençberoğlu, E. (2019). Fundamental Techniques of Feature Engineering
+  for Machine Learning. {[}online{]} Medium. Available at:
+  \url{https://towardsdatascience.com}.
+\end{itemize}
+
 %\showmatmethods
 
 
-\renewcommand\refname{Analysis and conclusions}
 \bibliography{pinp}
 \bibliographystyle{jss}
 

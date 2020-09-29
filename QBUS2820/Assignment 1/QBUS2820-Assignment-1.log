@@ -1,9 +1,9 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.9.28)  29 SEP 2020 17:01
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.9.28)  30 SEP 2020 00:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**QBUS2810-Assignment-1.tex
-(./QBUS2810-Assignment-1.tex
+**QBUS2820-Assignment-1.tex
+(./QBUS2820-Assignment-1.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-09-24> (./pinp.cls
 Document Class: pinp 2019-Sep-07, based on pnas-new 2018/05/06, v1.44
@@ -1375,21 +1375,8 @@ Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
 \TX@delta=\dimen335
 \TX@cols=\count359
 \TX@ftn=\toks55
-) (./QBUS2810-Assignment-1.aux
-
-LaTeX Warning: Label `fig:subim1' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:subim1' multiply defined.
-
-
-LaTeX Warning: Label `fig:subim2' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:subim2' multiply defined.
-
-)
-\openout1 = `QBUS2810-Assignment-1.aux'.
+) (./QBUS2820-Assignment-1.aux)
+\openout1 = `QBUS2820-Assignment-1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
 LaTeX Font Info:    ... okay on input line 48.
@@ -1448,9 +1435,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 48.
 LaTeX Info: Redefining \pageref on input line 48.
 LaTeX Info: Redefining \nameref on input line 48.
-(./QBUS2810-Assignment-1.out) (./QBUS2810-Assignment-1.out)
+(./QBUS2820-Assignment-1.out) (./QBUS2820-Assignment-1.out)
 \@outlinefile=\write5
-\openout5 = `QBUS2810-Assignment-1.out'.
+\openout5 = `QBUS2820-Assignment-1.out'.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -1665,18 +1652,103 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \unhbox 
-l.114 \includegraphics
-                      [width=0.6\linewidth]{correlation.png} \centering 
-Here is how much of TeX's memory you used:
- 30149 strings out of 481673
- 539425 string characters out of 5931647
- 832045 words of memory out of 5000000
- 46657 multiletter control sequences out of 15000+600000
- 574663 words of font info for 73 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
- 68i,4n,68p,464b,315s stack positions out of 5000i,500n,10000p,200000b,80000s
+File: correlation.png Graphic file (type bmp)
+<correlation.png>
+LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
+(Font)              scaled to size 7.68005pt on input line 122.
+LaTeX Font Info:    Font shape `T1/phv/m/n' will be
+(Font)              scaled to size 7.06396pt on input line 122.
+LaTeX Font Info:    Font shape `T1/phv/b/n' will be
+(Font)              scaled to size 6.18097pt on input line 122.
+[1
 
-No pages of output.
+]
+File: scatter.png Graphic file (type bmp)
+<scatter.png>
+[2]
+File: position_box.png Graphic file (type bmp)
+<position_box.png>
+LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
+(Font)              scaled to size 5.76004pt on input line 167.
+LaTeX Font Info:    Font shape `T1/phv/m/n' will be
+(Font)              scaled to size 5.29797pt on input line 167.
+File: team_box.png Graphic file (type bmp)
+<team_box.png>
+
+Overfull \hbox (2.15425pt too wide) in paragraph at lines 164--176
+[]$[]$ $[]$ 
+ []
+
+File: nbaTrain_miss.png Graphic file (type bmp)
+<nbaTrain_miss.png>
+File: nbaTest_miss.png Graphic file (type bmp)
+<nbaTest_miss.png>
+
+Overfull \hbox (52.72697pt too wide) in paragraph at lines 191--201
+[]$[]$ $[]$ 
+ []
+
+File: knn_models.png Graphic file (type bmp)
+<knn_models.png>
+File: poly_models.png Graphic file (type bmp)
+<poly_models.png>
+
+Overfull \hbox (2.15425pt too wide) in paragraph at lines 216--226
+[]$[]$ $[]$ 
+ []
+
+[3]
+LaTeX Font Info:    Trying to load font information for TS1+mdbch on input line
+ 247.
+
+(/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ts1m
+dbch.fd
+File: ts1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for TS1/mdbch.
+)
+LaTeX Font Info:    Font shape `TS1/mdbch/m/n' will be
+(Font)              scaled to size 11.52008pt on input line 247.
+Package microtype Info: Character `texttwelveudash ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textthreequartersemdash ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textasteriskcentered ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textlbrackdbl ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textrbrackdbl ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `texttildelow ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Package microtype Info: Character `textcelsius ' is missing
+(microtype)             in font `TS1/mdbch/m/n/12'.
+(microtype)             Ignoring protrusion settings for this character.
+Missing character: There is no ğ in font mdbchr8t!
+No file QBUS2820-Assignment-1.bbl.
+
+AED: lastpage setting LastPage
+[4]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 267.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 267.
+(./QBUS2820-Assignment-1.aux)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 267.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 267.
+Package rerunfilecheck Info: File `QBUS2820-Assignment-1.out' has not changed.
+(rerunfilecheck)             Checksum: 05613B5EF79A0F454645B0D10CCAD943;705.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 267.
+ ) 
+Here is how much of TeX's memory you used:
+ 30267 strings out of 481673
+ 541498 string characters out of 5931647
+ 834561 words of memory out of 5000000
+ 46757 multiletter control sequences out of 15000+600000
+ 584202 words of font info for 79 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 68i,11n,68p,464b,713s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on QBUS2820-Assignment-1.pdf (4 pages).
