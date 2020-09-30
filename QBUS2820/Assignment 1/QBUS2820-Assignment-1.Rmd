@@ -68,11 +68,11 @@ This project aims to develop several predictive models of salary for NBA basketb
 
 Two datasets `NBA_train` and `NBA_test` are analysed in this project. The data is collected by NBA, with the corresponding raw data and metadata being publicly accessible on the NBA websites. 
 
-There are 2 categorical variables and 19 numeric variables regarding players' personal information and game performance, with an additional unique ID of each record in the datasets. The numeric variables includes salary, age, number of games played , number of minutes played, personal efficiency rate , true shooting percentage , offensive rebounds , defensive rebounds , turnover percentage , assists , steals, blocks , turnover percentage , usage percentage , offensive rating, defensive rating and win shares while the categorical variables are the position and the team a player in.
+There are 2 categorical variables and 19 numeric variables regarding players' personal information and game performance, with an additional unique ID of each record in the datasets. The numeric variables includes salary, age, number of games played , number of minutes played, personal efficiency rate , true shooting percentage, offensive rebounds , defensive rebounds , turnover percentage , assists , steals, blocks , turnover percentage , usage percentage , offensive rating, defensive rating and win shares while the categorical variables are the position and the team a player in.
 
 The `NBA_train` dataset is used for training and validating predictive models in this project while the `NBA_test` dataset is used for testing selected models. Therefore the exploratory data analysis is conducted based on the `NBA_train` dataset.
 
-Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win share and win share.
+Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win share and win share. Althought other varables show mild linear relationship with salary, there can be other linkage between salary and these variables. Thus variables showing no linearity with salary can still be potentially informative and should be left for further feature selection when developing predictive models.
 
 \begin{wrapfigure}{l}{0.5\textwidth}
 \includegraphics[width=0.8\linewidth]{correlation.png}
@@ -81,18 +81,18 @@ Figure \ref{fig:correlation} illustrate that win share, defensive win share, off
 \label{fig:correlation}
 \end{wrapfigure}
 
-The relationships between salary and the six relative variables as well as the distribution of numeric variables are further visualized by a scatter plot matrix Figure \ref{fig:scatter}. The linearity between numeric variables and salary shown in the scatter plot matrix is in line with the correlation matrix Figure \ref{fig:correlation}. Salary, win share, defensive win share and offensive win share are significantly right-skewed while usage percentage and  personal efficiency rate are slightly right-skewed. Moreover, the distributions demonstrates a small variance of number of minutes played. The variables discussed above would be the main focus of the predictive model development.
+The relationships between salary and the six relative variables as well as the distribution of numeric variables are further visualized by a scatter plot matrix. In Figure \ref{fig:scatter}, the linearity between numeric variables and salary shown is in line with the correlation matrix (Figure \ref{fig:correlation}). Moreover, salary, win share, defensive win share and offensive win share are significantly right-skewed while usage percentage and  personal efficiency rate are slightly right-skewed. In additiona, the distributions demonstrates a small variance of number of minutes played. 
 
-\begin{figure}[H]
+\begin{figure}[h]
 \includegraphics[width=0.8\textwidth]{scatter.png}
 \centering
 \caption{Distribution of numeric variables.}
 \label{fig:scatter}
 \end{figure}
 
-Figure \ref{fig:position} describes how salary varies for players in different positions. Although the median salaries are similar at $4-6 millions for the five positions, the variance of salaries are different. The salaries for players in the center and small forward position vary significantly without any outliers whereas variances of salary for both power forward and shooting guard are much smaller with an outlier. As the distributions of salary differ for different positions, the position a player in could be the potential predictors of salaries.
+To analyse the categorical variables, Figure \ref{fig:boxes} is generated to visualise the distribution of salary. Figure \ref{fig:position} describes how salary varies for players in different positions. Although the median salaries are similar at $4-6 millions for the five positions, variances of salary are different. Salaries for players in the center and small forward position vary significantly without any outliers whereas variances of salary for both power forward and shooting guard are much smaller with an outlier. The different distributions of salary make the position a valuable predictor of salary.
 
-Outlining in Figure \ref{fig:team}, salary varies across different teams, which is reasonable in a business entity. There are many basketball teams within the NBA, resulting in small sample size of salaries in each group. Some groups, such as Los Angeles Clippers, Phoenix Surs and Denver Nuggets, have information of only one player being recorded in this dataset, making the team variable uninformative. Therefore, despite the different distributions of salary for players in different teams, the team variable is not involved in development of predictive models.
+Outlining in Figure \ref{fig:team}, salary varies across different teams, which is reasonable in a business entity. There are many basketball teams within the NBA, resulting in small sample sizes of salary in each group. Some groups, such as Los Angeles Clippers, Phoenix Surs and Denver Nuggets, have information of only one player being recorded in this dataset. Furthermoe, the team variable has no intrinsic order, and the teams in any unseen data can contain new teams. This makes the team variable less informative to engage in predictive models of salary. Therefore, despite the different distributions of salary for players in different teams, the team variable is not involved in development of predictive models.
 
 \begin{figure}[H]
 \begin{subfigure}{0.5\textwidth}
@@ -113,7 +113,7 @@ Outlining in Figure \ref{fig:team}, salary varies across different teams, which 
 
 # Feature engineering
 
-To discover any missing values involved in the datasets, bar charts of missingness are generated to visualize missingness. As shown in Figure \ref{fig:missingness}, both `NBA_train` and `NBA_test` are complete without any missing values. Moreover, Figure \ref{fig:scatter} does not show any noticeable outliers of the numeric variables. Therefore no data removal and data imputation is performed.
+To discover any missing values involved in the datasets, bar charts of missingness are generated to visualize missingness. As shown in Figure \ref{fig:missingness}, both `NBA_train` and `NBA_test` are complete without any missing values. Therefore no data removal or data imputation is performed.
 
 \begin{figure}[H]
 \begin{subfigure}{0.55\textwidth}
@@ -130,9 +130,13 @@ To discover any missing values involved in the datasets, bar charts of missingne
 \label{fig:missingness}
 \end{figure}
 
-In order to involve the categorical variable in predictive models, the variable position played is encoded by a dummy variable whose values of `1`, `2`, `3`, `4`, `5` represent center(C), power forward(PF), point guard(PG), small forward(SF) and shooting guard(SG) respectively.
+According to the results of exploratory data analysis, the record ID and team played are uninformative for predicting salary wherease the position the player in which is a categorical is not Therefore these two variables are discarded whereas the salary is extracted from the `NBA_train` and `NBA_test` datasets to be the response. There are 19 numeric features and 1 categorical features, including age, number of games played , number of minutes played, personal efficiency rate , true shooting percentage, offensive rebounds , defensive rebounds , turnover percentage , assists , steals, blocks , turnover percentage , usage percentage , offensive rating, defensive rating, win shares and team the player in, remaining for predictive model development
 
-# Methodology of the linear regression and kNN regression models
+In order to involve the categorical variable in predictive models, the position variable is replaced by several dummy variables `C`, `PF`, `PG`, `SF` and `SG` describing position of the play. The value of these dummy variables equal to 1 if a play is in the corresponding position, otherwise the value is 0.
+
+After selecting and preprocessing the potentially informative features, following the 80/20 rule, the `NBA_train` dataset is splitted into the training set and validation set. The training set is used to develop models while the validation set helps to select models developed. 
+
+# Methodology of K-nearest neighbour regression and linear regression models
 
 
 \begin{figure}[H]
@@ -167,4 +171,6 @@ In order to involve the categorical variable in predictive models, the variable 
 
 - NBA Stats. (2018). NBA Stats. [online] Available at: https://stats.nba.com/.
 
-- Rençberoğlu, E. (2019). Fundamental Techniques of Feature Engineering for Machine Learning. [online] Medium. Available at: https://towardsdatascience.com.
+- Rençberoğlu, E. (2019). Fundamental Techniques of Feature Engineering for Machine Learning. [online] Medium. Available at: https://towardsdatascience.com/.
+
+- Richards, J. (2020). Why We Use an 80/20 Split for Training and Test Data Plus an Alternative Method. [online] Medium. Available at: https://towardsdatascience.com/.
