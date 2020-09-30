@@ -1,0 +1,156 @@
+---
+title: "DATA2002 Lab6"
+author: "Jing Yang \ 480110301"
+date: "9/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+```
+
+# Group discussion
+
+## Which of the tests that we have considered so far in DATA2002 can be applied here? Why might you use one instead of the other?
+
+- Paired t-test is ideal as we atke the identical twins as the same
+- Wilcox signed rank because n=5 too little for t test
+- Can use sign test, though you would be sacrificing power
+
+## If you were to proceed with a Wilcoxon signed rank test, calculate the test statistic.
+```{r}
+observations = c(110,112,125,120,139,128,142,135,127,126)
+
+mat = matrix(observations, ncol = 2, byrow = T)
+
+colnames(mat) = c("experiment","control")
+rownames(mat) = paste0("pair_",1:5)
+mat = as.data.frame(mat)
+
+diff = mat[,1] - mat[,2]
+mat$diff = diff
+mat$rank = rank(abs(diff))
+mat$signed = sapply(1:length(diff), function(x)
+if(diff[x]<0){-mat$rank[[x]]} else{mat$rank[[x]]})
+
+mat$signed
+w_plus = sum(mat$signed[mat$signed > 0])
+w_minus = sum(abs(mat$signed[mat$signed < 0]))
+
+min(c(w_plus,w_minus))
+
+mat
+```
+
+## Under the null hypothesis of no difference in the mean IQ score between the experimental and control group, what is the expected value of the Wilcoxon signed rank test statistic?
+```{r}
+# expected value
+total_sum = sum(1:5)/2
+sum(1:5)/2
+```
+
+## If you had to guess which of the following p-values looks most reasonable for this example?
+
+- a. 0.0001
+- b. 0.9663
+- c. 0.0938
+- d. 0.4367
+
+Ans: b?
+
+# Questions
+
+## Drug abuse and IQ
+
+```{r}
+iq = c(100, 90, 135, 108, 107, 119, 127, 109, 105)
+
+boxplot(iq)
+
+qqnorm(iq, pch = 1, frame = FALSE)
+qqline(iq, col = "steelblue", lwd = 2)
+```
+
+
+```{r}
+iq.mat = iq.mat
+diff = iq - 107
+# calculate rank
+
+```
+
+```{r}
+t.test(iq, alternative = 'greater', correct = FALSE)
+```
+
+## Weight gain
+```{r}
+wdat = data.frame(
+  weight = c(12, 16, 16, 12, 10, 30, 12, 24, 32, 24),
+  diet = rep(c("X","Y"), each = 5)
+)
+
+ggplot(wdat,aes(x = weight, fill = diet))+
+geom_density(alpha = 0.5) +
+theme_bw(base_size = 34)
+
+wdat = wdat %>% mutate(rank = rank(weight))
+
+sum_wdat = wdat %>%
+  group_by(diet) %>%
+  summarise(n=n(),
+            w = sum(rank)
+  )
+
+sum_wdat
+```
+
+## How fast can you type?
+
+### Add a column called diff to the data frame x that equals the difference between the Brand A speeds and the Brand B speeds. Also add a column ranks that has the ranks of the absolute values of the differences.
+```{r}
+x = data.frame(
+  ea = c("Amy", "Bruce", "Carol", "Dion",
+                "Ellen", "Fred", "Gwen", "Hugh",
+                "Ingrid", "Kenneth"),
+  brand_a = c(74, 80, 68, 74, 86, 75, 78, 69, 76, 77),
+  brand_b = c(72, 86, 72, 70, 85, 73, 72, 65, 79, 75)
+)
+x = x %>% mutate(
+  diff = brand_a - brand_b,
+  rank = rank(abs(diff))
+)
+x
+```
+
+### Generate diagnostic plots to ascertain whether or not the differences are normally distributed. Discuss, with reference to the diagnostic plots, why you think the differences can or cannot be reasonably assumed to follow a normal distribution.
+
+```{r}
+qqnorm(x$diff, pch = 1, frame = FALSE)
+qqline(x$diff, col = "steelblue", lwd = 2)
+
+boxplot(x$diff)
+```
+### Perform the sign test to determine if these data provide enough evidence at the 5% significance level to infer that the brands differ with respect to typing speed.
+
+```{r}
+x = x %>% mutate(
+  pos_d = diff > 0
+)
+
+sign = sign(x$diff)[sign(x$diff) != 0]
+table(sign)
+
+binom.test(c(7,3), p = 0.5, alternative = "two.sided")
+```
+
+
+### Perform the Wilcoxon signed-rank test at the 5% level of significance.
+```{r}
+wilcox.test(x$diff)
+wilcox.test(x$diff,correct = FALSE)
+```
+
+
