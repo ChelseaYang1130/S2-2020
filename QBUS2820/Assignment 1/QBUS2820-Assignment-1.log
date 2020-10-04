@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.4)  4 OCT 2020 16:50
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.4)  4 OCT 2020 17:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1374,6 +1374,9 @@ Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
 
 LaTeX Warning: Label `fig:knn' multiply defined.
 
+
+LaTeX Warning: Label `fig:knn' multiply defined.
+
 )
 \openout1 = `QBUS2820-Assignment-1.aux'.
 
@@ -1691,14 +1694,14 @@ File: knn_plot.png Graphic file (type bmp)
 File: poly_plot.png Graphic file (type bmp)
 <poly_plot.png>
 LaTeX Font Info:    Trying to load font information for TS1+mdbch on input line
- 276.
+ 279.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ts1m
 dbch.fd
 File: ts1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for TS1/mdbch.
 )
 LaTeX Font Info:    Font shape `TS1/mdbch/m/n' will be
-(Font)              scaled to size 11.52008pt on input line 276.
+(Font)              scaled to size 11.52008pt on input line 279.
 Package microtype Info: Character `texttwelveudash ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1720,30 +1723,22 @@ Package microtype Info: Character `texttildelow ' is missing
 Package microtype Info: Character `textcelsius ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
-
-Overfull \hbox (16.36382pt too wide) in paragraph at lines 276--280
-\T1/mdbch/m/n/12 ware, 3(22), 547, [][][]$\T1/phv/m/n/12 https : / / doi . org 
-/ 10 . 21105 / joss . 00547$[][][]\T1/mdbch/m/n/12 . 
- []
-
 Missing character: There is no ğ in font mdbchr8t!
 
-Overfull \hbox (1.5908pt too wide) in paragraph at lines 283--287
-[]\T1/mdbch/m/n/12 Rençberolu, E. (2019). Fun-da-men-tal Tech-niques
- []
-
-
-Overfull \hbox (7.02365pt too wide) in paragraph at lines 283--287
-\T1/mdbch/m/n/12 of Fea-ture En-gi-neer-ing for Ma-chine Learn-ing. [on-
- []
-
-
-Overfull \hbox (25.9871pt too wide) in paragraph at lines 283--287
-\T1/mdbch/m/n/12 line] Medium. Avail-able at: [][][]$\T1/phv/m/n/12 https : / /
- towardsdatascience .
+Overfull \hbox (0.72855pt too wide) in paragraph at lines 286--290
+[]\T1/mdbch/m/n/12 Rençberolu, E. (2019). Fun-da-men-tal Tech-
  []
 
 [4]
+Overfull \hbox (1.69623pt too wide) in paragraph at lines 290--293
+[]\T1/mdbch/m/n/12 Richards, J. (2020). Why We Use an 80/20
+ []
+
+
+Overfull \hbox (1.89133pt too wide) in paragraph at lines 290--293
+\T1/mdbch/m/n/12 ter-na-tive Method. [on-line] Medium. Avail-
+ []
+
 File: miss_house.png Graphic file (type bmp)
 <miss_house.png>
 No file QBUS2820-Assignment-1.bbl.

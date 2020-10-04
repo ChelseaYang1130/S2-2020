@@ -147,7 +147,6 @@ The K-nearest neighbour regression models are trained by one of the 19 numeric f
 
 The model training by the win share and K = 19 which has a validation error of 4.2615 ($ Millions) is chosen as the optimal K-nearest neighbour regression model. With this model, 19 neighbours are considered to examine the value of the point of interest for win share. 
 
-
 # Methodology of linear regression models
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -156,6 +155,8 @@ The model training by the win share and K = 19 which has a validation error of 4
 \caption{Scatter plot of K-nearest neighbour model.}
 \label{fig:knn}
 \end{wrapfigure}
+
+The polynomial regression models are trained by one of the 19 numeric features. The maximum polynomial degree vary from 1 to 10. 
 
 # Methodology of lasso regression models
 
