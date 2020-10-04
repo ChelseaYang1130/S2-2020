@@ -58,6 +58,9 @@
 % If your first paragraph (i.e. with the \dropcap) contains a list environment (quote, quotation, theorem, definition, enumerate, itemize...), the line after the list may have some extra indentation. If this is the case, add \parshape=0 to the end of the list environment.
 
 
+\hypertarget{task-1}{%
+\section{Task 1}\label{task-1}}
+
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
@@ -217,33 +220,40 @@ turnover percentage , usage percentage , offensive rating, defensive
 rating, win shares and team the player in, engaging in predictive model
 development.
 
-After selecting and preprocessing the potential features and response,
-following the 80/20 rule, the \texttt{NBA\_train} dataset is splitted
-into the training set and validation set. The training set is used to
-develop models while the validation set helps to select models
-developed.
-
 \hypertarget{methodology-of-k-nearest-neighbour-regression-models}{%
 \section{Methodology of K-nearest neighbour regression
 models}\label{methodology-of-k-nearest-neighbour-regression-models}}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{knn_plot.png}
+\centering
+\caption{Scatter plot of K-nearest neighbour model.}
+\label{fig:knn}
+\end{wrapfigure}
+
+The K-nearest neighbour regression models are trained by one of the 19
+numeric features. The value of K varies from 1 to 50 for each feature.
+Totally 950 models are developed by changing the feature and the value
+of k. 5-fold cross validation is applied to assess negative mean square
+errors of models, followed by transferring negative mean square errors
+to root mean square errors. The model with the smallest root mean square
+error is selected as the optimal model.
+
+The model training by the win share and K = 19 which has a validation
+error of 4.2615 (\$ Millions) is chosen as the optimal K-nearest
+neighbour regression model. With this model, 19 neighbours are
+considered to examine the value of the point of interest for win share.
 
 \hypertarget{methodology-of-linear-regression-models}{%
 \section{Methodology of linear regression
 models}\label{methodology-of-linear-regression-models}}
 
-\begin{figure}[H]
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{knn_models.png} 
-\caption{Top 5 K nearest neighbor models with the highest validation errors.}
-\label{fig:subim1}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{poly_models.png}
-\caption{Top 5 polynomial linear regression models with the highest validation errors.}
-\label{fig:subim2}
-\end{subfigure}
-\caption{Validation errors of 10 models developed.}
-\end{figure}
+\begin{wrapfigure}{r}{0.5\textwidth}
+\includegraphics[width=0.8\linewidth]{poly_plot.png}
+\centering
+\caption{Scatter plot of K-nearest neighbour model.}
+\label{fig:knn}
+\end{wrapfigure}
 
 \hypertarget{methodology-of-lasso-regression-models}{%
 \section{Methodology of lasso regression
@@ -278,6 +288,19 @@ models}\label{methodology-of-lasso-regression-models}}
   Data Plus an Alternative Method. {[}online{]} Medium. Available at:
   \url{https://towardsdatascience.com/}.
 \end{itemize}
+
+\hypertarget{task-2}{%
+\section{Task 2}\label{task-2}}
+
+\hypertarget{exploratory-data-analysis}{%
+\section{Exploratory data analysis}\label{exploratory-data-analysis}}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{miss_house.png}
+\centering
+\caption{Barchart of missingness for `Boston housing` dataset.}
+\label{fig:knn}
+\end{wrapfigure}
 
 %\showmatmethods
 

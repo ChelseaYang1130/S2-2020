@@ -56,6 +56,8 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.pos = 
 library(EBImage)
 ```
 
+# Task 1
+
 # Introduction
 
 Although the NBA is known for being a sport league across globe, it is a vast economic entity as well. Undoubtedly, it has been a major impact in the past decades, and it does not seem to be slowing down anytime soon. Hence, economy is also a huge part of the business. Beside the League’s branding, its commercial success is contributed by the players at large as they make the trends on social media and attract costumers to buy their products in a constance. However, the most important attribute of a player is none other than his performance on the court. Performance is what NBA players thrive for as it decides their salary level. How much salary a player is worth can be a hard estimation to the teams because the performance of athlete fluctuates. Furthermore, the salary cap of the League as a whole, too, fluctuate every year. Fortunately, the League records players’ data in various categories which include field goal attempted, field goal percentage, offensive and defensive ratings, etc. Data is a powerful tool because it can reflect a player’s contribution on the court with precision. Accompanied by the comparison of the salaries given to a certain level of player, data can serve as a strong reference that allows objective calculations. 
@@ -132,27 +134,28 @@ To discover any missing values involved in the datasets, bar charts of missingne
 
 According to the results of exploratory data analysis, the record ID, position a player in and team played are uninformative for predicting salary. Therefore these three variables are discarded whereas the salary is extracted from the `NBA_train` and `NBA_test` datasets to be the response. There are 19 numeric features including age, number of games played , number of minutes played, personal efficiency rate , true shooting percentage, offensive rebounds , defensive rebounds , turnover percentage , assists , steals, blocks , turnover percentage , usage percentage , offensive rating, defensive rating, win shares and team the player in, engaging in predictive model development.
 
-After selecting and preprocessing the potential features and response, following the 80/20 rule, the `NBA_train` dataset is splitted into the training set and validation set. The training set is used to develop models while the validation set helps to select models developed. 
-
 # Methodology of K-nearest neighbour regression models
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{knn_plot.png}
+\centering
+\caption{Scatter plot of K-nearest neighbour model.}
+\label{fig:knn}
+\end{wrapfigure}
+
+The K-nearest neighbour regression models are trained by one of the 19 numeric features. The value of K varies from 1 to 50 for each feature. Totally 950 models are developed by changing the feature and the value of k. 5-fold cross validation is applied to assess negative mean square errors of models, followed by transferring negative mean square errors to root mean square errors. The model with the smallest root mean square error is selected as the optimal model.
+
+The model training by the win share and K = 19 which has a validation error of 4.2615 ($ Millions) is chosen as the optimal K-nearest neighbour regression model. With this model, 19 neighbours are considered to examine the value of the point of interest for win share. 
 
 
 # Methodology of linear regression models
 
-
-\begin{figure}[H]
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{knn_models.png} 
-\caption{Top 5 K nearest neighbor models with the highest validation errors.}
-\label{fig:subim1}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{poly_models.png}
-\caption{Top 5 polynomial linear regression models with the highest validation errors.}
-\label{fig:subim2}
-\end{subfigure}
-\caption{Validation errors of 10 models developed.}
-\end{figure}
+\begin{wrapfigure}{r}{0.5\textwidth}
+\includegraphics[width=0.8\linewidth]{poly_plot.png}
+\centering
+\caption{Scatter plot of K-nearest neighbour model.}
+\label{fig:knn}
+\end{wrapfigure}
 
 # Methodology of lasso regression models
 
@@ -172,3 +175,14 @@ After selecting and preprocessing the potential features and response, following
 - Rençberoğlu, E. (2019). Fundamental Techniques of Feature Engineering for Machine Learning. [online] Medium. Available at: https://towardsdatascience.com/.
 
 - Richards, J. (2020). Why We Use an 80/20 Split for Training and Test Data Plus an Alternative Method. [online] Medium. Available at: https://towardsdatascience.com/.
+
+# Task 2
+
+# Exploratory data analysis
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{miss_house.png}
+\centering
+\caption{Barchart of missingness for `Boston housing` dataset.}
+\label{fig:knn}
+\end{wrapfigure}
