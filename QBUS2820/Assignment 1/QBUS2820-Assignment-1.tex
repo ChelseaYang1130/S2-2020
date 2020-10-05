@@ -330,7 +330,18 @@ of liner regression analysis, conducts both feature selection and
 regularization. This helps to enhance the predictive performance and
 interpretability of the model developed.
 
-\textbf{how it works?}
+The objective of a lasso regression model is to minimize
+\(\sum^n_{i=1}(y_i-\sum_jx_{ij}\beta_j)^2+\alpha\sum^p_{j=1}|\beta_j|\),
+where \(\alpha\) is a tuning parameter which represents how strong the
+L1 regularization penalise coefficients of the lasso regression model.
+Changing the value of \(\alpha\) influences the number of features
+eliminated. When \(\alpha=0\), coefficients of features are not
+panalised such that no feature is removed. As the value of \(\alpha\)
+increases, L1 penalty gets stronger and therefore more features are
+eliminated, vice versa. Furthermore, the value of \(\alpha\) also
+affects the bias-variance trade-off. An increase of \(\alpha\) leads to
+increase in bais while a decrease of \(\alpha\) results in increase in
+variance.
 
 Lasso regression model automates feature selection whereas multiple
 linear regression model require additional feature selection approach to
@@ -338,18 +349,37 @@ deal with multicollinearity. Moreover, L1 regularization which penalizes
 the coefficients of linear regression model is performed with lasso
 regression. In the source data of this project, outliers and
 multicollinearity exist in several pairs of features. In this case,
-Lasso with automated feature selection and regularization could be
-better-suited for the data compared to regular linear regression.
+lasso regression with automated feature selection and regularization
+could be better-suited for the data compared to regular linear
+regression.
 
 Lasso regression is a supervised learning technique while K-nearest
 neighbour regression is an unsupervised learning technique, which means
 a linear funcation is pre-deined for lasso regression when K-nearest
-neighbour regression observe pattern in the data without fix function.
+neighbour regression observes pattern in the data without fix function.
 As such, lasso regression is more interpretable but less flexible than
 k-nearest neighbour regression. In this project, one of the goals is to
-discover dominant factors of salary for NBA players. to acheive this
+discover dominant factors of salary for NBA players. To acheive this
 goal, a lasso regression model which can clearly define weights of
 features is more powerful compared to a KNN regression model.
+
+19 numeric features are fed into lasso regression models with 7 values
+of alpha: 0.0001, 0.001, 0.01, 0.1, 0.5, 5 and 10. 5-fold cross
+validation is then applied to assess predictive performance of models.
+The optimal lasso model is selected based on negative mean squared
+error, the smaller the negative mean squared error, the better the lasso
+model performs.
+
+The optimal value of \(\alpha\) is 0.5 for this data. With this value of
+\(\alpha\), 10 features are selected with the predictive function:
+\(Salary = 25.18-0.0044~Age-0.18~Games+0.0056~Minutes+0.1~PER+0.036~DRB-0.054~AST+0.098~TOV+0.27~USG-0.23~RDtg+0.17～WS\).
+This indicates that salary increases with increases in number of minutes
+played, personal efficiency rate, defensive rebounds, turn over
+percentage, usage percentage and number of win shares while decreases in
+age, number of games played, assists and defensive rating result in an
+increase in salary. The validation root mean squared of the model is
+-12.8575 (\$ Millions), which is the best performance among 7 lasso
+regression models developed.
 
 \hypertarget{test-set-performance}{%
 \section{Test set performance}\label{test-set-performance}}

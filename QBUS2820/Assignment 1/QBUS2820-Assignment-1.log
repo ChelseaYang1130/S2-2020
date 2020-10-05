@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.4)  5 OCT 2020 17:14
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.4)  5 OCT 2020 21:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1688,15 +1688,16 @@ File: poly_plot.png Graphic file (type bmp)
 <poly_plot.png>
 Missing character: There is no ～ in font mdbchr7t!
 [5]
+Missing character: There is no ～ in font mdbchr7t!
 LaTeX Font Info:    Trying to load font information for TS1+mdbch on input line
- 373.
+ 403.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ts1m
 dbch.fd
 File: ts1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for TS1/mdbch.
 )
 LaTeX Font Info:    Font shape `TS1/mdbch/m/n' will be
-(Font)              scaled to size 11.52008pt on input line 373.
+(Font)              scaled to size 11.52008pt on input line 403.
 Package microtype Info: Character `texttwelveudash ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1719,19 +1720,19 @@ Package microtype Info: Character `textcelsius ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
 
-Overfull \hbox (13.29927pt too wide) in paragraph at lines 377--381
+Overfull \hbox (13.29927pt too wide) in paragraph at lines 407--411
 [][][]$\T1/phv/m/n/12 https : / / www . statisticshowto . com / lasso-[]regress
 ion / #$[][][]\T1/mdbch/m/n/12 :~:text=Lasso%20regression%20is%20a%20type. 
  []
 
+[6]
 Missing character: There is no ğ in font mdbchr8t!
 
-Overfull \hbox (9.73152pt too wide) in paragraph at lines 400--402
+Overfull \hbox (9.73152pt too wide) in paragraph at lines 430--432
 []\T1/mdbch/m/n/12 Basketball-Reference.com. NBA Win Shares. [on-line] Avail-ab
 le at: [][][]$\T1/phv/m/n/12 https : / / www . basketball-[]reference .
  []
 
-[6]
 File: miss_house.png Graphic file (type bmp)
 <miss_house.png>
 No file QBUS2820-Assignment-1.bbl.
