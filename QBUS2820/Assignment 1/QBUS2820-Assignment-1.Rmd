@@ -74,14 +74,16 @@ There are 2 categorical variables and 19 numeric variables regarding players' pe
 
 The `NBA_train` dataset is used for training and validating predictive models in this project while the `NBA_test` dataset is used for testing selected models. Therefore the exploratory data analysis is conducted based on the `NBA_train` dataset.
 
-Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win share and win share. Although other variables show mild linear relationship with salary, there can be other linkage between salary and these variables. Thus variables showing no linearity with salary can still be potentially informative and should be left for further feature selection when developing predictive models.
-
-\begin{wrapfigure}{l}{0.5\textwidth}
-\includegraphics[width=0.8\linewidth]{correlation.png}
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{correlation.png}
 \centering
 \caption{Correlations between numeric variables based on correlation coefficients.}
 \label{fig:correlation}
 \end{wrapfigure}
+
+Figure \ref{fig:correlation} illustrate that win share, defensive win share, offensive win share, number of minutes played and personal efficiency rate show linear relationships with salary, with win share having the strongest linear relationship with salary at a correlation coefficient of 0.68. It also provides evidences of linearity between offensive win share, defensive win share and win share. Although other variables show mild linear relationship with salary, there can be other linkage between salary and these variables. Thus variables showing no linearity with salary can still be potentially informative and should be left for further feature selection when developing predictive models. 
+
+Moreover, colinearity is observed between several variables. One the one hand, the number of win shares which is linearly related to salary is also found to be correlated with number of offensive win shares and number of defensive win shares. One the other hand, total rebound is linearly related to both offensive rebound and defensive rebound.
 
 The relationships between salary and the six relative variables as well as the distribution of numeric variables are further visualized by a scatter plot matrix. In Figure \ref{fig:scatter}, the linearity between numeric variables and salary shown is in line with the correlation matrix (Figure \ref{fig:correlation}). Moreover, salary, win share, defensive win share and offensive win share are significantly right-skewed while usage percentage and  personal efficiency rate are slightly right-skewed. In additions, the distributions demonstrates a small variance of number of minutes played. 
 
@@ -136,38 +138,63 @@ According to the results of exploratory data analysis, the record ID, position a
 
 # Methodology of K-nearest neighbour regression models
 
+The K-nearest neighbour regression models are trained by one of the 19 numeric features, with different values of K ranging from 1 to 50. Totally 950 models are developed by changing the feature and the value of k. 5-fold cross validation is applied to assess negative mean square errors of models, followed by transferring negative mean square errors to root mean square errors. The model with the smallest root mean square error is selected as the optimal model.
+
 \begin{wrapfigure}{r}{0.4\textwidth}
 \includegraphics[width=1\linewidth]{knn_plot.png}
 \centering
-\caption{Scatter plot of K-nearest neighbour model.}
+\caption{Visualizing the K-nearest neighbour model with K = 19 and number of win shares as the feature.}
 \label{fig:knn}
 \end{wrapfigure}
 
-The K-nearest neighbour regression models are trained by one of the 19 numeric features. The value of K varies from 1 to 50 for each feature. Totally 950 models are developed by changing the feature and the value of k. 5-fold cross validation is applied to assess negative mean square errors of models, followed by transferring negative mean square errors to root mean square errors. The model with the smallest root mean square error is selected as the optimal model.
-
-The model training by the win share and K = 19 which has a validation error of 4.2615 ($ Millions) is chosen as the optimal K-nearest neighbour regression model. With this model, 19 neighbours are considered to examine the value of the point of interest for win share. 
+The model trained by the number of win shares and a k of 19, which has a validation error of 4.2615 ($ Millions), is chosen to be the optimal K-nearest neighbour regression model. With this model, 19 neighbours are considered to examine the value of salary with specific number of win shares. Figure \ref{fig:knn} visualizes this k-nearest neighbour regression model with observed data points of salary against number of win shares. Generally, the salary is predicted to increase as number of win shares increases, which is logical with the economic concern of the NBA. The more games a player win, the more valuable he is in the basketball team and thus the play deserves a higher salary. The model predicts salary to remain stable when 10 win shares is reached, which is not in line with observed data points. This may result from the small number of data points with number of win shares greater than 10, resulting in insufficient neigbours for k-nearest neighbour model training. 
 
 # Methodology of linear regression models
 
-\begin{wrapfigure}{r}{0.5\textwidth}
-\includegraphics[width=0.8\linewidth]{poly_plot.png}
+The polynomial regression models are trained by one of the 19 numeric features with a polynomial degree varying between 1 and 10. 190 polynomial regression models are developed by selecting different feature and the polynomial degree of the model. 
+
+Multiple linear regression models are also developed with different features. Recursive feature elimination (RFE) which is a feature selection method is applied. It removes weakest features based on corresponding coefficients of linear regression model until the required number of features is reached. The dependencies and colinearity between features are also captured and eliminated by this method. As discussed in the exploratory data analysis, there is colinerity between number of defensive win shares, offensive win shares and win shares, and between total rebound, offensive rebound and defensive rebounds. In order to avoid violating the assumption of multiple linear regression, the number of offensive win share and defensive win shares, offensive rebound and defensive rebound are removed from the feature pool for feature selection, leading to 15 numeric variables remaining in the feature pool. The number of features required for recursive feature elimination varies from 1 to 15, as such simple linear regression models with one feature are also estimated in this approach.
+
+Negative mean square errors of these models are obtained by implementing 5-fold cross validation. Root mean square errors are then calculated to determine the optimal models of polynomial linear regression and multiple linear regression.
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{poly_plot.png}
 \centering
-\caption{Scatter plot of K-nearest neighbour model.}
-\label{fig:knn}
+\caption{Visualizing the polynomial regression model and linear model with number of win share as feature. The polynomial regression model has a polynomial degree of 2.}
+\label{fig:poly}
 \end{wrapfigure}
 
-The polynomial regression models are trained by one of the 19 numeric features. The maximum polynomial degree vary from 1 to 10. 
+The optimal polynomial regression model contains number of win shares as the feature and a polynomial degree of 2. The predictive function of the model is: $Salary=1.4213+1.4339~WS-0.0219~WS^2$, where $WS$ is the number of win shares. As shown in Figure \ref{fig:poly}, The polynomial regression better fits the observed data compared to the linear regression model as it captures more variance of salary with regard to different number of win shares.
+
+The optimal multiple regression model involves 14 numeric features, having the root mean square error of 3.792 ($ Millions). The predictive function is $Salary = 10.53-0.1~Age-0.16~Games+0.0037~Minutes-0.25~PER-0.098~TS+0.2~TRB-0.062~AST+0.58~STL-0.21~BLK+0.12~TOV+0.51~USG+0.11~ORtg-0.19～DRtg+0.49~WS$, where salary rises with incrase in number of minutes played, total rebounds, number of steals, turnover percentage, usage percentage, offensive rating, win shares, and decrease in age, number of games played, personal efficiency rating, true shooting percentage, assists, blocks, defensive rating. 
+
+With a smaller root mean square error of training model, the optimal multiple linear regression model including 14 features are finally selected as the optimal linear regression model. 
 
 # Methodology of lasso regression models
+
+Least absolute shrinkage and selection operator (Lasso), as an extension of liner regression analysis, conducts both feature selection and regularization. This helps to enhance the predictive performance and interpretability of the model developed.
+
+**how it works?**
+
+Lasso regression model automates feature selection whereas multiple linear regression model require additional feature selection approach to deal with multicollinearity. Moreover, L1 regularization which penalizes the coefficients of linear regression model is performed with lasso regression. In the source data of this project, outliers and multicollinearity exist in several pairs of features. In this case, Lasso with automated feature selection and regularization could be better-suited for the data compared to regular linear regression.
+
+Lasso regression is a supervised learning technique while K-nearest neighbour regression is an unsupervised learning technique, which means a linear funcation is pre-deined for lasso regression when K-nearest neighbour regression observe pattern in the data without fix function. As such, lasso regression is more interpretable but less flexible than k-nearest neighbour regression. In this project, one of the goals is to discover dominant factors of salary for NBA players. to acheive this goal, a lasso regression model which can clearly define weights of features is more powerful compared to a KNN regression model.
+
 
 # Test set performance
 
 
 # Analysis and conclusions
 
+**KNN Discussion** A potential solution to this issue is to choose a smaller values of k so that the salary is estimated based on fewer neibours. However, this could be a trade-off to worsen the predictive performance of the model.
+
 # Appendix
 
 # References
+
+- Pedregosa, F., et al. (2011). “Scikit-Learn: Machine Learning in Python.” Journal of Machine Learning Research, vol. 12, pp. 2825–2830.
+
+- Stephanie (2015). Lasso Regression: Simple Definition. [online] Statistics How To. Available at: https://www.statisticshowto.com/lasso-regression/#:~:text=Lasso%20regression%20is%20a%20type.
 
 - Bilogur, (2018). Missingno: a missing data visualization suite. Journal of Open Source Software, 3(22), 547, https://doi.org/10.21105/joss.00547.
 
@@ -175,7 +202,12 @@ The polynomial regression models are trained by one of the 19 numeric features. 
 
 - Rençberoğlu, E. (2019). Fundamental Techniques of Feature Engineering for Machine Learning. [online] Medium. Available at: https://towardsdatascience.com/.
 
+- Wikipedia Contributors (2019). Lasso (statistics). [online] Wikipedia. Available at: https://en.wikipedia.org/wiki/Lasso_(statistics).
+
 - Richards, J. (2020). Why We Use an 80/20 Split for Training and Test Data Plus an Alternative Method. [online] Medium. Available at: https://towardsdatascience.com/.
+
+- Basketball-Reference.com. NBA Win Shares. [online] Available at: https://www.basketball-reference.com/about/ws.html.
+
 
 # Task 2
 
@@ -185,5 +217,5 @@ The polynomial regression models are trained by one of the 19 numeric features. 
 \includegraphics[width=1\linewidth]{miss_house.png}
 \centering
 \caption{Barchart of missingness for `Boston housing` dataset.}
-\label{fig:knn}
+\label{fig:missHouse}
 \end{wrapfigure}

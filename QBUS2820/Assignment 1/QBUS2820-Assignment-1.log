@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.4)  4 OCT 2020 17:09
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.4)  5 OCT 2020 17:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1370,14 +1370,7 @@ Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
 \TX@delta=\dimen339
 \TX@cols=\count362
 \TX@ftn=\toks55
-) (./QBUS2820-Assignment-1.aux
-
-LaTeX Warning: Label `fig:knn' multiply defined.
-
-
-LaTeX Warning: Label `fig:knn' multiply defined.
-
-)
+) (./QBUS2820-Assignment-1.aux)
 \openout1 = `QBUS2820-Assignment-1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
@@ -1652,56 +1645,58 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `lmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 6.18097pt on input line 125.
-[1
-
-]
 File: correlation.png Graphic file (type bmp)
 <correlation.png>
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 7.68005pt on input line 129.
+(Font)              scaled to size 7.68005pt on input line 118.
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 7.06396pt on input line 129.
+(Font)              scaled to size 7.06396pt on input line 118.
+LaTeX Font Info:    Font shape `T1/phv/b/n' will be
+(Font)              scaled to size 6.18097pt on input line 118.
+[1
+
+]
 File: scatter.png Graphic file (type bmp)
 <scatter.png>
-[2]
 File: position_box.png Graphic file (type bmp)
 <position_box.png>
 LaTeX Font Info:    Font shape `T1/mdbch/m/n' will be
-(Font)              scaled to size 5.76004pt on input line 174.
+(Font)              scaled to size 5.76004pt on input line 180.
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 5.29797pt on input line 174.
+(Font)              scaled to size 5.29797pt on input line 180.
 File: team_box.png Graphic file (type bmp)
 <team_box.png>
 
-Overfull \hbox (2.15425pt too wide) in paragraph at lines 171--183
+Overfull \hbox (2.15425pt too wide) in paragraph at lines 177--189
 []$[]$ $[]$ 
  []
 
+[2] [3]
 File: nbaTrain_miss.png Graphic file (type bmp)
 <nbaTrain_miss.png>
 File: nbaTest_miss.png Graphic file (type bmp)
 <nbaTest_miss.png>
 
-Overfull \hbox (52.72697pt too wide) in paragraph at lines 197--207
+Overfull \hbox (52.72697pt too wide) in paragraph at lines 203--213
 []$[]$ $[]$ 
  []
 
-[3]
 File: knn_plot.png Graphic file (type bmp)
 <knn_plot.png>
+[4]
 File: poly_plot.png Graphic file (type bmp)
 <poly_plot.png>
+Missing character: There is no ～ in font mdbchr7t!
+[5]
 LaTeX Font Info:    Trying to load font information for TS1+mdbch on input line
- 279.
+ 373.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ts1m
 dbch.fd
 File: ts1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for TS1/mdbch.
 )
 LaTeX Font Info:    Font shape `TS1/mdbch/m/n' will be
-(Font)              scaled to size 11.52008pt on input line 279.
+(Font)              scaled to size 11.52008pt on input line 373.
 Package microtype Info: Character `texttwelveudash ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1723,41 +1718,36 @@ Package microtype Info: Character `texttildelow ' is missing
 Package microtype Info: Character `textcelsius ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
+
+Overfull \hbox (13.29927pt too wide) in paragraph at lines 377--381
+[][][]$\T1/phv/m/n/12 https : / / www . statisticshowto . com / lasso-[]regress
+ion / #$[][][]\T1/mdbch/m/n/12 :~:text=Lasso%20regression%20is%20a%20type. 
+ []
+
 Missing character: There is no ğ in font mdbchr8t!
 
-Overfull \hbox (0.72855pt too wide) in paragraph at lines 286--290
-[]\T1/mdbch/m/n/12 Rençberolu, E. (2019). Fun-da-men-tal Tech-
+Overfull \hbox (9.73152pt too wide) in paragraph at lines 400--402
+[]\T1/mdbch/m/n/12 Basketball-Reference.com. NBA Win Shares. [on-line] Avail-ab
+le at: [][][]$\T1/phv/m/n/12 https : / / www . basketball-[]reference .
  []
 
-[4]
-Overfull \hbox (1.69623pt too wide) in paragraph at lines 290--293
-[]\T1/mdbch/m/n/12 Richards, J. (2020). Why We Use an 80/20
- []
-
-
-Overfull \hbox (1.89133pt too wide) in paragraph at lines 290--293
-\T1/mdbch/m/n/12 ter-na-tive Method. [on-line] Medium. Avail-
- []
-
+[6]
 File: miss_house.png Graphic file (type bmp)
 <miss_house.png>
 No file QBUS2820-Assignment-1.bbl.
 
 AED: lastpage setting LastPage
-[5] (./QBUS2820-Assignment-1.aux)
+[7] (./QBUS2820-Assignment-1.aux)
 Package rerunfilecheck Info: File `QBUS2820-Assignment-1.out' has not changed.
 (rerunfilecheck)             Checksum: 858A3DE8DCB4427A7CBFC30E6D964576;914.
-
-LaTeX Warning: There were multiply-defined labels.
-
  ) 
 Here is how much of TeX's memory you used:
- 29956 strings out of 479466
- 533241 string characters out of 5880841
- 865945 words of memory out of 5000000
- 48651 multiletter control sequences out of 15000+600000
+ 29958 strings out of 479466
+ 533266 string characters out of 5880841
+ 866945 words of memory out of 5000000
+ 48653 multiletter control sequences out of 15000+600000
  584202 words of font info for 79 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 108i,11n,110p,464b,719s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 108i,12n,110p,464b,719s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on QBUS2820-Assignment-1.pdf (5 pages).
+Output written on QBUS2820-Assignment-1.pdf (7 pages).
