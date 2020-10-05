@@ -47,14 +47,17 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   
 header-includes: 
-   \usepackage{wrapfig,subcaption,array,tabularx}  
-   \captionsetup[figure]{font=scriptsize}
+   \usepackage{wrapfig,subcaption,array,tabularx,multirow,caption}  
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.pos = 'H', fig.align = 'center')
 library(EBImage)
 ```
+
+\captionsetup[figure]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
+\captionsetup[table]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
+\captionsetup[FLOAT_TYPE]{labelformat=simple, labelsep=colon}
 
 # Task 1
 
@@ -185,6 +188,23 @@ Lasso regression is a supervised learning technique while K-nearest neighbour re
 The optimal value of $\alpha$ is 0.5 for this data. With this value of $\alpha$, 10 features are selected with the predictive function: $Salary = 25.18-0.0044~Age-0.18~Games+0.0056~Minutes+0.1~PER+0.036~DRB-0.054~AST+0.098~TOV+0.27~USG-0.23~RDtg+0.17～WS$. This indicates that salary increases with increases in number of minutes played, personal efficiency rate, defensive rebounds, turn over percentage, usage percentage and number of win shares while decreases in age, number of games played, assists and defensive rating result in an increase in salary. The validation root mean squared of the model is -12.8575 ($ Millions), which is the best performance among 7 lasso regression models developed. 
 
 # Test set performance
+
+\begin{wraptable}{r}{8cm}
+\begin{tabular}{ |c|c|c|c| } 
+\hline
+\textbf{Model} & \textbf{Validation error} & \textbf{Testing error} \\
+\hline
+\textbf{KNN regression} & 4.1927 & 4.0804 \\ 
+\textbf{Multiple linear regression} & 3.7920 & 4.0532 \\
+\textbf{Lasso regression} & 3.5857 & 3.9570 \\
+\hline
+\end{tabular}
+\centering
+\caption{Summary of training and testing performance of three predictive models. Both valdation error and testing errors are estimated by root mean squared error.}
+\label{table:errors}
+\end{wraptable}
+
+Root mean squared error is used to assess the predictive performance of three models selected. As shown in Table \ref{table:errors}, predictive performances of three models are satisfactory as all test errors are less the 4.1 millions dollars. The lasso regression model with $\alpha=0.5$ has the lowest validation and testing error, at 3.5857 and 3.957 ($ Millions) respectively. Thus the lasso regression model is the best-suited the data with greatest predictive performance. The root mean squared error of test set indicates that the standard deviation of the unexplained variance of salary is 3.957 millions dollars. Moreover, it is also reflected from Table \ref{table:errors} that a model with a lower validation error tends to have a lower testing error. 
 
 # Analysis and conclusions
 

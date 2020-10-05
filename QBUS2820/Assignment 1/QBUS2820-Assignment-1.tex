@@ -19,7 +19,7 @@
 \definecolor{pnasbluetext}{RGB}{101,0,0} %
 
 
-\usepackage{wrapfig,subcaption,array,tabularx} \captionsetup[figure]{font=scriptsize}
+\usepackage{wrapfig,subcaption,array,tabularx,multirow,caption}
 
 \title{QBUS2820 Assignment 1}
 
@@ -57,6 +57,10 @@
 
 % If your first paragraph (i.e. with the \dropcap) contains a list environment (quote, quotation, theorem, definition, enumerate, itemize...), the line after the list may have some extra indentation. If this is the case, add \parshape=0 to the end of the list environment.
 
+
+\captionsetup[figure]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
+\captionsetup[table]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
+\captionsetup[FLOAT_TYPE]{labelformat=simple, labelsep=colon}
 
 \hypertarget{task-1}{%
 \section{Task 1}\label{task-1}}
@@ -383,6 +387,33 @@ regression models developed.
 
 \hypertarget{test-set-performance}{%
 \section{Test set performance}\label{test-set-performance}}
+
+\begin{wraptable}{r}{8cm}
+\begin{tabular}{ |c|c|c|c| } 
+\hline
+\textbf{Model} & \textbf{Validation error} & \textbf{Testing error} \\
+\hline
+\textbf{KNN regression} & 4.1927 & 4.0804 \\ 
+\textbf{Multiple linear regression} & 3.7920 & 4.0532 \\
+\textbf{Lasso regression} & 3.5857 & 3.9570 \\
+\hline
+\end{tabular}
+\centering
+\caption{Summary of training and testing performance of three predictive models. Both valdation error and testing errors are estimated by root mean squared error.}
+\label{table:errors}
+\end{wraptable}
+
+Root mean squared error is used to assess the predictive performance of
+three models selected. As shown in Table \ref{table:errors}, predictive
+performances of three models are satisfactory as all test errors are
+less the 4.1 millions dollars. The lasso regression model with
+\(\alpha=0.5\) has the lowest validation and testing error, at 3.5857
+and 3.957 (\$ Millions) respectively. Thus the lasso regression model is
+the best-suited the data with greatest predictive performance. The root
+mean squared error of test set indicates that the standard deviation of
+the unexplained variance of salary is 3.957 millions dollars. Moreover,
+it is also reflected from Table \ref{table:errors} that a model with a
+lower validation error tends to have a lower testing error.
 
 \hypertarget{analysis-and-conclusions}{%
 \section{Analysis and conclusions}\label{analysis-and-conclusions}}
