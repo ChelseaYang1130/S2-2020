@@ -19,7 +19,7 @@
 \definecolor{pnasbluetext}{RGB}{101,0,0} %
 
 
-\usepackage{wrapfig,subcaption,array,tabularx,multirow,caption}
+\usepackage{wrapfig,subcaption,array,tabularx,multirow,caption} \usepackage[utf8]{inputenc}
 
 \title{QBUS2820 Assignment 1}
 
@@ -156,24 +156,16 @@ right-skewed while usage percentage and personal efficiency rate are
 slightly right-skewed. In additions, the distributions demonstrates a
 small variance of number of minutes played.
 
-To analyse the categorical variables, box plots are generated to
-visualize the distribution of salary. Figure \ref{fig:position}
-describes how salary varies for players in different positions. Although
-the median salaries are similar at \$4-6 millions for the five
-positions, variances of salary are slightly different. Salaries for
-players in the center and small forward position vary significantly
-without any outliers whereas variances of salary for both power forward
-and shooting guard are smaller with an outlier. Nevertheless, the
-distributions of salary for players in different positions are similar.
-
-Outlining in Figure \ref{fig:team}, salary varies across different
-teams, which is reasonable in a business entity. There are many
-basketball teams within the NBA, resulting in small sample sizes of
-salary in each group. Some groups, such as Los Angeles Clippers, Phoenix
-Surs and Denver Nuggets, have information of only one player being
-recorded in this dataset. Furthermore, the team variable has no
-intrinsic order, and the teams in any unseen data can contain new teams.
-This makes the team variable less informative.
+To analyse the categorical variables, box plots (Figure \ref{fig:boxes})
+are generated to visualize the distribution of salary. Figure
+\ref{fig:position} describes how salary varies for players in different
+positions. Although the median salaries are similar at \$4-6 millions
+for the five positions, variances of salary are slightly different.
+Salaries for players in the center and small forward position vary
+significantly without any outliers whereas variances of salary for both
+power forward and shooting guard are smaller with an outlier.
+Nevertheless, the distributions of salary for players in different
+positions are similar.
 
 \begin{figure}[H]
 \begin{subfigure}{0.5\textwidth}
@@ -191,6 +183,15 @@ This makes the team variable less informative.
 \caption{Box plots of salaries for players in different teams and positions.}
 \label{fig:boxes}
 \end{figure}
+
+Outlining in Figure \ref{fig:team}, salary varies across different
+teams, which is reasonable in a business entity. There are many
+basketball teams within the NBA, resulting in small sample sizes of
+salary in each group. Some groups, such as Los Angeles Clippers, Phoenix
+Surs and Denver Nuggets, have information of only one player being
+recorded in this dataset. Furthermore, the team variable has no
+intrinsic order, and the teams in any unseen data can contain new teams.
+This makes the team variable less informative.
 
 \hypertarget{feature-engineering}{%
 \section{Feature engineering}\label{feature-engineering}}
@@ -439,6 +440,8 @@ deal with outliers. Moreover, a problem of whether and how the feature
 selection should be perform for k-nearest neighbour is yet to be
 discussed.
 
+\vfill
+
 \hypertarget{appendix}{%
 \section{Appendix}\label{appendix}}
 
@@ -493,11 +496,13 @@ WS & Win shares & Numeric  \\
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.85\textwidth]{scatter.png}
+\includegraphics[width=0.8\textwidth]{scatter.png}
 \centering
 \caption{Distribution of numeric variables in `NBA train` dataset.}
 \label{fig:scatter}
 \end{figure}
+
+\clearpage
 
 \hypertarget{references}{%
 \section{References}\label{references}}
@@ -585,17 +590,75 @@ Furthermore, Figure \ref{fig:houseScatter} shows that ``medv'',
 and ``rm'' follows a normal distribution. ``indus'' and ``tax'' follow
 unknow distribution with large amount of outliers.
 
-``rm'',``lstat'',``nox'',``indus'' \textbf{feature selection criteria}
-
-\textbf{explain optimal learning rate}
-
-\textbf{explain and justify approach}
+To select 3 features from 6 feature, the corelation coefficient and
+distribution of the data play is referred. As ``lstat'' and ``rm'' show
+no clear linear relationship with other variables except ``medv'',
+``lstat'' is preferred as it has a greater correlation coefficient with
+the response ``medv''. Besides, ``nox'' and ``indus'' are also selected
+as they have higher corelation coefficient and follow a clear
+distribution compared to ``ptratio'' and ``tax''. As such, by
+considering multicolinearity and the strength of linear relationships
+with ``medv'', ``lstat'', ``nox'' and ``indus'' are selected to engage
+in the linear regression model.
 
 \hypertarget{gradient-ascent-algorithm}{%
 \section{Gradient ascent algorithm}\label{gradient-ascent-algorithm}}
 
+To develop the gradient ascent algorithm for maximum likelihood
+estimaton, the log-likelihood is calculated by
+\(L=-\frac{1}{2N}\sum^N_{i=1}(y_i-\beta_0-\sum^p_{j=1}\beta_ix_{ij})^2\).
+The reason why log-likelihood rather than likelihood is used is that the
+logorithm transfers multiplication to sum in the function so that it is
+easier to calculate differentiation. The gradients of parameters are
+then calculated by the matrix representation
+\(\frac{\bigtriangleup L(\beta)}{\bigtriangleup \beta}=\frac{1}{N}X^T(y-f(X))\).
+The gradient ascent approach is initialised by a point of
+\(\beta=[0,...,0]^T\). In each iteration, \(\beta\) is updated to
+\(\beta+\alpha\frac{\bigtriangleup L(\beta)}{\bigtriangleup \beta}\),
+where \(\alpha\) is the learning rate controling the step of increase in
+\(\beta\) for each iteration, until convergence (i.e.~the gradient has
+minal changes).
+
+With the same number of iteration, different values of learning can
+influences the predictive performance of models. In this project,
+performance of gradient asccent models with learning rates of 0.001,
+0.01, 0.1 and 1 is estimated while the number of iteration is set to be
+500 which is large enough for likelihood to converge. Leave one out
+cross validation is applied, with mean squared error being the cross
+validation score to assess the performance of models.
+
+\begin{wraptable}{r}{6cm}
+\begin{tabular}{ |c|c| } 
+\hline
+\textbf{Learning rate} & \textbf{CV score (MSE)} \\
+\hline
+0.001 & 0.4447 \\
+0.01 & 0.4485 \\
+0.1 & 0.4485 \\
+1 & 0.04485 \\
+\hline
+\end{tabular}
+\centering
+\caption{CV scores of gradient aescent models}
+\label{table:cvScore}
+\end{wraptable}
+
+As shown in Table \ref{table:cvScore}, the optimal learning rate is
+0.001, which results in the smallest mean squared error of the linear
+regression model at 0.4447. This indicates that the linear regression
+model applying gradient ascent with \(\alpha=0.001\) for maximum
+likelihood estimation has a standard deviation of unexplained variance
+of ``medv'' at 0.4447.
+
 \hypertarget{appendix-1}{%
 \section{Appendix}\label{appendix-1}}
+
+\begin{figure}[h]
+\includegraphics[width=0.85\textwidth]{houseScatter.png}
+\centering
+\caption{Distribution of numeric variables in `Boston housing` dataset.}
+\label{fig:houseScatter}
+\end{figure}
 
 \begin{table}[ht]
 \centering
@@ -623,12 +686,22 @@ lstat & -0.7377 & 0.7377 \\
 \label{table:corrTab}
 \end{table}
 
-\begin{figure}
-\includegraphics[width=0.85\textwidth]{houseScatter.png}
-\centering
-\caption{Distribution of numeric variables in `Boston housing` dataset.}
-\label{fig:houseScatter}
-\end{figure}
+\hypertarget{references-1}{%
+\section{References}\label{references-1}}
+
+\begin{itemize}
+\item
+  James, G., Witten, D., Hastie, T. and Tibshirani, R. An introduction
+  to statistical learning: with applications in R. Springer-Verlag, New
+  York: Springer Texts in Statistics.
+\item
+  Brownlee, J. (2019). Understand the Impact of Learning Rate on Neural
+  Network Performance. {[}online{]} Machine Learning Mastery. Available
+  at: \url{https://machinelearningmastery.com/}.
+\item
+  Wikipedia. (2020). Learning rate. {[}online{]} Available at:
+  \url{https://en.wikipedia.org/wiki/Learning_rate}.
+\end{itemize}
 
 %\showmatmethods
 

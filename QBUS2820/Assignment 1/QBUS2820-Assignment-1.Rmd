@@ -47,7 +47,8 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   
 header-includes: 
-   \usepackage{wrapfig,subcaption,array,tabularx,multirow,caption}  
+   \usepackage{wrapfig,subcaption,array,tabularx,multirow,caption} 
+   \usepackage[utf8]{inputenc} 
 ---
 
 ```{r setup, include=FALSE}
@@ -88,9 +89,7 @@ Moreover, colinearity is observed between several variables. The number of win s
 
 The relationships between salary and the six relative variables as well as the distribution of numeric variables are further visualized by a scatter plot matrix. In Figure \ref{fig:scatter}, the linearity between numeric variables and salary shown is in line with the correlation matrix (Figure \ref{fig:correlation}). Moreover, salary, win share, defensive win share and offensive win share are significantly right-skewed while usage percentage and  personal efficiency rate are slightly right-skewed. In additions, the distributions demonstrates a small variance of number of minutes played. 
 
-To analyse the categorical variables, box plots are generated to visualize the distribution of salary. Figure \ref{fig:position} describes how salary varies for players in different positions. Although the median salaries are similar at $4-6 millions for the five positions, variances of salary are slightly different. Salaries for players in the center and small forward position vary significantly without any outliers whereas variances of salary for both power forward and shooting guard are smaller with an outlier. Nevertheless, the distributions of salary for players in different positions are similar. 
-
-Outlining in Figure \ref{fig:team}, salary varies across different teams, which is reasonable in a business entity. There are many basketball teams within the NBA, resulting in small sample sizes of salary in each group. Some groups, such as Los Angeles Clippers, Phoenix Surs and Denver Nuggets, have information of only one player being recorded in this dataset. Furthermore, the team variable has no intrinsic order, and the teams in any unseen data can contain new teams. This makes the team variable less informative. 
+To analyse the categorical variables, box plots (Figure \ref{fig:boxes}) are generated to visualize the distribution of salary. Figure \ref{fig:position} describes how salary varies for players in different positions. Although the median salaries are similar at $4-6 millions for the five positions, variances of salary are slightly different. Salaries for players in the center and small forward position vary significantly without any outliers whereas variances of salary for both power forward and shooting guard are smaller with an outlier. Nevertheless, the distributions of salary for players in different positions are similar. 
 
 \begin{figure}[H]
 \begin{subfigure}{0.5\textwidth}
@@ -108,6 +107,8 @@ Outlining in Figure \ref{fig:team}, salary varies across different teams, which 
 \caption{Box plots of salaries for players in different teams and positions.}
 \label{fig:boxes}
 \end{figure}
+
+Outlining in Figure \ref{fig:team}, salary varies across different teams, which is reasonable in a business entity. There are many basketball teams within the NBA, resulting in small sample sizes of salary in each group. Some groups, such as Los Angeles Clippers, Phoenix Surs and Denver Nuggets, have information of only one player being recorded in this dataset. Furthermore, the team variable has no intrinsic order, and the teams in any unseen data can contain new teams. This makes the team variable less informative. 
 
 # Feature engineering
 
@@ -198,6 +199,8 @@ In conclusion, predictive performance can vary significantly with different feat
 
 Although the 19-nearest neighbour regression model with win shares as feature is the optimal knn model, it is not satisfactory with a relatively high test set error compared to other techniques. With regards to previous discussion, a limitation of the optimal k-nearest neighbour model is that it does not accurately predict salary for a large number of win shares because of the outliers. This can also be the main reason of the undesired predictive performance. A potential solution to this issue is to choose a smaller values of k so that the salary is estimated based on fewer neibours. However, this could worsen predictive performance of the whole model as root mean squared error increases. More attention should be paid on this trade-off in further study. Another solution could be scaling the salary with logorithm to deal with outliers. Moreover, a problem of whether and how the feature selection should be perform for k-nearest neighbour is yet to be discussed.
 
+\vfill
+
 # Appendix
 
 \begin{table}[ht]
@@ -251,11 +254,13 @@ WS & Win shares & Numeric  \\
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=0.85\textwidth]{scatter.png}
+\includegraphics[width=0.8\textwidth]{scatter.png}
 \centering
 \caption{Distribution of numeric variables in `NBA train` dataset.}
 \label{fig:scatter}
 \end{figure}
+
+\clearpage
 
 # References
 
@@ -303,16 +308,40 @@ Figure \ref{fig:houseScatter} further visualise the distribution of 6 features w
 
 Furthermore, Figure \ref{fig:houseScatter} shows that "medv", "lstat" and "nox" are right-skewed while "ptratio" is left-skewed, and "rm" follows a normal distribution. "indus" and "tax" follow unknow distribution with large amount of outliers.
 
-"rm","lstat","nox","indus"
-**feature selection criteria**
-
-**explain optimal learning rate**
-
-**explain and justify approach**
+To select 3 features from 6 feature, the corelation coefficient and distribution of the data play is referred. As "lstat" and "rm" show no clear linear relationship with other variables except "medv", "lstat" is preferred as it has a greater correlation coefficient with the response "medv". Besides, "nox" and "indus" are also selected as they have higher corelation coefficient and follow a clear distribution compared to "ptratio" and "tax". As such, by considering multicolinearity and the strength of linear relationships with "medv", "lstat", "nox" and "indus" are selected to engage in the linear regression model.
 
 # Gradient ascent algorithm
 
+To develop the gradient ascent algorithm for maximum likelihood estimaton, the log-likelihood is calculated by $L=-\frac{1}{2N}\sum^N_{i=1}(y_i-\beta_0-\sum^p_{j=1}\beta_ix_{ij})^2$. The reason why log-likelihood rather than likelihood is used is that the logorithm transfers multiplication to sum in the function so that it is easier to calculate differentiation. The gradients of parameters are then calculated by the matrix representation $\frac{\bigtriangleup L(\beta)}{\bigtriangleup \beta}=\frac{1}{N}X^T(y-f(X))$. The gradient ascent approach is  initialised by a point of $\beta=[0,...,0]^T$. In each iteration, $\beta$ is updated to $\beta+\alpha\frac{\bigtriangleup L(\beta)}{\bigtriangleup \beta}$, where $\alpha$ is the learning rate controling the step of increase in $\beta$ for each iteration, until convergence (i.e. the gradient has minal changes). 
+
+With the same number of iteration, different values of learning can influences the predictive performance of models. In this project, performance of gradient asccent models with learning rates of 0.001, 0.01, 0.1 and 1 is estimated while the number of iteration is set to be 500 which is large enough for likelihood to converge. Leave one out cross validation is applied, with mean squared error being the cross validation score to assess the performance of models.
+
+\begin{wraptable}{r}{6cm}
+\begin{tabular}{ |c|c| } 
+\hline
+\textbf{Learning rate} & \textbf{CV score (MSE)} \\
+\hline
+0.001 & 0.4447 \\
+0.01 & 0.4485 \\
+0.1 & 0.4485 \\
+1 & 0.04485 \\
+\hline
+\end{tabular}
+\centering
+\caption{CV scores of gradient aescent models}
+\label{table:cvScore}
+\end{wraptable}
+
+As shown in Table \ref{table:cvScore}, the optimal learning rate is 0.001, which results in the smallest mean squared error of the linear regression model at 0.4447. This indicates that the linear regression model applying gradient ascent with $\alpha=0.001$ for maximum likelihood estimation has a standard deviation of unexplained variance of "medv" at 0.4447.
+
 # Appendix
+
+\begin{figure}[h]
+\includegraphics[width=0.85\textwidth]{houseScatter.png}
+\centering
+\caption{Distribution of numeric variables in `Boston housing` dataset.}
+\label{fig:houseScatter}
+\end{figure}
 
 \begin{table}[ht]
 \centering
@@ -340,9 +369,10 @@ lstat & -0.7377 & 0.7377 \\
 \label{table:corrTab}
 \end{table}
 
-\begin{figure}
-\includegraphics[width=0.85\textwidth]{houseScatter.png}
-\centering
-\caption{Distribution of numeric variables in `Boston housing` dataset.}
-\label{fig:houseScatter}
-\end{figure}
+# References
+
+- James, G., Witten, D., Hastie, T. and Tibshirani, R. An introduction to statistical learning: with applications in R. Springer-Verlag, New York: Springer Texts in Statistics. 
+
+- Brownlee, J. (2019). Understand the Impact of Learning Rate on Neural Network Performance. [online] Machine Learning Mastery. Available at: https://machinelearningmastery.com/.
+
+- Wikipedia. (2020). Learning rate. [online] Available at: https://en.wikipedia.org/wiki/Learning_rate.
