@@ -253,7 +253,7 @@ WS & Win shares & Numeric  \\
 \begin{figure}
 \includegraphics[width=0.85\textwidth]{scatter.png}
 \centering
-\caption{Distribution of numeric variables.}
+\caption{Distribution of numeric variables in `NBA train` dataset.}
 \label{fig:scatter}
 \end{figure}
 
@@ -281,7 +281,14 @@ WS & Win shares & Numeric  \\
 
 # Exploratory data analysis
 
-There are 14 numeric variables in the `Boston housing` dataset. As shown in Figure \ref{fig:missHouse}, the dataset is 100% complete without missing values. **Outliers**
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{miss_house.png}
+\centering
+\caption{Bar chart of missingness for `Boston housing` dataset.}
+\label{fig:missHouse}
+\end{wrapfigure}
+
+There are 14 numeric variables in the `Boston housing` dataset. As shown in Figure \ref{fig:missHouse}, the dataset is 100% complete without missing values. 
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \includegraphics[width=1\linewidth]{house_corr.png}
@@ -290,17 +297,13 @@ There are 14 numeric variables in the `Boston housing` dataset. As shown in Figu
 \label{fig:corrHouse}
 \end{wrapfigure}
 
-From Figure \ref{fig:corrHouse} and Table \ref{table:corrTab}, "lstat", "rm" and "ptrtio" have relatively strong linear relationship with "medv".
+Based on the correlation coefficients shown in Figure \ref{fig:corrHouse} and Table \ref{table:corrTab}, "lstat", "rm" and "ptrtio" have relatively strong linear relationship with "medv" while "chas" and "dis" is mildly linearly related to "medv". To reduce the number of features, features with an absolute value of corelation coefficients with "medv" (refer to Table \ref{table:corrTab}) at less than 0.4 are discarded. 6 features which are "nox", "tax", "indus", "ptratio", "rm" and "lstat" remain for further inspection.
 
+Figure \ref{fig:houseScatter} further visualise the distribution of 6 features which show linear relationship with "medv". The linear relationships are clearly shown between "rm", "lstat" and 'medv", which indicates multicollinearity between the three variables. As such, only one of "rm" and "lastat" can be involved in the linear regression model. "nox" and "indus"  are also visualised to have mediate linear relationship with "medv" whereas the pattern of linearity of "ptratio" and "tax" is unclear.
 
+Furthermore, Figure \ref{fig:houseScatter} shows that "medv", "lstat" and "nox" are right-skewed while "ptratio" is left-skewed, and "rm" follows a normal distribution. "indus" and "tax" follow unknow distribution with large amount of outliers.
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-\includegraphics[width=1\linewidth]{miss_house.png}
-\centering
-\caption{Bar chart of missingness for `Boston housing` dataset.}
-\label{fig:missHouse}
-\end{wrapfigure}
-
+"rm","lstat","nox","indus"
 **feature selection criteria**
 
 **explain optimal learning rate**
@@ -336,3 +339,10 @@ lstat & -0.7377 & 0.7377 \\
 \caption{Correlation coefficients between "medv" and other variable in `Boston housing` dataset.}
 \label{table:corrTab}
 \end{table}
+
+\begin{figure}
+\includegraphics[width=0.85\textwidth]{houseScatter.png}
+\centering
+\caption{Distribution of numeric variables in `Boston housing` dataset.}
+\label{fig:houseScatter}
+\end{figure}

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.6)  6 OCT 2020 17:01
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.6)  6 OCT 2020 18:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1801,36 +1801,22 @@ le at: [][][]$\T1/phv/m/n/12 https : / / www . basketball-[]reference .
  []
 
 [8]
-LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
-(Font)              scaled to size 11.52008pt on input line 548.
-File: house_corr.png Graphic file (type bmp)
-<house_corr.png>
-
-Package wrapfig Warning: Collision between wrapping environments on input line 
-561.
-
 File: miss_house.png Graphic file (type bmp)
 <miss_house.png>
 
+Package wrapfig Warning: Collision between wrapping environments on input line 
+557.
+
+File: house_corr.png Graphic file (type bmp)
+<house_corr.png>
+
 Package wrapfig Warning: Stationary wrapfigure forced to float on input line 56
-8.
+4.
 
-
-Package wrapfig Warning: Stationary wrapfigure forced to float on input line 57
-0.
-
-
-Package wrapfig Warning: Stationary wrapfigure forced to float on input line 57
-2.
-
-
-Package wrapfig Warning: Stationary wrapfigure forced to float on input line 57
-5.
-
-
-Package wrapfig Warning: Stationary wrapfigure forced to float on input line 57
-8.
-
+LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
+(Font)              scaled to size 11.52008pt on input line 588.
+File: houseScatter.png Graphic file (type bmp)
+<houseScatter.png>
 No file QBUS2820-Assignment-1.bbl.
 
 Package caption Warning: Unused \captionsetup[FLOAT_TYPE] on input line 63.
@@ -1840,17 +1826,17 @@ See the caption package documentation for explanation.
 AED: lastpage setting LastPage
 [9
 
-] (./QBUS2820-Assignment-1.aux)
+] [10] [11] (./QBUS2820-Assignment-1.aux)
 Package rerunfilecheck Info: File `QBUS2820-Assignment-1.out' has not changed.
 (rerunfilecheck)             Checksum: 864E92BFA4C9FCED451765F0681C685B;1039.
  ) 
 Here is how much of TeX's memory you used:
- 30100 strings out of 479465
- 535937 string characters out of 5880823
+ 30107 strings out of 479465
+ 536063 string characters out of 5880823
  875703 words of memory out of 5000000
- 48786 multiletter control sequences out of 15000+600000
+ 48792 multiletter control sequences out of 15000+600000
  600870 words of font info for 110 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  108i,11n,110p,464b,742s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on QBUS2820-Assignment-1.pdf (9 pages).
+Output written on QBUS2820-Assignment-1.pdf (11 pages).
