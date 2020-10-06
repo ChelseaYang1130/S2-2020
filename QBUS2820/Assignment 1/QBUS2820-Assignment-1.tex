@@ -62,8 +62,8 @@
 \captionsetup[table]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
 \captionsetup[FLOAT_TYPE]{labelformat=simple, labelsep=colon}
 
-\hypertarget{task-1}{%
-\section{Task 1}\label{task-1}}
+\hypertarget{task-a}{%
+\section{Task A}\label{task-a}}
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -71,27 +71,31 @@
 Although the NBA is known for being a sport league across globe, it is a
 vast economic entity as well. Undoubtedly, it has been a major impact in
 the past decades, and it does not seem to be slowing down anytime soon.
-Hence, economy is also a huge part of the business. Beside the League's
-branding, its commercial success is contributed by the players at large
-as they make the trends on social media and attract costumers to buy
-their products in a constance. However, the most important attribute of
-a player is none other than his performance on the court. Performance is
-what NBA players thrive for as it decides their salary level. How much
-salary a player is worth can be a hard estimation to the teams because
-the performance of athlete fluctuates. Furthermore, the salary cap of
-the League as a whole, too, fluctuate every year. Fortunately, the
-League records players' data in various categories which include field
-goal attempted, field goal percentage, offensive and defensive ratings,
-etc. Data is a powerful tool because it can reflect a player's
-contribution on the court with precision. Accompanied by the comparison
-of the salaries given to a certain level of player, data can serve as a
-strong reference that allows objective calculations.
+Beside the League's branding, its commercial success is contributed by
+the players at large as they make the trends on social media and attract
+costumers to buy their products in a constance. However, the most
+important attribute of a player is none other than his performance on
+the court. Performance is what NBA players thrive for as it decides
+their salary level. How much salary a player is worth can be a hard
+estimation to the teams because the performance of athlete fluctuates.
+Furthermore, the salary cap of the League as a whole, too, fluctuate
+every year. Fortunately, the League records players' data in various
+categories which include field goal attempted, field goal percentage,
+offensive and defensive ratings, etc. With this data, machine learning
+techniques can be applied to develop reliable models to predict salary
+so that to help the NBA better performing their business manner such as
+human resource mangement, financial management and marketing strategies.
 
-This project aims to develop several predictive models of salary for NBA
-basketball players. Three models including , k-nearest neignbour model,
-a linear regression model and a lasso regression model are involved.
-
-\textbf{summarizing findings}
+This project aims to develop predictive models of salary for NBA
+basketball players. Three types of techniques including k-nearest
+neignbour regression, linear regression and lasso regression are
+involved. Predictive models are developed by changing corresponding
+parameters and features, with 5-fold cross validation being applied to
+assess root mean squared errors of these models. The optimal model is
+then selected by the lowest validation error for each technique. With
+the best predictive performance, a lasso regression model having the
+lowest test set root mean squared error is found to be best-suited the
+NBA data.
 
 \hypertarget{data-processing-and-exploratory-data-analysis}{%
 \section{Data processing and exploratory data
@@ -109,7 +113,8 @@ efficiency rate , true shooting percentage, offensive rebounds ,
 defensive rebounds , turnover percentage , assists , steals, blocks ,
 turnover percentage , usage percentage , offensive rating, defensive
 rating and win shares while the categorical variables are the position
-and the team a player in.
+and the team a player in. The corresponding variable names can be found
+the Table \ref{table:var}
 
 The \texttt{NBA\_train} dataset is used for training and validating
 predictive models in this project while the \texttt{NBA\_test} dataset
@@ -134,11 +139,11 @@ linkage between salary and these variables. Thus variables showing no
 linearity with salary can still be potentially informative and should be
 left for further feature selection when developing predictive models.
 
-Moreover, colinearity is observed between several variables. One the one
-hand, the number of win shares which is linearly related to salary is
-also found to be correlated with number of offensive win shares and
-number of defensive win shares. One the other hand, total rebound is
-linearly related to both offensive rebound and defensive rebound.
+Moreover, colinearity is observed between several variables. The number
+of win shares which is linearly related to salary is also found to be
+correlated with number of offensive win shares and number of defensive
+win shares, while total rebound is linearly related to both offensive
+rebound and defensive rebound.
 
 The relationships between salary and the six relative variables as well
 as the distribution of numeric variables are further visualized by a
@@ -149,13 +154,6 @@ defensive win share and offensive win share are significantly
 right-skewed while usage percentage and personal efficiency rate are
 slightly right-skewed. In additions, the distributions demonstrates a
 small variance of number of minutes played.
-
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{scatter.png}
-\centering
-\caption{Distribution of numeric variables.}
-\label{fig:scatter}
-\end{figure}
 
 To analyse the categorical variables, Figure \ref{fig:boxes} is
 generated to visualize the distribution of salary. Figure
@@ -202,21 +200,6 @@ missingness are generated to visualize missingness. As shown in Figure
 \ref{fig:missingness}, both \texttt{NBA\_train} and \texttt{NBA\_test}
 are complete without any missing values. Therefore no data removal or
 data imputation is performed.
-
-\begin{figure}[H]
-\begin{subfigure}{0.55\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{nbaTrain_miss.png} 
-\caption{Missingness bar chart of the `NBA train` dataset.}
-\label{fig:trainMiss}
-\end{subfigure}
-\begin{subfigure}{0.55\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{nbaTest_miss.png}
-\caption{Missingness bar chart of the `NBA test` dataset.}
-\label{fig:testMiss}
-\end{subfigure}
-\caption{Visualizing the missingness of two datasets used.}
-\label{fig:missingness}
-\end{figure}
 
 According to the results of exploratory data analysis, the record ID,
 position a player in and team played are uninformative for predicting
@@ -388,12 +371,35 @@ regression models developed.
 \hypertarget{test-set-performance}{%
 \section{Test set performance}\label{test-set-performance}}
 
+Root mean squared error is used to assess the predictive performance of
+three models selected.
+
+The selected k-nearest neighbour regression model has a test set root
+mean squared error of 4.2288, representing a standard deviation of
+unexplained variance of salary at 4.2288 millions dollars.
+
+The selected multiple linear regression model has a test set error at
+4.0532, indicating that the standard deviation of the unexplained
+variance of salary by the multiple linear regression is 4.0532 millions
+dollars.
+
+The test set error of the optimal lasso regression model is 3.9570,
+demonstrating a standard deviation of uncaptured variance of salary by
+the lasso regression at 3.9570 millions dollars.
+
+With the rule of thumb of 4.1 millioins dollars, the predictive
+performances of the multiple linear regression model with 14 features
+and the lasso regression model with \(\alpha=0.5\) are satisfactory.
+
+\hypertarget{analysis-and-conclusions}{%
+\section{Analysis and conclusions}\label{analysis-and-conclusions}}
+
 \begin{wraptable}{r}{8cm}
 \begin{tabular}{ |c|c|c|c| } 
 \hline
 \textbf{Model} & \textbf{Validation error} & \textbf{Testing error} \\
 \hline
-\textbf{KNN regression} & 4.1927 & 4.0804 \\ 
+\textbf{KNN regression} & 4.2615 & 4.2288 \\ 
 \textbf{Multiple linear regression} & 3.7920 & 4.0532 \\
 \textbf{Lasso regression} & 3.5857 & 3.9570 \\
 \hline
@@ -403,20 +409,12 @@ regression models developed.
 \label{table:errors}
 \end{wraptable}
 
-Root mean squared error is used to assess the predictive performance of
-three models selected. As shown in Table \ref{table:errors}, predictive
-performances of three models are satisfactory as all test errors are
-less the 4.1 millions dollars. The lasso regression model with
-\(\alpha=0.5\) has the lowest validation and testing error, at 3.5857
-and 3.957 (\$ Millions) respectively. Thus the lasso regression model is
-the best-suited the data with greatest predictive performance. The root
-mean squared error of test set indicates that the standard deviation of
-the unexplained variance of salary is 3.957 millions dollars. Moreover,
-it is also reflected from Table \ref{table:errors} that a model with a
-lower validation error tends to have a lower testing error.
-
-\hypertarget{analysis-and-conclusions}{%
-\section{Analysis and conclusions}\label{analysis-and-conclusions}}
+As shown in Table \ref{table:errors}, a predictive model with a lower
+validation error tends to have a lower testing error. The lasso
+regression model with \(\alpha=0.5\) has the lowest validation and
+testing error, at 3.5857 and 3.957 (\$ Millions) respectively. Therefore
+generally the lasso regression model is the best-suited the data with
+greatest predictive performance.
 
 \textbf{KNN Discussion} A potential solution to this issue is to choose
 a smaller values of k so that the salary is estimated based on fewer
@@ -425,6 +423,65 @@ performance of the model.
 
 \hypertarget{appendix}{%
 \section{Appendix}\label{appendix}}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ |c|c|c|} 
+\hline
+\textbf{Variables} & \textbf{Description} & \textbf{Data type}\\
+\hline
+ID & Unique identification number of the record & Numeric\\ 
+SALARY & Salary for the NBA player & Numeric \\
+POSITION & Position played & Categorical \\
+TEAM & Team the player in & Categorical \\
+Age & Age of the player & Numeric \\
+Games & Number of games played & Numeric \\
+Minutes & Number of minutes played & Numeric  \\
+PER & Personal efficiency rate & Numeric  \\ 
+TS & True shooting percentage & Numeric  \\
+ORB & Offensive rebounds & Numeric  \\
+DRB & Defensvie rebounds & Numeric  \\
+TRB & Total rebounds & Numeric  \\
+AST & Number of assists & Numeric  \\
+STL & Number of steals & Numeric  \\
+BLK & Number of blocks & Numeric  \\
+TOV & Turnover percentage & Numeric  \\
+USG & Usage percentage & Numeric  \\
+ORtg & Offensive rating & Numeric  \\
+DRtg & Defensive rating & Numeric  \\
+OWS & Offensive win shares & Numeric  \\
+DWS & Defensive win shares  & Numeric \\
+WS & Win shares & Numeric  \\
+\hline
+\end{tabular}
+\centering
+\caption{Table of variables.}
+\label{table:var}
+\end{table}
+
+\begin{figure}[H]
+\begin{subfigure}{0.55\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{nbaTrain_miss.png} 
+\caption{Missingness bar chart of the `NBA train` dataset.}
+\label{fig:trainMiss}
+\end{subfigure}
+\begin{subfigure}{0.55\textwidth}
+\includegraphics[width=0.9\linewidth, height=5cm]{nbaTest_miss.png}
+\caption{Missingness bar chart of the `NBA test` dataset.}
+\label{fig:testMiss}
+\end{subfigure}
+\caption{Visualizing the missingness of two datasets used.}
+\label{fig:missingness}
+\end{figure}
+
+2
+
+\begin{figure}{h}
+\includegraphics[width=1\textwidth]{scatter.png}
+\centering
+\caption{Distribution of numeric variables.}
+\label{fig:scatter}
+\end{figure}
 
 \hypertarget{references}{%
 \section{References}\label{references}}
@@ -462,8 +519,8 @@ performance of the model.
   \url{https://www.basketball-reference.com/about/ws.html}.
 \end{itemize}
 
-\hypertarget{task-2}{%
-\section{Task 2}\label{task-2}}
+\hypertarget{task-b}{%
+\section{Task B}\label{task-b}}
 
 \hypertarget{exploratory-data-analysis}{%
 \section{Exploratory data analysis}\label{exploratory-data-analysis}}
@@ -471,9 +528,15 @@ performance of the model.
 \begin{wrapfigure}{r}{0.4\textwidth}
 \includegraphics[width=1\linewidth]{miss_house.png}
 \centering
-\caption{Barchart of missingness for `Boston housing` dataset.}
+\caption{Bar chart of missingness for `Boston housing` dataset.}
 \label{fig:missHouse}
 \end{wrapfigure}
+
+\textbf{feature selection criteria}
+
+\textbf{explain optimal learning rate}
+
+\textbf{explain and justify approach}
 
 %\showmatmethods
 
