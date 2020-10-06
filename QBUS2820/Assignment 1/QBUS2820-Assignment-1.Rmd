@@ -63,7 +63,7 @@ library(EBImage)
 
 # Introduction
 
-Although the NBA is known for being a sport league across globe, it is a vast economic entity as well. Undoubtedly, it has been a major impact in the past decades, and it does not seem to be slowing down anytime soon. Beside the League’s branding, its commercial success is contributed by the players at large as they make the trends on social media and attract costumers to buy their products in a constance. However, the most important attribute of a player is none other than his performance on the court. Performance is what NBA players thrive for as it decides their salary level. How much salary a player is worth can be a hard estimation to the teams because the performance of athlete fluctuates. Furthermore, the salary cap of the League as a whole, too, fluctuate every year. Fortunately, the League records players’ data in various categories which include field goal attempted, field goal percentage, offensive and defensive ratings, etc. With this data, machine learning techniques can be applied to develop reliable models to predict salary so that to help the NBA better performing their business manner such as human resource mangement, financial management and marketing strategies.
+Although the NBA is known for being a sport league across globe, it is a vast economic entity as well. Undoubtedly, it has been a major impact in the past decades, and it does not seem to be slowing down anytime soon. Beside the League’s branding, its commercial success is contributed by the players at large as they make the trends on social media and attract costumers to buy their products in a constance. However, the most important attribute of a player is none other than his performance on the court. Performance is what NBA players thrive for as it decides their salary level. How much salary a player is worth can be a hard estimation to the teams because the performance of athlete fluctuates. Furthermore, the salary cap of the League as a whole, too, fluctuate every year. Fortunately, the League records players’ data in various categories which include field goal attempted, field goal percentage, offensive and defensive ratings, etc. With this data, machine learning techniques can be applied to develop reliable models to predict salary so that to help the NBA better performing their business manner such as human resource management, financial management and marketing strategies.
 
 This project aims to develop predictive models of salary for NBA basketball players. Three types of techniques including k-nearest neignbour regression, linear regression and lasso regression are involved. Predictive models are developed by changing corresponding parameters and features, with 5-fold cross validation being applied to assess root mean squared errors of these models. The optimal model is then selected by the lowest validation error for each technique. With the best predictive performance, a lasso regression model having the lowest test set root mean squared error is found to be best-suited the NBA data.
 
@@ -86,19 +86,6 @@ Figure \ref{fig:correlation} illustrate that win share, defensive win share, off
 
 Moreover, colinearity is observed between several variables. The number of win shares which is linearly related to salary is also found to be correlated with number of offensive win shares and number of defensive win shares, while total rebound is linearly related to both offensive rebound and defensive rebound.
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-\includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
-\centering
-\caption{Salaries for players in different positions.}
-\label{fig:position}
-\end{figure}
-
-\includegraphics[width=1\linewidth]{correlation.png}
-\centering
-\caption{Correlations between numeric variables based on correlation coefficients.}
-\label{fig:correlation}
-\end{wrapfigure}
-
 The relationships between salary and the six relative variables as well as the distribution of numeric variables are further visualized by a scatter plot matrix. In Figure \ref{fig:scatter}, the linearity between numeric variables and salary shown is in line with the correlation matrix (Figure \ref{fig:correlation}). Moreover, salary, win share, defensive win share and offensive win share are significantly right-skewed while usage percentage and  personal efficiency rate are slightly right-skewed. In additions, the distributions demonstrates a small variance of number of minutes played. 
 
 To analyse the categorical variables, box plots are generated to visualize the distribution of salary. Figure \ref{fig:position} describes how salary varies for players in different positions. Although the median salaries are similar at $4-6 millions for the five positions, variances of salary are slightly different. Salaries for players in the center and small forward position vary significantly without any outliers whereas variances of salary for both power forward and shooting guard are smaller with an outlier. Nevertheless, the distributions of salary for players in different positions are similar. 
@@ -106,12 +93,12 @@ To analyse the categorical variables, box plots are generated to visualize the d
 Outlining in Figure \ref{fig:team}, salary varies across different teams, which is reasonable in a business entity. There are many basketball teams within the NBA, resulting in small sample sizes of salary in each group. Some groups, such as Los Angeles Clippers, Phoenix Surs and Denver Nuggets, have information of only one player being recorded in this dataset. Furthermore, the team variable has no intrinsic order, and the teams in any unseen data can contain new teams. This makes the team variable less informative. 
 
 \begin{figure}[H]
+\begin{subfigure}{0.5\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{position_box.png}
 \centering
 \caption{Salaries for players in different positions.}
 \label{fig:position}
-\end{figure}
-
+\end{subfigure}
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{team_box.png}
 \centering
@@ -166,11 +153,11 @@ With a smaller root mean square error of training model, the optimal multiple li
 
 Least absolute shrinkage and selection operator (Lasso), as an extension of liner regression analysis, conducts both feature selection and regularization. This helps to enhance the predictive performance and interpretability of the model developed.
 
-The objective of a lasso regression model is to minimize $\sum^n_{i=1}(y_i-\sum_jx_{ij}\beta_j)^2+\alpha\sum^p_{j=1}|\beta_j|$, where $\alpha$ is a tuning parameter which represents how strong the L1 regularization penalise coefficients of the lasso regression model. Changing the value of $\alpha$ influences the number of features eliminated. When $\alpha=0$, coefficients of features are not panalised such that no feature is removed. As the value of $\alpha$ increases, L1 penalty gets stronger and therefore more features are eliminated, vice versa. Furthermore, the value of $\alpha$ also affects the bias-variance trade-off. An increase of $\alpha$ leads to increase in bais while a decrease of $\alpha$ results in increase in variance.
+The objective of a lasso regression model is to minimize $\sum^n_{i=1}(y_i-\sum_jx_{ij}\beta_j)^2+\alpha\sum^p_{j=1}|\beta_j|$, where $\alpha$ is a tuning parameter which represents how strong the L1 regularization penalize coefficients of the lasso regression model. Changing the value of $\alpha$ influences the number of features eliminated. When $\alpha=0$, coefficients of features are not Palisades such that no feature is removed. As the value of $\alpha$ increases, L1 penalty gets stronger and therefore more features are eliminated, vice versa. Furthermore, the value of $\alpha$ also affects the bias-variance trade-off. An increase of $\alpha$ leads to increase in bias while a decrease of $\alpha$ results in increase in variance.
 
 Lasso regression model automates feature selection whereas multiple linear regression model require additional feature selection approach to deal with multicollinearity. Moreover, L1 regularization which penalizes the coefficients of linear regression model is performed with lasso regression. In the source data of this project, outliers and multicollinearity exist in several pairs of features. In this case, lasso regression with automated feature selection and regularization could be better-suited for the data compared to regular linear regression.
 
-Lasso regression is a supervised learning technique while K-nearest neighbour regression is an unsupervised learning technique, which means a linear funcation is pre-deined for lasso regression when K-nearest neighbour regression observes pattern in the data without fix function. As such, lasso regression is more interpretable but less flexible than k-nearest neighbour regression. In this project, one of the goals is to discover dominant factors of salary for NBA players. To acheive this goal, a lasso regression model which can clearly define weights of features is more powerful compared to a KNN regression model.
+Lasso regression is a supervised learning technique while K-nearest neighbour regression is an unsupervised learning technique, which means a linear function is pre-defined for lasso regression when K-nearest neighbour regression observes pattern in the data without fix function. As such, lasso regression is more interpretable but less flexible than k-nearest neighbour regression. In this project, one of the goals is to discover dominant factors of salary for NBA players. To achieve this goal, a lasso regression model which can clearly define weights of features is more powerful compared to a KNN regression model.
 
 19 numeric features are fed into lasso regression models with 7 values of alpha: 0.0001, 0.001, 0.01, 0.1, 0.5, 5 and 10. 5-fold cross validation is then applied to assess predictive performance of models. The optimal lasso model is selected based on negative mean squared error, the smaller the negative mean squared error, the better the lasso model performs.
 
@@ -186,14 +173,12 @@ The selected multiple linear regression model has a test set error at 4.0532, in
 
 The test set error of the optimal lasso regression model is 3.9570, demonstrating a standard deviation of uncaptured variance of salary by the lasso regression at 3.9570 millions dollars.
 
-With the rule of thumb of 4.1 millioins dollars, the predictive performances of the multiple linear regression model with 14 features and the lasso regression model with $\alpha=0.5$ are satisfactory.
-
-# Analysis and conclusions
+With the rule of thumb of 4.1 millions dollars, the predictive performances of the multiple linear regression model with 14 features and the lasso regression model with $\alpha=0.5$ are satisfactory.
 
 \begin{wraptable}{r}{8cm}
 \begin{tabular}{ |c|c|c|c| } 
 \hline
-\textbf{Model} & \textbf{Validation error} & \textbf{Testing error} \\
+\textbf{Model} & \textbf{Validation error} & \textbf{Test set error} \\
 \hline
 \textbf{KNN regression} & 4.2615 & 4.2288 \\ 
 \textbf{Multiple linear regression} & 3.7920 & 4.0532 \\
@@ -201,13 +186,17 @@ With the rule of thumb of 4.1 millioins dollars, the predictive performances of 
 \hline
 \end{tabular}
 \centering
-\caption{Summary of training and testing performance of three predictive models. Both valdation error and testing errors are estimated by root mean squared error.}
+\caption{Summary of training and testing performance of three predictive models. Both validation error and testing errors are estimated by root mean squared error.}
 \label{table:errors}
 \end{wraptable}
 
-As shown in Table \ref{table:errors}, a predictive model with a lower validation error tends to have a lower testing error. The lasso regression model with $\alpha=0.5$ has the lowest validation and testing error, at 3.5857 and 3.957 ($ Millions) respectively. Therefore generally the lasso regression model is the best-suited the data with greatest predictive performance. 
+As shown in Table \ref{table:errors}, a predictive model with a lower validation error tends to have a lower testing error. The lasso regression model with $\alpha=0.5$ has the lowest testing error, at 3.957 millions dollars. Therefore generally the lasso regression model is the best-suited the data with greatest predictive performance. 
 
-**KNN Discussion** A potential solution to this issue is to choose a smaller values of k so that the salary is estimated based on fewer neibours. However, this could be a trade-off to worsen the predictive performance of the model.
+# Analysis and conclusions
+
+In conclusion, predictive performance can vary significantly with different features and parameters of machine learning techniques. The optimal multiple linear regression model contains 14 features while the optimal lasso regression model selects 10 features and a $\alpha$ value of 0.5. These two models satisfies the predictive performance rule of thumb which requires root mean squared errors less than 4.1 millions dollars.
+
+Although the 19-nearest neighbour regression model with win shares as feature is the optimal knn model, it is not satisfactory with a relatively high test set error compared to other techniques. With regards to previous discussion, a limitation of the optimal k-nearest neighbour model is that it does not accurately predict salary for a large number of win shares because of the outliers. This can also be the main reason of the undesired predictive performance. A potential solution to this issue is to choose a smaller values of k so that the salary is estimated based on fewer neibours. However, this could worsen predictive performance of the whole model as root mean squared error increases. More attention should be paid on this trade-off in further study. Another solution could be scaling the salary with logorithm to deal with outliers. Moreover, a problem of whether and how the feature selection should be perform for k-nearest neighbour is yet to be discussed.
 
 # Appendix
 
@@ -227,7 +216,7 @@ Minutes & Number of minutes played & Numeric  \\
 PER & Personal efficiency rate & Numeric  \\ 
 TS & True shooting percentage & Numeric  \\
 ORB & Offensive rebounds & Numeric  \\
-DRB & Defensvie rebounds & Numeric  \\
+DRB & Defensive rebounds & Numeric  \\
 TRB & Total rebounds & Numeric  \\
 AST & Number of assists & Numeric  \\
 STL & Number of steals & Numeric  \\
@@ -246,7 +235,7 @@ WS & Win shares & Numeric  \\
 \label{table:var}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}
 \begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{nbaTrain_miss.png} 
 \caption{Missingness bar chart of the `NBA train` dataset.}
@@ -260,9 +249,9 @@ WS & Win shares & Numeric  \\
 \caption{Visualizing the missingness of two datasets used.}
 \label{fig:missingness}
 \end{figure}
-2
-\begin{figure}{h}
-\includegraphics[width=1\textwidth]{scatter.png}
+
+\begin{figure}
+\includegraphics[width=0.85\textwidth]{scatter.png}
 \centering
 \caption{Distribution of numeric variables.}
 \label{fig:scatter}
@@ -286,10 +275,24 @@ WS & Win shares & Numeric  \\
 
 - Basketball-Reference.com. NBA Win Shares. [online] Available at: https://www.basketball-reference.com/about/ws.html.
 
+\clearpage
 
 # Task B
 
 # Exploratory data analysis
+
+There are 14 numeric variables in the `Boston housing` dataset. As shown in Figure \ref{fig:missHouse}, the dataset is 100% complete without missing values. **Outliers**
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{house_corr.png}
+\centering
+\caption{Correlations between numeric variables in `Boston Housing` dataset.}
+\label{fig:corrHouse}
+\end{wrapfigure}
+
+From Figure \ref{fig:corrHouse} and Table \ref{table:corrTab}, "lstat", "rm" and "ptrtio" have relatively strong linear relationship with "medv".
+
+
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \includegraphics[width=1\linewidth]{miss_house.png}
@@ -303,3 +306,33 @@ WS & Win shares & Numeric  \\
 **explain optimal learning rate**
 
 **explain and justify approach**
+
+# Gradient ascent algorithm
+
+# Appendix
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ |c|c|c|} 
+\hline
+\textbf{Variables} & \textbf{Correlation with "medv"} & \textbf{Absolute coefficient}\\
+\hline
+chas & 0.1753 & 0.1753 \\
+dis & 0.2499 & 0.2499 \\
+black & 0.3335 & 0.3335 \\
+zn & 0.3604 & 0.3604 \\
+age & -0.3770 & 0.3770 \\
+rad & -0.3816 & 0.3816 \\
+crim & -0.3883 & 0.3883 \\
+nox & -0.4273 & 0.4273 \\
+tax &-0.4685 & 0.4685 \\
+indus & -0.4837 & 0.4837 \\
+ptratio & -0.5078 & 0.5078 \\
+rm & 0.6954 & 0.6954 \\
+lstat & -0.7377 & 0.7377 \\
+\hline
+\end{tabular}
+\centering
+\caption{Correlation coefficients between "medv" and other variable in `Boston housing` dataset.}
+\label{table:corrTab}
+\end{table}

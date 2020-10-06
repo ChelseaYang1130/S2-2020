@@ -84,7 +84,8 @@ categories which include field goal attempted, field goal percentage,
 offensive and defensive ratings, etc. With this data, machine learning
 techniques can be applied to develop reliable models to predict salary
 so that to help the NBA better performing their business manner such as
-human resource mangement, financial management and marketing strategies.
+human resource management, financial management and marketing
+strategies.
 
 This project aims to develop predictive models of salary for NBA
 basketball players. Three types of techniques including k-nearest
@@ -155,16 +156,15 @@ right-skewed while usage percentage and personal efficiency rate are
 slightly right-skewed. In additions, the distributions demonstrates a
 small variance of number of minutes played.
 
-To analyse the categorical variables, Figure \ref{fig:boxes} is
-generated to visualize the distribution of salary. Figure
-\ref{fig:position} describes how salary varies for players in different
-positions. Although the median salaries are similar at \$4-6 millions
-for the five positions, variances of salary are slightly different.
-Salaries for players in the center and small forward position vary
-significantly without any outliers whereas variances of salary for both
-power forward and shooting guard are smaller with an outlier.
-Nevertheless, the distributions of salary for players in different
-positions are similar.
+To analyse the categorical variables, box plots are generated to
+visualize the distribution of salary. Figure \ref{fig:position}
+describes how salary varies for players in different positions. Although
+the median salaries are similar at \$4-6 millions for the five
+positions, variances of salary are slightly different. Salaries for
+players in the center and small forward position vary significantly
+without any outliers whereas variances of salary for both power forward
+and shooting guard are smaller with an outlier. Nevertheless, the
+distributions of salary for players in different positions are similar.
 
 Outlining in Figure \ref{fig:team}, salary varies across different
 teams, which is reasonable in a business entity. There are many
@@ -320,14 +320,14 @@ interpretability of the model developed.
 The objective of a lasso regression model is to minimize
 \(\sum^n_{i=1}(y_i-\sum_jx_{ij}\beta_j)^2+\alpha\sum^p_{j=1}|\beta_j|\),
 where \(\alpha\) is a tuning parameter which represents how strong the
-L1 regularization penalise coefficients of the lasso regression model.
+L1 regularization penalize coefficients of the lasso regression model.
 Changing the value of \(\alpha\) influences the number of features
 eliminated. When \(\alpha=0\), coefficients of features are not
-panalised such that no feature is removed. As the value of \(\alpha\)
+Palisades such that no feature is removed. As the value of \(\alpha\)
 increases, L1 penalty gets stronger and therefore more features are
 eliminated, vice versa. Furthermore, the value of \(\alpha\) also
 affects the bias-variance trade-off. An increase of \(\alpha\) leads to
-increase in bais while a decrease of \(\alpha\) results in increase in
+increase in bias while a decrease of \(\alpha\) results in increase in
 variance.
 
 Lasso regression model automates feature selection whereas multiple
@@ -342,11 +342,11 @@ regression.
 
 Lasso regression is a supervised learning technique while K-nearest
 neighbour regression is an unsupervised learning technique, which means
-a linear funcation is pre-deined for lasso regression when K-nearest
+a linear function is pre-defined for lasso regression when K-nearest
 neighbour regression observes pattern in the data without fix function.
 As such, lasso regression is more interpretable but less flexible than
 k-nearest neighbour regression. In this project, one of the goals is to
-discover dominant factors of salary for NBA players. To acheive this
+discover dominant factors of salary for NBA players. To achieve this
 goal, a lasso regression model which can clearly define weights of
 features is more powerful compared to a KNN regression model.
 
@@ -387,17 +387,14 @@ The test set error of the optimal lasso regression model is 3.9570,
 demonstrating a standard deviation of uncaptured variance of salary by
 the lasso regression at 3.9570 millions dollars.
 
-With the rule of thumb of 4.1 millioins dollars, the predictive
+With the rule of thumb of 4.1 millions dollars, the predictive
 performances of the multiple linear regression model with 14 features
 and the lasso regression model with \(\alpha=0.5\) are satisfactory.
-
-\hypertarget{analysis-and-conclusions}{%
-\section{Analysis and conclusions}\label{analysis-and-conclusions}}
 
 \begin{wraptable}{r}{8cm}
 \begin{tabular}{ |c|c|c|c| } 
 \hline
-\textbf{Model} & \textbf{Validation error} & \textbf{Testing error} \\
+\textbf{Model} & \textbf{Validation error} & \textbf{Test set error} \\
 \hline
 \textbf{KNN regression} & 4.2615 & 4.2288 \\ 
 \textbf{Multiple linear regression} & 3.7920 & 4.0532 \\
@@ -405,21 +402,42 @@ and the lasso regression model with \(\alpha=0.5\) are satisfactory.
 \hline
 \end{tabular}
 \centering
-\caption{Summary of training and testing performance of three predictive models. Both valdation error and testing errors are estimated by root mean squared error.}
+\caption{Summary of training and testing performance of three predictive models. Both validation error and testing errors are estimated by root mean squared error.}
 \label{table:errors}
 \end{wraptable}
 
 As shown in Table \ref{table:errors}, a predictive model with a lower
 validation error tends to have a lower testing error. The lasso
-regression model with \(\alpha=0.5\) has the lowest validation and
-testing error, at 3.5857 and 3.957 (\$ Millions) respectively. Therefore
-generally the lasso regression model is the best-suited the data with
-greatest predictive performance.
+regression model with \(\alpha=0.5\) has the lowest testing error, at
+3.957 millions dollars. Therefore generally the lasso regression model
+is the best-suited the data with greatest predictive performance.
 
-\textbf{KNN Discussion} A potential solution to this issue is to choose
-a smaller values of k so that the salary is estimated based on fewer
-neibours. However, this could be a trade-off to worsen the predictive
-performance of the model.
+\hypertarget{analysis-and-conclusions}{%
+\section{Analysis and conclusions}\label{analysis-and-conclusions}}
+
+In conclusion, predictive performance can vary significantly with
+different features and parameters of machine learning techniques. The
+optimal multiple linear regression model contains 14 features while the
+optimal lasso regression model selects 10 features and a \(\alpha\)
+value of 0.5. These two models satisfies the predictive performance rule
+of thumb which requires root mean squared errors less than 4.1 millions
+dollars.
+
+Although the 19-nearest neighbour regression model with win shares as
+feature is the optimal knn model, it is not satisfactory with a
+relatively high test set error compared to other techniques. With
+regards to previous discussion, a limitation of the optimal k-nearest
+neighbour model is that it does not accurately predict salary for a
+large number of win shares because of the outliers. This can also be the
+main reason of the undesired predictive performance. A potential
+solution to this issue is to choose a smaller values of k so that the
+salary is estimated based on fewer neibours. However, this could worsen
+predictive performance of the whole model as root mean squared error
+increases. More attention should be paid on this trade-off in further
+study. Another solution could be scaling the salary with logorithm to
+deal with outliers. Moreover, a problem of whether and how the feature
+selection should be perform for k-nearest neighbour is yet to be
+discussed.
 
 \hypertarget{appendix}{%
 \section{Appendix}\label{appendix}}
@@ -440,7 +458,7 @@ Minutes & Number of minutes played & Numeric  \\
 PER & Personal efficiency rate & Numeric  \\ 
 TS & True shooting percentage & Numeric  \\
 ORB & Offensive rebounds & Numeric  \\
-DRB & Defensvie rebounds & Numeric  \\
+DRB & Defensive rebounds & Numeric  \\
 TRB & Total rebounds & Numeric  \\
 AST & Number of assists & Numeric  \\
 STL & Number of steals & Numeric  \\
@@ -459,7 +477,7 @@ WS & Win shares & Numeric  \\
 \label{table:var}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}
 \begin{subfigure}{0.55\textwidth}
 \includegraphics[width=0.9\linewidth, height=5cm]{nbaTrain_miss.png} 
 \caption{Missingness bar chart of the `NBA train` dataset.}
@@ -474,10 +492,8 @@ WS & Win shares & Numeric  \\
 \label{fig:missingness}
 \end{figure}
 
-2
-
-\begin{figure}{h}
-\includegraphics[width=1\textwidth]{scatter.png}
+\begin{figure}
+\includegraphics[width=0.85\textwidth]{scatter.png}
 \centering
 \caption{Distribution of numeric variables.}
 \label{fig:scatter}
@@ -519,11 +535,28 @@ WS & Win shares & Numeric  \\
   \url{https://www.basketball-reference.com/about/ws.html}.
 \end{itemize}
 
+\clearpage
+
 \hypertarget{task-b}{%
 \section{Task B}\label{task-b}}
 
 \hypertarget{exploratory-data-analysis}{%
 \section{Exploratory data analysis}\label{exploratory-data-analysis}}
+
+There are 14 numeric variables in the \texttt{Boston\ housing} dataset.
+As shown in Figure \ref{fig:missHouse}, the dataset is 100\% complete
+without missing values. \textbf{Outliers}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\includegraphics[width=1\linewidth]{house_corr.png}
+\centering
+\caption{Correlations between numeric variables in `Boston Housing` dataset.}
+\label{fig:corrHouse}
+\end{wrapfigure}
+
+From Figure \ref{fig:corrHouse} and Table \ref{table:corrTab},
+``lstat'', ``rm'' and ``ptrtio'' have relatively strong linear
+relationship with ``medv''.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \includegraphics[width=1\linewidth]{miss_house.png}
@@ -537,6 +570,38 @@ WS & Win shares & Numeric  \\
 \textbf{explain optimal learning rate}
 
 \textbf{explain and justify approach}
+
+\hypertarget{gradient-ascent-algorithm}{%
+\section{Gradient ascent algorithm}\label{gradient-ascent-algorithm}}
+
+\hypertarget{appendix-1}{%
+\section{Appendix}\label{appendix-1}}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ |c|c|c|} 
+\hline
+\textbf{Variables} & \textbf{Correlation with "medv"} & \textbf{Absolute coefficient}\\
+\hline
+chas & 0.1753 & 0.1753 \\
+dis & 0.2499 & 0.2499 \\
+black & 0.3335 & 0.3335 \\
+zn & 0.3604 & 0.3604 \\
+age & -0.3770 & 0.3770 \\
+rad & -0.3816 & 0.3816 \\
+crim & -0.3883 & 0.3883 \\
+nox & -0.4273 & 0.4273 \\
+tax &-0.4685 & 0.4685 \\
+indus & -0.4837 & 0.4837 \\
+ptratio & -0.5078 & 0.5078 \\
+rm & 0.6954 & 0.6954 \\
+lstat & -0.7377 & 0.7377 \\
+\hline
+\end{tabular}
+\centering
+\caption{Correlation coefficients between "medv" and other variable in `Boston housing` dataset.}
+\label{table:corrTab}
+\end{table}
 
 %\showmatmethods
 
