@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.6)  6 OCT 2020 22:53
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.10.6)  10 OCT 2020 16:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1748,7 +1748,7 @@ File: nbaTrain_miss.png Graphic file (type bmp)
 File: nbaTest_miss.png Graphic file (type bmp)
 <nbaTest_miss.png>
 
-Overfull \hbox (52.72697pt too wide) in paragraph at lines 484--494
+Overfull \hbox (52.72697pt too wide) in paragraph at lines 489--499
 []$[]$ $[]$ 
  []
 
@@ -1756,14 +1756,14 @@ File: scatter.png Graphic file (type bmp)
 <scatter.png>
 [6] [7]
 LaTeX Font Info:    Trying to load font information for TS1+mdbch on input line
- 512.
+ 517.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ts1m
 dbch.fd
 File: ts1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for TS1/mdbch.
 )
 LaTeX Font Info:    Font shape `TS1/mdbch/m/n' will be
-(Font)              scaled to size 11.52008pt on input line 512.
+(Font)              scaled to size 11.52008pt on input line 517.
 Package microtype Info: Character `texttwelveudash ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1786,14 +1786,14 @@ Package microtype Info: Character `textcelsius ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
 
-Overfull \hbox (13.29927pt too wide) in paragraph at lines 516--520
+Overfull \hbox (13.29927pt too wide) in paragraph at lines 521--525
 [][][]$\T1/phv/m/n/12 https : / / www . statisticshowto . com / lasso-[]regress
 ion / #$[][][]\T1/mdbch/m/n/12 :~:text=Lasso%20regression%20is%20a%20type. 
  []
 
 Missing character: There is no ğ in font mdbchr8t!
 
-Overfull \hbox (9.73152pt too wide) in paragraph at lines 539--541
+Overfull \hbox (9.73152pt too wide) in paragraph at lines 544--546
 []\T1/mdbch/m/n/12 Basketball-Reference.com. NBA Win Shares. [on-line] Avail-ab
 le at: [][][]$\T1/phv/m/n/12 https : / / www . basketball-[]reference .
  []
@@ -1805,13 +1805,13 @@ File: miss_house.png Graphic file (type bmp)
 <miss_house.png>
 
 Package wrapfig Warning: Collision between wrapping environments on input line 
-562.
+567.
 
 File: house_corr.png Graphic file (type bmp)
 <house_corr.png>
 
-Package wrapfig Warning: Stationary wrapfigure forced to float on input line 56
-9.
+Package wrapfig Warning: Stationary wrapfigure forced to float on input line 57
+4.
 
 [9
 
@@ -1833,7 +1833,7 @@ Package rerunfilecheck Info: File `QBUS2820-Assignment-1.out' has not changed.
 Here is how much of TeX's memory you used:
  30106 strings out of 479465
  536045 string characters out of 5880823
- 871714 words of memory out of 5000000
+ 871756 words of memory out of 5000000
  48792 multiletter control sequences out of 15000+600000
  598545 words of font info for 109 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191

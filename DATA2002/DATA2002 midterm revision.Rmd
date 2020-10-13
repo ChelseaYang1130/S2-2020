@@ -1,0 +1,613 @@
+---
+title: "DATA2002 midterm review"
+author: "Jing Yang \ 480110301"
+date: "10/12/2020"
+output: 
+  bookdown::html_document2:
+    code_folding: hide
+    theme: readable
+    toc: true
+    toc_float: true
+    number_sections: true
+    highlight: kate
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message=FALSE)
+# some packages required for this to run 
+# install.packages("ggpubr")
+# install.packages("kableExtra")
+```
+
+```{r warning=F, message=F}
+library(tidyverse)
+library(lubridate)
+library(forcats)
+library(skimr)
+library(plotly)
+library(ggpubr)
+library(kableExtra)
+library(gridExtra)
+mykable <- function(dt, ...) {
+  kbl(dt, ...) %>% kable_material(c("striped", "hover", "condensed", "responsive"), full_width = F)
+}
+```
+
+```{r load, message=F}
+rawdata <- readr::read_csv("DATA2X02 class survey 2020 (Responses) - Form responses 1.csv")
+data <- rawdata %>%
+  janitor::clean_names() %>%
+  mutate(
+    timestamp = lubridate::dmy_hms(timestamp)
+  ) %>%
+  rename(
+    covid = how_many_times_have_you_been_tested_for_covid,
+    postcode = postcode_of_where_you_live_during_semester,
+    dentist = how_long_has_it_been_since_you_last_went_to_the_dentist,
+    uni_work = on_average_how_many_hours_per_week_did_you_spend_on_university_work_last_semester,
+    social_media = what_is_your_favourite_social_media_platform,
+    dog_cat = did_you_have_a_dog_or_a_cat_when_you_were_a_child,
+    parents = do_you_currently_live_with_your_parents,
+    exercise = how_many_hours_a_week_do_you_spend_exercising,
+    eye_colour = what_is_your_eye_colour,
+    asthma = do_you_have_asthma,
+    paid_work = on_average_how_many_hours_per_week_did_you_work_in_paid_employment_in_semester_1,
+    season = what_is_your_favourite_season_of_the_year,
+    shoe = what_is_your_shoe_size,
+    height = how_tall_are_you,
+    floss = how_often_do_you_floss_your_teeth,
+    glasses = do_you_wear_glasses_or_contacts,
+    hand = what_is_your_dominant_hand,
+    steak = how_do_you_like_your_steak_cooked,
+    stress = on_a_scale_from_0_to_10_please_indicate_how_stressed_you_have_felt_in_the_past_week
+  ) %>%
+  mutate(
+    gender = case_when(
+      grepl("f", tolower(gender), fixed=T) ~ "Female",
+      grepl("m", tolower(gender), fixed=T) ~ "Male",
+      TRUE ~ "Non-binary"
+    ) %>% as.factor(),
+    dentist = factor(dentist, levels = c("Less than 6 months", "Between 6 and 12 months", 
+                                             "Between 12 months and 2 years", "More than 2 years", NA),
+                         ordered = T) %>% 
+            recode(
+                `Less than 6 months` = "< 6 months",
+                `Between 6 and 12 months` = "6 - 12 months",
+                `Between 12 months and 2 years` = "12 months - 2 years", 
+                `More than 2 years` = "> 2 years"
+            ),
+    dog_cat = as_factor(dog_cat),
+    parents = as_factor(parents),
+    postcode = as.factor(postcode),
+    asthma = as_factor(asthma),
+    season = factor(season, levels = c("Summer", "Autumn", "Winter", "Spring"), ordered = T),
+    floss = factor(floss, levels = c("Less than once a week", "Weekly", "Most days", 
+                                        "Every day", NA), ordered = T),
+    glasses = as_factor(glasses),
+    hand = case_when(
+      hand == "Right handed" ~ "Right",
+      hand == "Left handed" ~ "Left",
+      TRUE ~ "Ambidextrous"
+    ) %>% as_factor(),
+    steak = factor(steak, levels = c(
+      "Rare", "Medium-rare", "Medium", "Medium-well done", "Well done",
+      "I don't eat beef"
+    ), ordered = T)
+  )
+```
+
+```{r}
+data <- data %>%
+  mutate(
+    # Some heights were given in metres instead of centimetres
+    height  = case_when(
+      height < 2.3 ~ height * 100,
+      T ~ height
+    ),
+    # some eye colours are misspelt 
+    eye_colour = tolower(eye_colour),
+    eye_colour = stringr::str_replace(eye_colour, pattern="dark ",
+                                      replacement = ""),
+    eye_colour = case_when(
+      eye_colour == "balck" ~ "black",
+      TRUE ~ eye_colour
+    ) %>% forcats::fct_lump_n(5, other_level="other"),
+    # fix up social media by taking the first three characters as an identifier
+    social_media = case_when(
+      grepl("ess", social_media, fixed=T) ~ "messenger",
+      T ~ social_media
+    ),
+    social_media = tolower(social_media) %>%
+      stringr::str_sub(1, 3),
+    social_media = case_when(
+        social_media == "fac" ~ "Facebook",
+        social_media == "ins" ~ "Instagram",
+        social_media == "mes" ~ "Messenger",
+        social_media == "red" ~ "Reddit",
+        social_media == "tik" ~ "Tiktok",
+        social_media == "twi" ~ "Twitter",
+        social_media == "wec" ~ "WeChat",
+        social_media == "you" ~ "YouTube",
+        T ~ social_media
+      ) %>%
+      forcats::fct_lump_n(8, other_level="Other")
+  ) %>%
+  filter(
+    exercise < 60 | is.na(exercise),
+    !(is.na(exercise) & is.na(parents) & is.na(covid) & is.na(dentist))
+  )
+
+```
+
+# Experiment design
+
+## Bias
+
+- **Selection bias / Sampling bias:** the sample does not accurately represent the poputation. (e.g. As the class survey is published on Ed, students who spend more time on checking Ed post are more likely to complete the survey.)
+
+- **Non-response bias:** certain groups are under-represented because they elect not to participate
+
+- **Measurement or designed bias:** bias factors in the sampling method influence the data obtained.
+
+## Controlled experiments vs Observational studies
+
+**randomised controlled double-blind study:** 
+
+- investigator randomly allocate the subject into a **treatment group** and a **control group**. The **control group** is given a **placebo** but both the subject and investigators don't know the identity of the groups.
+
+- the design is **good** because we expect the 2 groups to be similar thus any difference in the responses is likely to be caused by the treatment.
+
+**controlled** vs **observational:**
+
+- A *good randomised controlled experiment* can establish **causation**
+
+- An *observational study* can only eatablish **association**. It may suggest causation but **can't** prove causation.
+
+## Confounding
+
+**Concounding** occurs when the treatment group and control group differ by some *third variable* than the treatment) which influences the response that is studied.
+
+- if **any** of the subjects **drop out**, causing **selection bias** or **survivor bias**.
+- if **not all** subjects keep taking treatment or placebo, the confounding of **adherers** and **non-adherers occurs**.
+
+**Controlling for confounding:** make groups more comparable by dividing them into subgroups with respect to the confounders. (e.g. if alcohol consuption is a potential confounding factor, then divide subjects into *heavy drinkers*, *medium drinkers* and *light drinkers*)
+
+- **limitation** of controlling: 
+  - this can be limited by our ability to **identify all confounders** and then divide the study by the confounders.
+  - This explains the long time to establish that smoking causes lung cancer. Researchers needed to
+control for factors such as health, tness, diet, lifestyle, environment etc.
+
+## Simpson's Paradox
+
+- A clear trend in individual groups of data disappears when the groups are pooled together.
+- It occurs whenn relationships between percentages in subgroups are reversed when the subgroups are combined, because of a confounding or lurking variable.
+
+# Data cleaning
+```{r missingness, fig.cap="Visualising the missingness in the data."}
+visdat::vis_miss(data)+theme(axis.text.x = element_text(angle = 90))
+data = data %>% drop_na()
+```
+
+# Performance evaluation
+
+- $D_+$: the event that an individual has a particular disease
+- $D_-$: the event that an individual does not have a particular disease
+- $S_+$: represent a positive screening test result.
+- $S_-$: represent a negative screening test result.
+
+```{r}
+data(kyphosis, package = "rpart")
+# dplyr::glimpse(kyphosis)
+truth = kyphosis$Kyphosis
+prediction = ifelse(kyphosis$Start >= 9,
+"Predict absent (S+)",
+"Predict present(S-)")
+tab = table(prediction, truth)
+
+a = tab[1,1]
+b = tab[1,2]
+c = tab[2,1]
+d = tab[2,2]
+FN = c/(a+c) # false negative
+FP = b/(b+d) # false positive
+sen = a/(a+c) # sensitivity / recall
+spe = d/(b+d) # specificity
+pre = a/(a+b) # positive predictive / precision
+NP = d/(c+d) # negative predictive
+acc = (a+d)/(a+b+c+d) # accuracy
+```
+
+False negative rate is `r round(FN,2)`; False positive rate is `r round(FP,2)`; Sensitivity/Recall is `r round(sen)`; Specificity is `r round(spe,2)`; Precision/Positive predictive value is `r round(pre,2)`; Negative predictive value is `r round(NP,2)`; Accuracy is `r round(acc,2)`.
+
+# Measure of risk
+
+**Prospective / cohort study**: subjects are initially identified as disease-free and classified by presence or absence of a risk factor.
+
+- one sample from the risk factor group $R^+$
+- another sample from the non-risk factor group $R^-$
+
+**Retrospective / case control study**: take random samples from each of the two outcome categories which are followed back to determine the presence or absence of the risk factor.
+
+- one sample from the disease group $D^+$
+- another sample from the non-disease group $D^-$
+
+**Relative risk:** The relative risk is the ratio of the probability of having the disease in the group with the risk factor to the
+probability of having the disease in the group without the risk factor. $RR=\frac{P(D^+|R^+)}{P(D^+|R^-)}$
+
+- For **Prospective study** only. 
+- Not for Retrospectie study because the proportions os cases with $D^+$ and $D^-$ ewre decided by the investigator, which means we cannot estimate $P(D^+|R^+)$ and $P(D^+|R^-)$.
+- *RR = 1* - there is no difference between the two groups; *RR < 1* the disease is less likely to occur in the group with the risk factor; *RR > 1* the disease is more likely to occur in the group with the risk factor; 
+
+**Odds ratio:** 
+
+- for both **Prospective** and **Retrospective** studyies
+- *OR = 1* if and only if risk factor and disease are independent; *OR > 1* the disease is less likely to occur in the group with the risk factor; *OR < 1* the disease is less likely to occur in the group with the risk factorl;
+- **standard error** = $\sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}$
+- **confidence interval** (at 95%): if CI includes 1, risk factor & disease are independent. $CI = exp(log(\hat{OR})\pm 1.96\times\sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}})$
+```{r}
+data(kyphosis, package = "rpart")
+# dplyr::glimpse(kyphosis)
+truth = kyphosis$Kyphosis
+prediction = ifelse(kyphosis$Start >= 9,
+"Predict absent (S+)",
+"Predict present(S-)")
+tab = table(prediction, truth)
+
+a = tab[1,1]
+b = tab[1,2]
+c = tab[2,1]
+d = tab[2,2]
+
+rr = (a*(c+d))/(c*(a+b))
+or = (a*d)/(b*c)
+
+se = sqrt(1/a+1/b+1/c+1/d)
+CI = exp(log(or)+c(-1,1)*1.96*se)
+```
+
+# Goodness of fit test 
+
+### Do the data obtained in line with the claim?
+
+**Hypothesis:** $H_0:p_1=p_{10},p_2=p_{20},...,p_k=p_{k0}$ vs $H_1:$ at least one equality does not hold.
+
+**Assumptions:** 
+- indenpendent obsrevations
+- expected counts are all greater than 5 (i.e. $e_i=np_{i0}\geq 5$)
+```{r include=TRUE}
+y = c(102, 32, 12, 4)
+# y = as.data.frame(table(x$covid_test))$Freq
+p = c(0.69, 0.21, 0.07,0.03)
+  
+y_i = c(y[1:2],sum(y[3:4]))
+p_i = c(p[1:2],sum(p[3:4]))
+n = sum(y_i)
+
+e_i = n * p_i
+
+e_i >=5
+```
+**Test statistic:** $T = \sum_{i=0}^k\frac{(Y_{i} - e_{i})^2}{e_{i}}$. 
+
+```{r}
+t0 = sum((y_i - e_i)^2/e_i)
+```
+
+**Observed test statistic:** $T = \sum_{i=0}^k\frac{(y_{i} - e_{i})^2}{e_{i}}$ = `r round(t0,2)`
+
+```{r}
+chisq.test(y_i,p = p_i)
+pval = chisq.test(y_i,p = p_i)$p.value
+```
+
+**P-value:**$P(T\geq t_0)=P(X^2_{k-1-q}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:** 
+
+- Since the p-value < 0.05, there is strong evidence in the data aginst $H_0$.
+- Since the p-value > 0.05, the null hypothesis is not rejected.
+
+### Whether the data follows a Poisson distribution
+
+With the identity of a Poisson distribution that $$X \sim \text{Poisson}(\lambda) \Longrightarrow E[X] = \lambda$$. The estimated lambda is calculated by:
+$$
+\hat{\lambda} = \bar{x} = \sum_{k=1}^n\frac{x_k}n
+$$
+
+```{r fig.cap="Data with overlayed Poisson distribution"}
+tab <- table(data$covid) %>% as.data.frame() %>% mutate(
+  Var1 = as.numeric(as.character(Var1)),
+  pois = dpois(Var1, weighted.mean(Var1, Freq)) * sum(Freq)
+)
+
+(ggplot(tab) + geom_bar(aes(x = Var1, y = Freq, fill = "Data"), stat='identity') + 
+  geom_line(aes(x = Var1, y = pois, fill = "Poisson"), colour = "blue") + 
+  theme_linedraw(base_size= 18) + 
+  scale_fill_manual(values = c("Data" = "red", "Poisson" = "blue")) + 
+  labs(fill = "", x = "Number of COVID tests", y = "Count")) %>% 
+  ggplotly()
+```
+
+```{r message=F, warning=F}
+table <- table(data$covid, dnn=c("num_tests")) %>% as.data.frame() %>% mutate(
+  num_tests = as.numeric(as.character(num_tests)),
+  pois = dpois(num_tests, weighted.mean(num_tests, Freq)) * sum(Freq)
+)
+
+mykable(table, 
+        col.names = c("Number of Tests", "Observed Count", "Expected Counts from Poisson"),
+        digits = 2,
+        caption = "Data and expected counts")
+```
+
+**Hypothesis:** $H_0:p_1=p_{10},p_2=p_{20},...,p_k=p_{k0}$ vs $H_1:$ at least one equality does not hold.
+
+**Assumptions:** 
+- indenpendent obsrevations
+- expected counts are all greater than 5 (i.e. $e_i=np_{i0}\geq 5$)
+
+```{r}
+tab = as.data.frame(table(data$covid))
+y = c(tab$Freq)
+x = as.numeric(as.character(tab$Var1))
+n = sum(y)
+k = length(y)
+(lam = sum(y*x)/n)
+p = dpois(x,lambda=lam)
+ey = n*p
+ey >=5
+
+# if some Freq < 5:
+ey = c(ey[1:2],sum(ey[3:k]))
+y = c(y[1:2],sum(y[3:k]))
+k = length(y)
+
+q = 1
+df = k-1-q
+```
+
+**Test statistic:** $T = \sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$, under $H_0$, degree of freedom is $k-1-q$ = `r df` , where k is the enumber of groups and q is the number o f parameters that needs to be estimated from the data.
+
+```{r}
+t0 = sum((y-ey)^2/ey)
+```
+**Observed test statistic:** With the obsered frequencies $y_i$ from the data and estimated parameter $\lambda$ =  `r round(lam, 4)`, $t_0$ = `r round(t0,2)`
+
+```{r}
+pval = 1 - pchisq(t0,df=k-1-1)
+```
+
+**P-value:** $P(T\geq t_0)=P(\chi^2_{k-1-q}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision** 
+
+- Since the p-value is greater than 0.05, we do not reject the null hypothesis. The data are consistent with a Poisson distribution.
+
+- Since the p-value is smaller than 0.05, we reject the null hypothesis. The data does not follow a Poisson distribution.
+
+# Test of homogeneity
+
+```{r}
+tab = table(data$parents,data$gender)
+```
+
+**Test of homogeneity:** Test whether the probability distributions of the categories are the same over **the different populations**.
+
+## Chi-sqaured test
+
+**Hypothesis:** $H_0:p_{1j}=p_{2j}$ for $j=1,2,3$ vs $H_1: p_{11}\neq p_{21}, p_{21}\neq p_{22}$.
+
+```{r}
+n=sum(tab)
+r = nrow(tab)
+c = ncol(tab)
+
+yr = apply(tab, MARGIN = 1, FUN = sum)
+yc = apply(tab, MARGIN = 2, FUN = sum)
+etab = yr %*% t(yc) / n
+etab >=5
+```
+
+**Assumptions:** $e_{ij}=\frac{y_iy_j}{n} \geq 5$.
+
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{Y_{ij}-e_{ij}^2}{e_{ij}}$. Under $H_0$, the degree of freedom is $(r-1)(c-1)$ = `r df`, where r is the number of rows and c is the number of columns in contingency table.
+
+```{r}
+df = (r-1)*(c-1)
+
+t0 = chisq.test(tab, correct=FALSE)$statistic
+pval = chisq.test(tab, correct=FALSE)$p.value
+```
+
+**Observed test statistic:** $\sum^r_{i=1}\sum^c_{j=1}\frac{y_{ij}-e_{ij}^2}{e_{ij}}$.
+
+**P-value:** $P(T \geq$ `r round(t0,2)`) = $P(\chi^2_1 \geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:** 
+
+- Since the p-value is greater than 0.05, we do not reject the null hypothesis. There is no significant difference in ... between .. and ..
+- Since the p-value is smaller than 0.05, we reject the null hypothesis. There is significant difference in ... between .. and ..
+
+# Test of independence
+
+**Test of independence:**
+
+```{r}
+tab = table(data$parents,data$gender)
+```
+
+## Chi-squared test
+
+**Hypothesis:** $H_0:p_{ij}=p_ip_j$ for $i=1,2,...,r,j=1,2,...,c$ vs $H_1:$ Not all equalities hold.
+
+```{r}
+n=sum(tab)
+r = nrow(tab)
+c = ncol(tab)
+
+yr = apply(tab, MARGIN = 1, FUN = sum)
+yc = apply(tab, MARGIN = 2, FUN = sum)
+etab = yr %*% t(yc) / n
+etab >=5
+```
+
+**Assumptions:** all expected counts are greater or equal to 5 (i.e.$e_{ij}=\frac{y_iy_j}{n} \geq 5$)
+
+```{r}
+df = (r-1)*(c-1)
+
+t0 = chisq.test(tab, correct=FALSE)$statistic
+pval = chisq.test(tab, correct=FALSE)$p.value
+```
+
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(Y_{ij}-e_{ij})^2}{e_{ij}}$. Under $H_0$, the degree of freedom is $(r-1)(c-1)=$ 1r df`, where c is the number of columns and r is the number of rows in the contingency table.
+
+**Observed statistic:** $t_0=\sum^r_{i=1}\sum^c_{j=1}\frac{(y_{ij}-{y_iy_j/n})^2}{y_iy_j/n}=$ `r round(t0,2)`
+
+**P-value:** $P(T\geq$ `r round(t0,2)`) = $P(\chi^2_{(r-1)(c-1)}\geq `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:**
+
+- Since the p-value is greater than 0.05, we do not reject the null hypothesis. There is no association between ... and ...
+- Since the p-value is smaller than 0.05, we reject the null hypothesis. There is no an association between ... and ...
+
+# Test in small samples (cell counts < 5)
+
+## Fisher's exact test - 2 by 2 table
+
+**Fisher's exact test:** Consider all posible permutations of 2 by 2 contingency table wiht the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
+
+**Drawbacks:**
+
+- It assumes that row and column margins are fixed.
+- Need to use Monte Carlo for large contingency tables.
+
+**Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
+
+**Assumptions:** Consider all posible permutations of 2 by 2 contingency table wiht the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
+
+```{r}
+tab = table(data$parents,data$gender)
+fisher = fisher.test(tab)  # two-sided
+fisher = fisher.test(tab,alternative = "greater")
+fisher = fisher.test(tab,alternative = "less")
+pval = fisher$p.value 
+```
+
+The degrees of freedom is not calculated as it is not relevant to fisher's exact test.
+
+**Decision:** 
+
+- P-value = `r round(pval,4)` $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
+- P-value = `r round(pval,4)` $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
+
+## Yate's corrected chi-squared test
+
+**Yate's correction:** Apply continuity correction with a chi-squared test, using the identity $P(X\leq x) \approx P(Y\leq x+0.5)$ and $P(X\geq x) \approx P(Y\geq x-0.5)$.
+
+**Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
+
+**Assumption:** Yate's correction applies continuity correction to approximize integer-valued varaible, therefore, it does not restrict the celll counts. 
+
+```{r}
+tab = table(data$parents,data$gender)
+r=nrow(tab)
+c=ncol(tab)
+df = (r-1)*(c-1)
+yate = chisq.test(tab,correct=TRUE)
+t0 = yate$statistic
+pval = yate$p.value
+```
+
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(|Y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$, which approximately follows a $\chi^2_{(r-1)(c-1)}$ distribution under $H_0$. The degree of freedom is $(r-1)(c-1)=$ `r df`, where r is the number of rows and c is the number of columns in the contingency table.
+
+**Observed test statistic:** $t_0=\sum^r_{i=1}\sum^c_{j=1}\frac{(|y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$ = `r round(t0,2)`.
+
+**P-value:** $P(T\geq$ `r round(t0,2)`) = $P(\chi^2_{(r-1)(c-1)}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:** 
+
+- As p-value $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
+- As p-value $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
+
+## Monte Carlo simulation
+
+**Monte Carlo simulation:** Resample (i.e. randomly generate contingency tables) and perform chi-squared tests by many times. Calculate the test statistic for each of the resamples and create a sampling distribution of test statistics. P-value is calculated by determining the proportion of the resampled test statistics $\geq$ the observed test statistic.
+
+**Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
+
+**Assumptions:** No assumptions are mde about the underlying distibution of the population. The cell counts are also not restricted for Monte Carlo simulation.
+
+To calculate the p-value, a Monte Carlo simulation is performe, with 10000 simulations of chi-squared test. Note that degree of freedom is not considered as it is not relavant to the Monte Carlo simulation.
+
+```{r}
+tab = table(data$parents,data$gender)
+sim = chisq.test(tab, simulate.p.value = TRUE, B = 10000)
+t0 = sim$statistic
+pval = sim$p.value
+```
+
+**Test statistics:** the test statistic is calculated for each of the resamples by $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(Y_{ij}-e_{ij})^2}{e_{ij}}$. 
+
+**Observed test statistic:** $t_0=\sum^r_{i=1}\sum^c_{j=1}\frac{(y_{ij}-e_{ij})^2}{e_{ij}}=$ `r round(t0,2)`
+
+**P-value:** $P(T\geq$ `r round(t0,2)`) = $P(\chi^2\geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:** 
+
+- As p-value $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
+- As p-value $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
+
+# Testing mean
+
+## One sample t-test
+
+```{r box,fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
+ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0, width = 18) +
+  geom_vline(xintercept= 35,colour = "blue",linetype = "dashed") # the tested mean
+```
+
+From Figure \@ref(fig:box), ...
+
+**Assumptions:** 
+
+- Each observation is chosen at radom from a population. 
+- Variables are independently and identically distributed.
+
+To test the normality of data, a Q-Q plot is generated as below.
+
+The data doesn't follow a normal distriution if:
+- A lower bend of zero exist?
+- Not clase enought to the line to be considered 'normal'.
+
+```{r}
+ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+```
+
+
+# Plots
+```{r}
+# barchart
+media_f = as.data.frame(table(data$social_media))
+sort = arrange(media_f, Freq)
+data %>% ggplot() +
+  aes(y = social_media,fill = gender, stat = "count")   +
+  geom_bar() +
+  scale_y_discrete(name=" ", limits=as.character(sort$Var1)) +
+  labs(y = "", x = "Count")+theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r message = F, warning = F, fig.cap = "Comparison of number of hours per week exercised between females and males"}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+  facet_grid(rows = vars(gender)) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Exercise per week (hours)") +
+  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```

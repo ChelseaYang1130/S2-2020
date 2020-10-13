@@ -23,7 +23,7 @@
 
 \title{QBUS2820 Assignment 1}
 
-\author[]{}
+\author[a]{SID: 480110301}
 
 
 \setcounter{secnumdepth}{0}
@@ -91,12 +91,12 @@ This project aims to develop predictive models of salary for NBA
 basketball players. Three types of techniques including k-nearest
 neignbour regression, linear regression and lasso regression are
 involved. Predictive models are developed by changing corresponding
-parameters and features, with 5-fold cross validation being applied to
-assess root mean squared errors of these models. The optimal model is
-then selected by the lowest validation error for each technique. With
-the best predictive performance, a lasso regression model having the
-lowest test set root mean squared error is found to be best-suited the
-NBA data.
+hyperparameters and features involved, with 5-fold cross validation
+being applied to assess root mean squared errors of these models. The
+optimal model is then selected by the lowest validation error for each
+technique. With the best predictive performance, a lasso regression
+model having the lowest test set root mean squared error is found to be
+best-suited the NBA data.
 
 \hypertarget{data-processing-and-exploratory-data-analysis}{%
 \section{Data processing and exploratory data
@@ -354,9 +354,9 @@ features is more powerful compared to a KNN regression model.
 19 numeric features are fed into lasso regression models with 7 values
 of alpha: 0.0001, 0.001, 0.01, 0.1, 0.5, 5 and 10. 5-fold cross
 validation is then applied to assess predictive performance of models.
-The optimal lasso model is selected based on negative mean squared
-error, the smaller the negative mean squared error, the better the lasso
-model performs.
+The optimal lasso model is selected based on root mean squared error,
+the smaller the root mean squared error, the better the lasso model
+performs.
 
 The optimal value of \(\alpha\) is 0.5 for this data. With this value of
 \(\alpha\), 10 features are selected with the predictive function:
@@ -366,7 +366,7 @@ played, personal efficiency rate, defensive rebounds, turn over
 percentage, usage percentage and number of win shares while decreases in
 age, number of games played, assists and defensive rating result in an
 increase in salary. The validation root mean squared of the model is
--12.8575 (\$ Millions), which is the best performance among 7 lasso
+3.5857 (\$ Millions), which is the best performance among 7 lasso
 regression models developed.
 
 \hypertarget{test-set-performance}{%
@@ -417,9 +417,9 @@ is the best-suited the data with greatest predictive performance.
 \section{Analysis and conclusions}\label{analysis-and-conclusions}}
 
 In conclusion, predictive performance can vary significantly with
-different features and parameters of machine learning techniques. The
-optimal multiple linear regression model contains 14 features while the
-optimal lasso regression model selects 10 features and a \(\alpha\)
+different features and hyperparameters of machine learning techniques.
+The optimal multiple linear regression model contains 14 features while
+the optimal lasso regression model selects 10 features and a \(\alpha\)
 value of 0.5. These two models satisfies the predictive performance rule
 of thumb which requires root mean squared errors less than 4.1 millions
 dollars.
@@ -435,10 +435,15 @@ solution to this issue is to choose a smaller values of k so that the
 salary is estimated based on fewer neibours. However, this could worsen
 predictive performance of the whole model as root mean squared error
 increases. More attention should be paid on this trade-off in further
-study. Another solution could be scaling the salary with logorithm to
+study. Another solution could be scaling the salary with logarithm to
 deal with outliers. Moreover, a problem of whether and how the feature
 selection should be perform for k-nearest neighbour is yet to be
 discussed.
+
+Beside the k-knerest neighbour regression, more unsupervised learning
+techniques should be evaluated in further study, so that any differences
+of predictive performance between supervised and unsupervised learning
+can be discovered.
 
 \vfill
 
@@ -571,31 +576,31 @@ Based on the correlation coefficients shown in Figure
 ``ptrtio'' have relatively strong linear relationship with ``medv''
 while ``chas'' and ``dis'' is mildly linearly related to ``medv''. To
 reduce the number of features, features with an absolute value of
-corelation coefficients with ``medv'' (refer to Table
+correlation coefficients with ``medv'' (refer to Table
 \ref{table:corrTab}) at less than 0.4 are discarded. 6 features which
 are ``nox'', ``tax'', ``indus'', ``ptratio'', ``rm'' and ``lstat''
 remain for further inspection.
 
-Figure \ref{fig:houseScatter} further visualise the distribution of 6
+Figure \ref{fig:houseScatter} further visualize the distribution of 6
 features which show linear relationship with ``medv''. The linear
 relationships are clearly shown between ``rm'', ``lstat'' and 'medv``,
 which indicates multicollinearity between the three variables. As such,
 only one of''rm" and ``lastat'' can be involved in the linear regression
-model. ``nox'' and ``indus'' are also visualised to have mediate linear
+model. ``nox'' and ``indus'' are also visualized to have mediate linear
 relationship with ``medv'' whereas the pattern of linearity of
 ``ptratio'' and ``tax'' is unclear.
 
 Furthermore, Figure \ref{fig:houseScatter} shows that ``medv'',
 ``lstat'' and ``nox'' are right-skewed while ``ptratio'' is left-skewed,
 and ``rm'' follows a normal distribution. ``indus'' and ``tax'' follow
-unknow distribution with large amount of outliers.
+unknown distribution with large amount of outliers.
 
-To select 3 features from 6 feature, the corelation coefficient and
+To select 3 features from 6 feature, the correlation coefficient and
 distribution of the data play is referred. As ``lstat'' and ``rm'' show
 no clear linear relationship with other variables except ``medv'',
 ``lstat'' is preferred as it has a greater correlation coefficient with
 the response ``medv''. Besides, ``nox'' and ``indus'' are also selected
-as they have higher corelation coefficient and follow a clear
+as they have higher correlation coefficient and follow a clear
 distribution compared to ``ptratio'' and ``tax''. As such, by
 considering multicolinearity and the strength of linear relationships
 with ``medv'', ``lstat'', ``nox'' and ``indus'' are selected to engage
@@ -605,23 +610,23 @@ in the linear regression model.
 \section{Gradient ascent algorithm}\label{gradient-ascent-algorithm}}
 
 To develop the gradient ascent algorithm for maximum likelihood
-estimaton, the log-likelihood is calculated by
+estimation, the log-likelihood is calculated by
 \(L=-\frac{1}{2N}\sum^N_{i=1}(y_i-\beta_0-\sum^p_{j=1}\beta_ix_{ij})^2\).
 The reason why log-likelihood rather than likelihood is used is that the
-logorithm transfers multiplication to sum in the function so that it is
+logarithm transfers multiplication to sum in the function so that it is
 easier to calculate differentiation. The gradients of parameters are
 then calculated by the matrix representation
 \(\frac{\bigtriangleup L(\beta)}{\bigtriangleup \beta}=\frac{1}{N}X^T(y-f(X))\).
-The gradient ascent approach is initialised by a point of
+The gradient ascent approach is initialized by a point of
 \(\beta=[0,...,0]^T\). In each iteration, \(\beta\) is updated to
 \(\beta+\alpha\frac{\bigtriangleup L(\beta)}{\bigtriangleup \beta}\),
-where \(\alpha\) is the learning rate controling the step of increase in
-\(\beta\) for each iteration, until convergence (i.e.~the gradient has
-minal changes).
+where \(\alpha\) is the learning rate controlling the step of increase
+in \(\beta\) for each iteration, until convergence (i.e.~the gradient
+has few changes).
 
 With the same number of iteration, different values of learning can
 influences the predictive performance of models. In this project,
-performance of gradient asccent models with learning rates of 0.001,
+performance of gradient ascent models with learning rates of 0.001,
 0.01, 0.1 and 1 is estimated while the number of iteration is set to be
 500 which is large enough for likelihood to converge. Leave one out
 cross validation is applied, with mean squared error being the cross
@@ -639,7 +644,7 @@ validation score to assess the performance of models.
 \hline
 \end{tabular}
 \centering
-\caption{CV scores of gradient aescent models}
+\caption{CV scores of gradient ascent models}
 \label{table:cvScore}
 \end{wraptable}
 
