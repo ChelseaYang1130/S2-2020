@@ -265,6 +265,37 @@ se = sqrt(1/a+1/b+1/c+1/d)
 CI = exp(log(or)+c(-1,1)*1.96*se)
 ```
 
+# Random variables
+
+**Expectations of random variable:**
+
+- $E(X)=\mu$ - $\mu$ is the population mean
+- $Var(X)=\sigma^2$ - $\sigma^2$ is the population variance
+- $SD(X)=\sigma$
+- $E(cX)=cE(X)$
+- $Var(cX)=c^2Var(X)$
+
+For $T=\sum^n_{i=1}X_i$:
+
+- $E(T)=E(X_1+...+X_n)=E(X_1)+...+E(X_n)=\mu+...+\mu=n\mu$
+- $Var(T)=Var(X_1+...+X_n)=Var(X_1)+...+Var(X_n)=\sigma^2+...+\sigma^2=n\sigma^2$
+
+**Sampling:**
+
+- sample mean: $E(\bar X)=E(\frac{1}{n}T)=\frac{1}{n}E(T)=\frac{1}{n}n\mu=\mu$.
+- sample variance: $Var(\bar X)=Var(\frac{1}{n}T)=(\frac{1}{n})^2 Var(T)=\frac{1}{n^2}n\sigma^2=\frac{\sigma^2}{n}$
+- standard error: $SE=SD(\bar X)=\sqrt{Var(\bar X)}=\frac{\sigma}{\sqrt n}$
+- estimated SE: $\hat{SE}=\frac{s}{\sqrt n}$, where $s^2=\frac{1}{n-1}\sum^n_{i=1}(x_i-\bar x)^2$
+
+**Importance of SE:** it tells us the likely size of the esimation error so that we know how accurate or reliable the estimate is.
+
+## Critical value & Confidence intervals
+
+Two-sided discrepancies of interest:
+
+- **t-test:**
+- **Confidence interval:** $\bar x \pm c\frac{s}{\sqrt n}$ - the set of plausible values for unknown $\mu$.
+
 # Goodness of fit test 
 
 ### Do the data obtained in line with the claim?
@@ -293,14 +324,14 @@ e_i >=5
 t0 = sum((y_i - e_i)^2/e_i)
 ```
 
-**Observed test statistic:** $T = \sum_{i=0}^k\frac{(y_{i} - e_{i})^2}{e_{i}}$ = `r round(t0,2)`
+**Observed test statistic:** $t_0 = \sum_{i=0}^k\frac{(y_{i} - e_{i})^2}{e_{i}}$ = `r round(t0,2)`
 
 ```{r}
 chisq.test(y_i,p = p_i)
 pval = chisq.test(y_i,p = p_i)$p.value
 ```
 
-**P-value:**$P(T\geq t_0)=P(X^2_{k-1-q}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+**P-value:**$P(T\geq t_0)=P(X^2_{`k-1-q`}\geq$ `r round(t0,2)`) = `r round(pval,4)`
 
 **Decision:** 
 
@@ -377,7 +408,7 @@ t0 = sum((y-ey)^2/ey)
 pval = 1 - pchisq(t0,df=k-1-1)
 ```
 
-**P-value:** $P(T\geq t_0)=P(\chi^2_{k-1-q}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+**P-value:** $P(T\geq t_0)=P(\chi^2_{`r df`}\geq$ `r round(t0,2)`) = `r round(pval,4)`
 
 **Decision** 
 
@@ -419,9 +450,9 @@ t0 = chisq.test(tab, correct=FALSE)$statistic
 pval = chisq.test(tab, correct=FALSE)$p.value
 ```
 
-**Observed test statistic:** $\sum^r_{i=1}\sum^c_{j=1}\frac{y_{ij}-e_{ij}^2}{e_{ij}}$.
+**Observed test statistic:** $\sum^{`r r`}_{i=1}\sum^{`r c`}_{j=1}\frac{y_{ij}-e_{ij}^2}{e_{ij}}$.
 
-**P-value:** $P(T \geq$ `r round(t0,2)`) = $P(\chi^2_1 \geq$ `r round(t0,2)`) = `r round(pval,4)`
+**P-value:** $P(T \geq `r round(t0,2)`) = P(\chi^2_{`r df`} \geq `r round(t0,2)`) = `r round(pval,4)`$
 
 **Decision:** 
 
@@ -429,8 +460,6 @@ pval = chisq.test(tab, correct=FALSE)$p.value
 - Since the p-value is smaller than 0.05, we reject the null hypothesis. There is significant difference in ... between .. and ..
 
 # Test of independence
-
-**Test of independence:**
 
 ```{r}
 tab = table(data$parents,data$gender)
@@ -460,11 +489,11 @@ t0 = chisq.test(tab, correct=FALSE)$statistic
 pval = chisq.test(tab, correct=FALSE)$p.value
 ```
 
-**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(Y_{ij}-e_{ij})^2}{e_{ij}}$. Under $H_0$, the degree of freedom is $(r-1)(c-1)=$ 1r df`, where c is the number of columns and r is the number of rows in the contingency table.
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(Y_{ij}-e_{ij})^2}{e_{ij}}$. Under $H_0$, the degree of freedom is $(r-1)(c-1)=$ `r df`, where c is the number of columns and r is the number of rows in the contingency table.
 
-**Observed statistic:** $t_0=\sum^r_{i=1}\sum^c_{j=1}\frac{(y_{ij}-{y_iy_j/n})^2}{y_iy_j/n}=$ `r round(t0,2)`
+**Observed statistic:** $t_0=\sum^{`r r`}_{i=1}\sum^{`r c`}_{j=1}\frac{(y_{ij}-{y_iy_j/n})^2}{y_iy_j/n}=$ `r round(t0,2)`
 
-**P-value:** $P(T\geq$ `r round(t0,2)`) = $P(\chi^2_{(r-1)(c-1)}\geq `r round(t0,2)`) = `r round(pval,4)`
+**P-value:** $P(T\geq `r round(t0,2)`) = P(\chi^2_{`r df`}\geq `r round(t0,2)`) = `r round(pval,4)`$
 
 **Decision:**
 
@@ -521,9 +550,9 @@ pval = yate$p.value
 
 **Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(|Y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$, which approximately follows a $\chi^2_{(r-1)(c-1)}$ distribution under $H_0$. The degree of freedom is $(r-1)(c-1)=$ `r df`, where r is the number of rows and c is the number of columns in the contingency table.
 
-**Observed test statistic:** $t_0=\sum^r_{i=1}\sum^c_{j=1}\frac{(|y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$ = `r round(t0,2)`.
+**Observed test statistic:** $t_0=\sum^{`r r`}_{i=1}\sum^{`r c`}_{j=1}\frac{(|y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$ = `r round(t0,2)`.
 
-**P-value:** $P(T\geq$ `r round(t0,2)`) = $P(\chi^2_{(r-1)(c-1)}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+**P-value:** $P(T\geq `r round(t0,2)`) = P(\chi^2_{`r df`}\geq `r round(t0,2)`) = `r round(pval,4)`$
 
 **Decision:** 
 
@@ -562,35 +591,218 @@ pval = sim$p.value
 
 ## One sample t-test
 
-```{r box,fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
-ggplot(data, aes(x= uni_work)) +
+```{r fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
+p1 = ggplot(data, aes(x= uni_work)) +
   geom_histogram(bins = 12, show.legend = F) +
   theme_linedraw(base_size = 18) +
   labs(y = "Count", x = "Uni Work (hours)") +
-  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0, width = 18) +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
   geom_vline(xintercept= 35,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
 ```
+The data doesn't follow a normal distriution if:
+- A lower bend of zero exist?
+- Not clase enought to the line to be considered 'normal'.
 
 From Figure \@ref(fig:box), ...
+
+**Hypothesis:** $H_0: \mu =130$ vs $H_1: \mu ><\neq130$
 
 **Assumptions:** 
 
 - Each observation is chosen at radom from a population. 
 - Variables are independently and identically distributed.
 
-To test the normality of data, a Q-Q plot is generated as below.
+```{r}
+n = length(data$uni_work)
+df = n-1
+mean = mean(data$uni_work)
+mu = 130
+S = sd(data$uni_work)
+# t.test(data$uni_work,mu = 130,alternative = "two.sided")
+t0 = t.test(x,mu = mu,alternative = "two.sided")$statistic
+pval = t.test(x,mu = mu,alternative = "two.sided")$p.value
+
+# for greater or less than 130:
+t0 = t.test(x,mu = mu,alternative = "greater")$statistic
+pval = t.test(x,mu = mu,alternative = "greater")$p.value
+
+t0 = t.test(x,mu = mu,alternative = "less")$statistic
+pval = t.test(x,mu = mu,alternative = "less")$p.value
+```
+
+**Test statistic:** $T=\frac{\bar{X}-\mu_0}{s/\sqrt{n}}$. Under $H_0$, the data tends to follow t distribution with $n-1=$ `r df` degree of freedom.
+
+**Observed test statistic:** $t_0=\frac{`r round(mean,2)`-`r mu`}{`r round(S,2)`/\sqrt{`r n`}}=`r round(t0,2)`$
+
+**P-value:** $P(t_{`r df`}\leq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Decision:** 
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+## Two-sample t-test
+
+**Two-sample t-test:** test whether the population mean of two samples are different. 
+
+**Welch two-sample t-test:** does not assume equal population variances.
+
+```{r}
+sum = data %>% group_by(gender) %>%
+      summarise(Mean = mean(exercise), 
+      Median = median(exercise),
+      SD = sd(exercise),
+      Variance = var(exercise),
+      n = n())
+
+colnames(sum)=c("Gender","Mean","Median","SD","Variance","Counts")
+knitr::kable(sum,digits = 1, align="cccccc",caption = "Statistics of number of hours spent on exercising by different genders.") %>% kable_paper(full_width = F, html_font = "Cambria")
+```
+
+```{r fig.cap="Distribution of ..."}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+  facet_grid(rows = vars(gender)) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Exercise per week (hours)") +
+  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```
+```{r fig.cap="Q-Q plots of data in different groups."}
+ggqqplot(data %>% filter(gender != "Non-binary"), x = "exercise", color = "gender") +
+  facet_grid(rows = vars(gender)) + 
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+```
 
 The data doesn't follow a normal distriution if:
 - A lower bend of zero exist?
 - Not clase enought to the line to be considered 'normal'.
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ or $\mu_x \leq \mu_y$ or $\mu_x \neq \mu_y$
+
+**Assumptions:** 
+- Variables $X,Y$ are identically and independently distributed with identities $N(\mu_X,\sigma^2)$ and $N(\mu_Y,\sigma^2)$.
+- Observations are independent to each other
+- Regular two-sample t-test assumes equal population variances of variables while Welch two-sample t-test does not assume equal variance.
+
+```{r}
+x = data %>% filter(gender =="Female")
+x= data$exercise
+y = data %>% filter(gender =="Male")
+y = data$exercise
+
+nx = length(x)
+ny = length(y)
+sx = sd(x)
+sy = sd(y)
+sp2 = ((nx-1)*(sx^2)+(ny-1)*(sy^2))/(nx+ny-2)
+sp = sqrt(sp2)
+xbar = mean(x)
+ybar = mean(y)
+t.test(x,y, alternative="two.sided")
+df = nx+ny-2
+t0 = t.test(x,y, alternative="two.sided")$statistic
+pval = t.test(x,y, alternative="two.sided")$p.value
+```
+
+**Test statistic:** $T=\frac{\bar{X}-\bar{Y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}$. Under $H_0$, the data tend to follow a t distribution with `r df` degree of freedom.
+
+**Observed test statistic:** $t_0=\frac{`r round(xbar,2)` - `r round(ybar,2)`}{`r round(sp,2)` \sqrt{\frac{1}{`r nx`}+\frac{1}{`r ny`}}}$, where $S2_p=\frac{(`r nx` -1)`r round(sx,2)`^2+(`r ny`-1)`r round(sy,2)`^2}{`r nx`+`r ny` -2}=`r round(t0,2)`$
+
+**P-value:** $2P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$ or $P(t_{`r df` \leq |`r t0`|})=`r round(pval,4)`$ or $P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$
+
+**Decision:** 
+
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
+
+## Paired samples t-test
+
+**Paired samples t-test:** measure twice with the same population. (e.g. Blood samples from individuals before and after they smoked a cigarette). The differences between two variables are usually calculated to perform one-sample t-test.
+
+```{r}
+before = c(25, 25, 27, 44, 30, 67, 53, 53, 52)
+after = c(27, 29, 37, 36, 46, 82, 57, 80, 61)
+df = data.frame(before,after, diff = after-before)
+
+p1 = ggplot(df, aes(x= diff)) +
+  geom_histogram(bins = 10, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Difference") +
+  geom_boxplot(aes(x = diff, y = 20), outlier.alpha = 0.5, width = 18)
+
+p2 = ggqqplot(df, x = "diff") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+The data doesn't follow a normal distriution if:
+- A lower bend of zero exist?
+- Not clase enought to the line to be considered 'normal'.
+
+**Hypothsis:**$H_0:\mu_d=0$ vs $H_1:\mu_d\neq 0$
+
+**Assumptions:** differences between two samples are independent and identically disbributed, with the identity $N(\mu_d,\sigma^2)$.
+
+```{r}
+n = length(df$diff)
+sd = sd(df$diff)
+dbar = mean(df$diff)
+t0 = t.test(df$diff,mu=0)$statistic
+pval = t.test(df$diff,mu=0)$p.value
+df = n-1
+```
+
+**Test statistic:** $T=\frac{\bar D}{S_d / \sqrt{n}}$. Under $H_0$, test statistic tends to follow a t distribution with $n-1=`r df`$ degree of freedom.
+
+**Observed test statistic:** $t_0=\frac{`r round(dbar,2)`}{`r round(sd,2)`/ \sqrt{`r n`}}$
+
+**P-value:** $2P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$ or $P(t_{`r df` \leq |`r t0`|})=`r round(pval,4)`$ or $P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$
+
+**Decision:** 
+
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
+
+# Plots
+
+## Single histogram + boxplot
+```{r box,fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
+
+ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= 35,colour = "blue",linetype = "dashed") # the tested mean
+```
+
+## Two histogram + boxplots
+```{r message = F, warning = F, fig.cap = "Comparison of number of hours per week exercised between females and males"}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+  facet_grid(rows = vars(gender)) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Exercise per week (hours)") +
+  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```
+
+## Q-Q plot
 
 ```{r}
 ggqqplot(data, x = "uni_work") +
   theme_linedraw(base_size = 18) + theme(legend.position = "none")
 ```
 
+## Barchart
 
-# Plots
 ```{r}
 # barchart
 media_f = as.data.frame(table(data$social_media))
@@ -600,14 +812,4 @@ data %>% ggplot() +
   geom_bar() +
   scale_y_discrete(name=" ", limits=as.character(sort$Var1)) +
   labs(y = "", x = "Count")+theme(plot.title = element_text(hjust = 0.5))
-```
-
-```{r message = F, warning = F, fig.cap = "Comparison of number of hours per week exercised between females and males"}
-ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
-  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
-  facet_grid(rows = vars(gender)) +
-  theme_linedraw(base_size = 18) +
-  labs(y = "Count", x = "Exercise per week (hours)") +
-  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
-  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
 ```

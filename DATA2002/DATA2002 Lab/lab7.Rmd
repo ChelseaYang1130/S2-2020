@@ -1,0 +1,218 @@
+---
+title: "DATA2002 Lab7"
+author: "Jing Yang \ 480110301"
+date: "10/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+for(i in 1:6){
+  sample(1:6, 2, replace = TRUE)
+  
+}
+```
+```{r}
+mean(1.9+2.9+2.4+2+3.4+6.4)/6
+```
+
+Q2.2
+
+```{r}
+my_house = c()
+bs_res = NULL
+for(i in 1:200){
+  bs_sample = sample(my_houses,replace=TRUE)
+  bs_res[i] = mean(bs_sample)
+}
+
+hist(bs_res)
+
+bs_ci = quantile(bs_res, c(0.025,0.975))
+```
+
+# Questions
+
+## Speed of light
+
+```{r}
+library(tidyverse)
+speed_file = read_csv("https://raw.githubusercontent.com/DATA2002/data/master/speed_of_light.txt")
+ggplot(speed_file, aes(x= Speed_of_Light)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "", x = "Speed of Light") +
+  geom_boxplot(aes(x =Speed_of_Light, y = 60), outlier.alpha = 0.5, width = 18) 
+```
+
+a. Generate one bootstrap sample and compare this sampled data with the original data.
+
+```{r}
+speed = speed_file$Speed_of_Light
+bs_sample = sample(speed,replace = TRUE)
+bs_sample
+speed
+```
+
+b. Compute the mean and median of the bootstrap sample and compare with the corresponding values in the original data.
+```{r}
+(sam_mean = mean(bs_sample))
+(pop_mean = mean(speed))
+(sam_median = median(bs_sample))
+(pop_median = median(speed))
+```
+
+c. Draw another bootstrap sample and repeat the comparison. Repeat this 20 times and see if your conclusion changes. Inspect first ten bootstrap estimates of the mean. Visualise the result. Hint: Write a for loop (see example in lecture notes).
+```{r}
+set.seed(100)
+
+bs_means = NULL
+for(i in 1:20){
+  bs_sample = sample(speed, replace=TRUE)
+  bs_means[i] = mean(bs_sample)
+}
+bs_means = as.data.frame(bs_means)
+pop_mean
+hist(bs_means$bs_means)
+
+# ggplot(bs_means,aes(x= bs_means)) +
+#   geom_histogram(bins = 10, show.legend = F) +
+#   theme_linedraw(base_size = 18) +
+#   labs(x = "Mean")
+```
+d. Typically one draws a large number of bootstrap samples, say 1000 or more. Try different numbers of bootstrap samples and see how the shape of the histogram changes.
+
+```{r}
+set.seed(100)
+
+bs_means = NULL
+for(i in 1:1000){
+  bs_sample = sample(speed, replace=TRUE)
+  bs_means[i] = mean(bs_sample)
+}
+```
+
+e. Calculate the statistic for which we want to find a confidence interval and use the 2.5 and 97.5 percentiles as the confidence limits. Compare with the results using the t-interval.
+```{r}
+(bs_ci = quantile(bs_means, c(0.025,0.975)))
+
+hist(bs_means,breaks = 30,col="lightblue")
+abline(v=bs_ci,col="red",lwd=2)
+```
+
+Using t distribution
+```{r}
+n = length(speed)
+se = sd(speed)/sqrt(n)
+c(pop_mean,n,se)
+
+critical_values = qt(c(0.025,0.975), df = n-1)
+critical_values
+(t_ci = pop_mean+critical_values*se)
+
+hist(bs_means,breaks = 30,col="lightblue")
+abline(v=bs_ci,col="red",lwd=2)
+abline(v=t_ci,col="blue", lwd=3,lty=2)
+```
+
+f. Repeat the same bootstrap confidence intervals calculation for the median and the MAD.
+
+```{r}
+bs_medians = NULL
+for(i in 1:1000){
+  bs_sample = sample(speed, replace=TRUE)
+  bs_medians[i] = median(bs_sample)
+}
+(bs_ci = quantile(bs_medians, c(0.025,0.975)))
+
+hist(bs_medians,breaks = 10,col="lightblue")
+abline(v=bs_ci,col="red",lwd=2)
+```
+
+## Cotinine
+
+1. Calculate some simple descriptive measures of the data, construct a histogram and a QQ plot. Provide a brief description of the sample data.
+```{r}
+x = c(0, 87, 173, 253, 1, 103, 173, 265, 1, 112, 198, 266, 3, 121, 
+    208, 277, 17, 123, 210, 284, 32, 130, 222, 289, 35, 131, 227, 
+    290, 44, 149, 234, 313, 48, 164, 245, 477, 86, 167, 250, 491)
+
+pop_mean = mean(x)
+pop_median = median(x)
+c(pop_mean,pop_median)
+```
+```{r}
+data = as.data.frame(x)
+
+
+p1 = ggplot(data, aes(x= x)) +
+  geom_histogram(bins = 10, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = x, y = 15), outlier.alpha = 0, width = 5) 
+
+p2 = ggqqplot(data, x = "x") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+grid.arrange(p1, p2, ncol=2)
+```
+2. Based on your descriptive summary of the data, do you think there are any outlying, or unusually large, observations that may impact upon any inferential test that you perform? In your description, take into consideration the summary statistics and histogram of the remaining data.
+
+3. Using R and the complete sample, perform a standard t test of the hypotheses H0: μ=130 vs H1: μ≠130. At the 5% level of significance, what can you conclude about the cotinine levels of the smokers in the population?
+
+**Hypothesis:** $H_0: \mu=130$ vs $H_1: \mu \neq130$
+
+**Assumptions:** 
+
+- Each observation is chosen at radom from a population. 
+- Variables are independently and identically distributed.
+
+To test the normality of data, a Q-Q plot is generated as below.
+
+The data doesn't follow a normal distriution if:
+- A lower bend of zero exist?
+- Not clase enought to the line to be considered 'normal'.
+
+```{r}
+n = length(x)
+(df = n-1)
+t.test(x,mu = 130,alternative = "two.sided")
+t0 = t.test(x,mu = 130,alternative = "two.sided")$statistic
+pval = t.test(x,mu = 130,alternative = "two.sided")$p.value
+```
+
+**Test statistic:** $T=\frac{\bar{X}-\mu_0}{s/\sqrt{n}}$. Under $H_0$, the data tends to follow t distribution with $n-1=$ `r df` degree of freedom.
+
+**Observed test statistic:**
+
+4. Sign test
+```{r}
+x1=x[x!=130]
+bigger = x1>130
+table(bigger) 
+binom.test(table(bigger))
+```
+
+5. Permutation test: have more power and we don't have to infer population.
+
+```{r}
+reps = 10000
+n = length(x)
+
+diff_data = x-130
+dbar = mean(diff_data)
+random_means = numeric(reps)
+
+for(i in 1:reps){
+  perm_signs = sample(c(-1,1),n,replace=TRUE)
+  perm_data = perm_signs*diff_data
+  random_means[i] = mean(perm_data)
+}
+
+pval = mean(abs(random_means)>=abs(dbar))
+pval
+```
+
