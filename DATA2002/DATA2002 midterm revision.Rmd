@@ -289,12 +289,90 @@ For $T=\sum^n_{i=1}X_i$:
 
 **Importance of SE:** it tells us the likely size of the esimation error so that we know how accurate or reliable the estimate is.
 
-## Critical value & Confidence intervals
+# Critical value & Confidence intervals
 
 Two-sided discrepancies of interest:
 
-- **t-test:**
+- **t-test:** $|\bar x-\mu_0|>c\frac{c}{\sqrt n}$
 - **Confidence interval:** $\bar x \pm c\frac{s}{\sqrt n}$ - the set of plausible values for unknown $\mu$.
+
+**False alarm rate / Significance level:** a given value $\mu_0$ is rejected incorrectly.
+
+**Normal popuation: use the t-distribution:** under the special statistical model where the data are modelled as values thaken by iid normal random variables, if the true population mean is indeed $\mu_0$, then the ratio $\frac{\bar X-\mu_0}{S/ \sqrt n}$~$t_{n-1}$. Thus we choose c such that $P(|\bar X-\mu_0|>c\frac{S}{\sqrt n})=P(\frac{|\bar X-\mu_0|}{S/\sqrt n}>c)=P(t_{n-1}>c)=\alpha$.
+
+## Finding quantiles in R
+
+```{r include=FALSE}
+p = 0.05
+n = 10
+qt(p, n-1) # for t distribution
+qnorm(p) # for normal distribution
+qchisq(p, n-1) # for chi-sqaured distribution
+```
+
+## Calculate CI by `t.test()`
+
+```{r}
+t.test(data$uni_work,mu = 130, conf.level=1-0.01) # 99% two-sided IC
+t.test(data$uni_work,mu = 130, alt="less", conf.level=1-0.01/2) # 99% one-sided IC
+```
+
+## Critical value decision rule
+
+For a test of $H_0:\mu=\mu_0$ vs $H_1:\mu>\mu_0$:
+
+- for $H_1:\mu>\mu_0$, reject $H_0$ if $t_0\geq t_{n-1}(1-\alpha)$
+- for $H_1:\mu<\mu_0$, reject $H_0$ if $t_0\leq t_{n-1}(\alpha)$
+- for $H_1:\mu\neq\mu_0$, reject $H_0$ if $|t_0|\geq |t_{n-1}(\alpha/2)|$; don't reject $H_0$ if $|t_0|< |t_{n-1}(\alpha/2)|$
+
+## Hypothesis test using rejection region
+
+**Hypothesis:** $H_0:\mu=375$ vs $H_1:\mu<375$
+
+**Assumptions:** $X_i$ are independently and identically distributed and follow $N(\mu,\sigma^2)$
+
+```{r}
+n = length(data$uni_work)
+df = n-1
+mu = 130
+S = sd(data$uni_work)
+t_0.05 = qt(0.05,n)
+xbar = mu - t_0.05*S/sqrt(n)
+pop_mean = mean(data$uni_work)
+```
+
+**Test statistic:** $T=\frac{\bar X-\mu_0}{S/ \sqrt n}$. Under $H_0$, test statistic follows a t distribution with $n-1=`r df` degree of freedom.
+
+**Regjection region:**
+
+$\frac{\bar X-\mu}{s/\sqrt n}<t_{n-1}(0.05)$
+
+$\bar X<\mu+t_{n-1}(0.05)s/\sqrt n$
+
+$\bar X<\mu+`r round(t_0.05,2)` \times `r round(S,2)`/ \sqrt `r n`$
+
+$\bar X<`r round(xbar,2)`$
+
+**Decision:** 
+
+- The observed sample mean, $\bar x=`r round(pop_mean,2)`$ is greater than `r round(xbar,2)`, so do not reject $H_0$.
+- The observed sample mean, $\bar x=`r round(pop_mean,2)`$ is smaller than `r round(xbar,2)`, so we reject $H_0$.
+
+# Power & sample size
+
+```{r}
+library(pwr)
+
+# population sd = 0.294, sample size = 6,  power: 80% sure of "detecting" that mu is not equal to 375, two-sided, significant level=0.05, how much lower than 375 does mu need to be? 
+res = pwr.t.test(n = 6, d = NULL, sig.level = 0.05, power = 0.8, type = "one.sample", alternative = "two.sided")
+res$d*0.294
+
+# mu = 374.87, population sd=0.294, power: 80% sure of "detecting" that mu is not equal 75, two-sided, what sample size n would be needed?
+res = pwr.t.test(n = NULL, d = (374.87-375)/0.294, sig.level = 0.05, power = 0.8,
+type = "one.sample", alternative = "two.sided")
+res$n
+
+```
 
 # Goodness of fit test 
 
@@ -615,7 +693,7 @@ From Figure \@ref(fig:box), ...
 **Assumptions:** 
 
 - Each observation is chosen at radom from a population. 
-- Variables are independently and identically distributed.
+- Variables are independently and identically distributed and follow $N(\mu,\sigma^2)$
 
 ```{r}
 n = length(data$uni_work)
@@ -623,7 +701,8 @@ df = n-1
 mean = mean(data$uni_work)
 mu = 130
 S = sd(data$uni_work)
-# t.test(data$uni_work,mu = 130,alternative = "two.sided")
+t.test(data$uni_work,mu = 130,alternative = "two.sided")
+
 t0 = t.test(x,mu = mu,alternative = "two.sided")$statistic
 pval = t.test(x,mu = mu,alternative = "two.sided")$p.value
 
@@ -686,7 +765,7 @@ The data doesn't follow a normal distriution if:
 **Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ or $\mu_x \leq \mu_y$ or $\mu_x \neq \mu_y$
 
 **Assumptions:** 
-- Variables $X,Y$ are identically and independently distributed with identities $N(\mu_X,\sigma^2)$ and $N(\mu_Y,\sigma^2)$.
+- Variables $X,Y$ are identically and independently distributed and follow $N(\mu_X,\sigma^2)$ and $N(\mu_Y,\sigma^2)$.
 - Observations are independent to each other
 - Regular two-sample t-test assumes equal population variances of variables while Welch two-sample t-test does not assume equal variance.
 

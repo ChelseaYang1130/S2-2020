@@ -179,11 +179,12 @@ add = cbind(var,fre)
 colnames(add) = c("Var1", "Freq")
 tab = rbind(tab,add)
 tab = tab[order(tab$Var1),]
-covid_count = tab$Freq
-groups = as.numeric(as.character(tab$Var1))
+(covid_count = tab$Freq)
+(groups = as.numeric(as.character(tab$Var1)))
 n=sum(covid_count) # sample size
 k = length(covid_count) # number of groups
 (lam = sum(covid_count * groups)/n) # estimate the lambda parameter
+tab$Var1
 ```
 
 **Hypothesis:** $H_0:$ the data come from a Poisson distribution vs $H_1:$ the data do not come from a Poisson distribution.
