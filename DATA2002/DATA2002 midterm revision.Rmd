@@ -143,7 +143,7 @@ data <- data %>%
 
 ## Bias
 
-- **Selection bias / Sampling bias:** the sample does not accurately represent the poputation. (e.g. As the class survey is published on Ed, students who spend more time on checking Ed post are more likely to complete the survey.)
+- **Selection bias / Sampling bias:** the sample does not accurately represent the population. (e.g. As the class survey is published on Ed, students who spend more time on checking Ed post are more likely to complete the survey.)
 
 - **Non-response bias:** certain groups are under-represented because they elect not to participate
 
@@ -151,7 +151,7 @@ data <- data %>%
 
 ## Controlled experiments vs Observational studies
 
-**randomised controlled double-blind study:** 
+**randomized controlled double-blind study:** 
 
 - investigator randomly allocate the subject into a **treatment group** and a **control group**. The **control group** is given a **placebo** but both the subject and investigators don't know the identity of the groups.
 
@@ -159,28 +159,28 @@ data <- data %>%
 
 **controlled** vs **observational:**
 
-- A *good randomised controlled experiment* can establish **causation**
+- A *good randomized controlled experiment* can establish **causation**
 
-- An *observational study* can only eatablish **association**. It may suggest causation but **can't** prove causation.
+- An *observational study* can only establish **association**. It may suggest causation but **can't** prove causation.
 
 ## Confounding
 
-**Concounding** occurs when the treatment group and control group differ by some *third variable* than the treatment) which influences the response that is studied.
+**Confounding** occurs when the treatment group and control group differ by some *third variable* than the treatment) which influences the response that is studied.
 
 - if **any** of the subjects **drop out**, causing **selection bias** or **survivor bias**.
 - if **not all** subjects keep taking treatment or placebo, the confounding of **adherers** and **non-adherers occurs**.
 
-**Controlling for confounding:** make groups more comparable by dividing them into subgroups with respect to the confounders. (e.g. if alcohol consuption is a potential confounding factor, then divide subjects into *heavy drinkers*, *medium drinkers* and *light drinkers*)
+**Controlling for confounding:** make groups more comparable by dividing them into subgroups with respect to the confounders. (e.g. if alcohol consumption is a potential confounding factor, then divide subjects into *heavy drinkers*, *medium drinkers* and *light drinkers*)
 
 - **limitation** of controlling: 
   - this can be limited by our ability to **identify all confounders** and then divide the study by the confounders.
   - This explains the long time to establish that smoking causes lung cancer. Researchers needed to
-control for factors such as health, tness, diet, lifestyle, environment etc.
+control for factors such as health, nests, diet, lifestyle, environment etc.
 
 ## Simpson's Paradox
 
 - A clear trend in individual groups of data disappears when the groups are pooled together.
-- It occurs whenn relationships between percentages in subgroups are reversed when the subgroups are combined, because of a confounding or lurking variable.
+- It occurs when relationships between percentages in subgroups are reversed when the subgroups are combined, because of a confounding or lurking variable.
 
 # Data cleaning
 ```{r missingness, fig.cap="Visualising the missingness in the data."}
@@ -235,13 +235,13 @@ False negative rate is `r round(FN,2)`; False positive rate is `r round(FP,2)`; 
 probability of having the disease in the group without the risk factor. $RR=\frac{P(D^+|R^+)}{P(D^+|R^-)}$
 
 - For **Prospective study** only. 
-- Not for Retrospectie study because the proportions os cases with $D^+$ and $D^-$ ewre decided by the investigator, which means we cannot estimate $P(D^+|R^+)$ and $P(D^+|R^-)$.
+- Not for Retrospective study because the proportions of cases with $D^+$ and $D^-$ were decided by the investigator, which means we cannot estimate $P(D^+|R^+)$ and $P(D^+|R^-)$.
 - *RR = 1* - there is no difference between the two groups; *RR < 1* the disease is less likely to occur in the group with the risk factor; *RR > 1* the disease is more likely to occur in the group with the risk factor; 
 
 **Odds ratio:** 
 
-- for both **Prospective** and **Retrospective** studyies
-- *OR = 1* if and only if risk factor and disease are independent; *OR > 1* the disease is less likely to occur in the group with the risk factor; *OR < 1* the disease is less likely to occur in the group with the risk factorl;
+- for both **Prospective** and **Retrospective** studies
+- *OR = 1* if and only if risk factor and disease are independent; *OR > 1* the disease is less likely to occur in the group with the risk factor; *OR < 1* the disease is less likely to occur in the group with the risk factor;
 - **standard error** = $\sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}$
 - **confidence interval** (at 95%): if CI includes 1, risk factor & disease are independent. $CI = exp(log(\hat{OR})\pm 1.96\times\sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}})$
 ```{r}
@@ -287,7 +287,7 @@ For $T=\sum^n_{i=1}X_i$:
 - standard error: $SE=SD(\bar X)=\sqrt{Var(\bar X)}=\frac{\sigma}{\sqrt n}$
 - estimated SE: $\hat{SE}=\frac{s}{\sqrt n}$, where $s^2=\frac{1}{n-1}\sum^n_{i=1}(x_i-\bar x)^2$
 
-**Importance of SE:** it tells us the likely size of the esimation error so that we know how accurate or reliable the estimate is.
+**Importance of SE:** it tells us the likely size of the estimation error so that we know how accurate or reliable the estimate is.
 
 # Critical value & Confidence intervals
 
@@ -298,7 +298,7 @@ Two-sided discrepancies of interest:
 
 **False alarm rate / Significance level:** a given value $\mu_0$ is rejected incorrectly.
 
-**Normal popuation: use the t-distribution:** under the special statistical model where the data are modelled as values thaken by iid normal random variables, if the true population mean is indeed $\mu_0$, then the ratio $\frac{\bar X-\mu_0}{S/ \sqrt n}$~$t_{n-1}$. Thus we choose c such that $P(|\bar X-\mu_0|>c\frac{S}{\sqrt n})=P(\frac{|\bar X-\mu_0|}{S/\sqrt n}>c)=P(t_{n-1}>c)=\alpha$.
+**Normal population: use the t-distribution:** under the special statistical model where the data are modeled as values taken by iid normal random variables, if the true population mean is indeed $\mu_0$, then the ratio $\frac{\bar X-\mu_0}{S/ \sqrt n}$~$t_{n-1}$. Thus we choose c such that $P(|\bar X-\mu_0|>c\frac{S}{\sqrt n})=P(\frac{|\bar X-\mu_0|}{S/\sqrt n}>c)=P(t_{n-1}>c)=\alpha$.
 
 ## Finding quantiles in R
 
@@ -343,7 +343,7 @@ pop_mean = mean(data$uni_work)
 
 **Test statistic:** $T=\frac{\bar X-\mu_0}{S/ \sqrt n}$. Under $H_0$, test statistic follows a t distribution with $n-1=`r df` degree of freedom.
 
-**Regjection region:**
+**Rejection region:**
 
 $\frac{\bar X-\mu}{s/\sqrt n}<t_{n-1}(0.05)$
 
@@ -381,7 +381,7 @@ res$n
 **Hypothesis:** $H_0:p_1=p_{10},p_2=p_{20},...,p_k=p_{k0}$ vs $H_1:$ at least one equality does not hold.
 
 **Assumptions:** 
-- indenpendent obsrevations
+- independent observations
 - expected counts are all greater than 5 (i.e. $e_i=np_{i0}\geq 5$)
 ```{r include=TRUE}
 y = c(102, 32, 12, 4)
@@ -413,7 +413,7 @@ pval = chisq.test(y_i,p = p_i)$p.value
 
 **Decision:** 
 
-- Since the p-value < 0.05, there is strong evidence in the data aginst $H_0$.
+- Since the p-value < 0.05, there is strong evidence in the data against $H_0$.
 - Since the p-value > 0.05, the null hypothesis is not rejected.
 
 ### Whether the data follows a Poisson distribution
@@ -452,7 +452,7 @@ mykable(table,
 **Hypothesis:** $H_0:p_1=p_{10},p_2=p_{20},...,p_k=p_{k0}$ vs $H_1:$ at least one equality does not hold.
 
 **Assumptions:** 
-- indenpendent obsrevations
+- independent observations
 - expected counts are all greater than 5 (i.e. $e_i=np_{i0}\geq 5$)
 
 ```{r}
@@ -475,12 +475,12 @@ q = 1
 df = k-1-q
 ```
 
-**Test statistic:** $T = \sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$, under $H_0$, degree of freedom is $k-1-q$ = `r df` , where k is the enumber of groups and q is the number o f parameters that needs to be estimated from the data.
+**Test statistic:** $T = \sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$, under $H_0$, degree of freedom is $k-1-q$ = `r df` , where k is the number of groups and q is the number o f parameters that needs to be estimated from the data.
 
 ```{r}
 t0 = sum((y-ey)^2/ey)
 ```
-**Observed test statistic:** With the obsered frequencies $y_i$ from the data and estimated parameter $\lambda$ =  `r round(lam, 4)`, $t_0$ = `r round(t0,2)`
+**Observed test statistic:** With the observed frequencies $y_i$ from the data and estimated parameter $\lambda$ =  `r round(lam, 4)`, $t_0$ = `r round(t0,2)`
 
 ```{r}
 pval = 1 - pchisq(t0,df=k-1-1)
@@ -582,7 +582,7 @@ pval = chisq.test(tab, correct=FALSE)$p.value
 
 ## Fisher's exact test - 2 by 2 table
 
-**Fisher's exact test:** Consider all posible permutations of 2 by 2 contingency table wiht the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
+**Fisher's exact test:** Consider all possible permutations of 2 by 2 contingency table whit the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
 
 **Drawbacks:**
 
@@ -591,7 +591,7 @@ pval = chisq.test(tab, correct=FALSE)$p.value
 
 **Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
 
-**Assumptions:** Consider all posible permutations of 2 by 2 contingency table wiht the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
+**Assumptions:** Consider all possible permutations of 2 by 2 contingency table whit the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
 
 ```{r}
 tab = table(data$parents,data$gender)
@@ -614,7 +614,7 @@ The degrees of freedom is not calculated as it is not relevant to fisher's exact
 
 **Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
 
-**Assumption:** Yate's correction applies continuity correction to approximize integer-valued varaible, therefore, it does not restrict the celll counts. 
+**Assumption:** Yate's correction applies continuity correction to approximate integer-valued variable, therefore, it does not restrict the cell counts. 
 
 ```{r}
 tab = table(data$parents,data$gender)
@@ -643,9 +643,9 @@ pval = yate$p.value
 
 **Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
 
-**Assumptions:** No assumptions are mde about the underlying distibution of the population. The cell counts are also not restricted for Monte Carlo simulation.
+**Assumptions:** No assumptions are made about the underlying distribution of the population. The cell counts are also not restricted for Monte Carlo simulation.
 
-To calculate the p-value, a Monte Carlo simulation is performe, with 10000 simulations of chi-squared test. Note that degree of freedom is not considered as it is not relavant to the Monte Carlo simulation.
+To calculate the p-value, a Monte Carlo simulation is perform, with 10000 simulations of chi-squared test. Note that degree of freedom is not considered as it is not relevant to the Monte Carlo simulation.
 
 ```{r}
 tab = table(data$parents,data$gender)
@@ -683,10 +683,10 @@ p2 = ggqqplot(data, x = "uni_work") +
 
 grid.arrange(p1, p2, ncol=2)
 ```
-The data doesn't follow a normal distriution if:
+The data doesn't follow a normal distribution if:
 
 - A lower bend of zero exist?
-- Not clase enought to the line to be considered 'normal'.
+- Not close enough to the line to be considered 'normal'.
 
 From Figure \@ref(fig:box), ...
 
@@ -694,7 +694,7 @@ From Figure \@ref(fig:box), ...
 
 **Assumptions:** 
 
-- Each observation is chosen at radom from a population. 
+- Each observation is chosen at random from a population. 
 - Variables are independently and identically distributed and follow $N(\mu,\sigma^2)$
 
 ```{r}
@@ -703,10 +703,10 @@ df = n-1
 mean = mean(data$uni_work)
 mu = 30
 S = sd(data$uni_work)
-t.test(data$uni_work,mu = 130,alternative = "two.sided")
+(test = t.test(data$uni_work,mu = 130,alternative = "two.sided"))
 
-t0 = t.test(x,mu = mu,alternative = "two.sided")$statistic
-pval = t.test(x,mu = mu,alternative = "two.sided")$p.value
+t0 = test$statistic
+pval = test$p.value
 
 # for greater or less than 30:
 # t0 = t.test(x,mu = mu,alternative = "greater")$statistic
@@ -760,10 +760,10 @@ ggqqplot(data %>% filter(gender != "Non-binary"), x = "exercise", color = "gende
   theme_linedraw(base_size = 18) + theme(legend.position = "none")
 ```
 
-The data doesn't follow a normal distriution if:
+The data doesn't follow a normal distribution if:
 
 - A lower bend of zero exist?
-- Not clase enought to the line to be considered 'normal'.
+- Not close enough to the line to be considered 'normal'.
 
 **Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ or $\mu_x \leq \mu_y$ or $\mu_x \neq \mu_y$
 
@@ -824,13 +824,13 @@ p2 = ggqqplot(df, x = "diff") +
 grid.arrange(p1, p2, ncol=2)
 ```
 
-The data doesn't follow a normal distriution if:
+The data doesn't follow a normal distribution if:
 - A lower bend of zero exist?
-- Not clase enought to the line to be considered 'normal'.
+- Not close enough to the line to be considered 'normal'.
 
-**Hypothsis:**$H_0:\mu_d=0$ vs $H_1:\mu_d\neq 0$
+**Hypothesis:**$H_0:\mu_d=0$ vs $H_1:\mu_d\neq 0$
 
-**Assumptions:** differences between two samples are independent and identically disbributed, with the identity $N(\mu_d,\sigma^2)$.
+**Assumptions:** differences between two samples are independent and identically distributed, with the identity $N(\mu_d,\sigma^2)$.
 
 ```{r}
 n = length(df$diff)
@@ -853,15 +853,15 @@ df = n-1
 - As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
 - As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
 
-# Sign test
+# Sign test / Binomial test
 
-**Sign test:** is used to test $H_0:\mu = \mu_0$ and paired data when normaility is not satisfied. 
+**Sign test:** is used to test $H_0:\mu = \mu_0$ and paired data when normality is not satisfied. 
 
 - drawback: it ignores all the information on magnitude and hence has low power.
 
 - If $H_0$ is true, the probability $p_+$, of getting a positive $D_i$ where $D_i=X_i-\mu_0$.
-- The sign test reduces to a binomail test of proportions.
-- The sign test is a nonparametric test as no assumption on the data distribution is made except symmetry.
+- The sign test reduces to a binomial test of proportions.
+- The sign test is a non-parametric test as no assumption on the data distribution is made except symmetry.
 
 ## Sign test for one-sample mean
 ```{r fig.cap="Distribution of the data."}
@@ -889,7 +889,7 @@ pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
 
 **Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
 
-**Assumptions:** Observations are indeendently sampled from a symmetric distribution.
+**Assumptions:** Observations are independently sampled from a symmetric distribution.
 
 **Test statistic:** $$T=number~of (D_i>0)$$ where $D_i=X_i-`r mu`$. Under $H_0$, the test statistic follows a binomial distribution with identity $B(n,\frac{1}{2})$ where n is the number of non-zero differences.
 
@@ -909,7 +909,7 @@ pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
 
 ## Sign test for paired data
 
-**Sign test** can be used to test differences between paried data when normality is not satified.
+**Sign test** can be used to test differences between paired data when normality is not satisfied.
 
 **Hypothesis:** $H_0:p_+=\frac{1}{2}$ vs $H_1:p_+>\frac{1}{2}$
 
@@ -931,7 +931,7 @@ binom.test(t0,n,p=0.5,alternative="greater")
 pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
 ```
 
-**Test statistic:** Let $T$ be the number of positive differenceso out of the `r n` non-zero differences. Under $H_0$, the test statistic follows a binomial distribution with the identity $B(`r n`,\frac{1}{2})$.
+**Test statistic:** Let $T$ be the number of positive differences out of the `r n` non-zero differences. Under $H_0$, the test statistic follows a binomial distribution with the identity $B(`r n`,\frac{1}{2})$.
 
 **Observed test statistic:** We observed $t_0=`r t0`$ positive differences in the sample.
 
@@ -943,6 +943,150 @@ pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
 
 - As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
 
+# Wilcoxon signed-rank test - for one sample & paired data
+
+**Wilcoxon signed-rank test:**
+
+- The hypotheses can bbe stated interms of *mean* or *median* since we assume that the distribution is symmetric
+- The p-value will typically be smaller than the p-value of a sign test. Using the information in the ranks, the test becomes much more **powerful** in detecting differences from $\mu_0$ and almost as the powerful as the one sample t-test.
+
+## Using wilcox.test
+```{r fig.cap="Distribution of the data."}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+**Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
+
+**Assumptions:** Observations are independently sampled from a symmetric distribution.
+
+```{r}
+diff = data$uni_work-mu
+
+# for paired data
+test = wilcox.test(y,x,alternative="greater",paried=TRUE)
+
+# without continuity correction
+test = wilcox.test(DIFF,alternative="greater",correct = FALSE)
+
+# for one-sample 
+(test=wilcox.test(diff, alternative = "greater"))
+
+t0 = test$statistic
+pval = test$p.value
+```
+
+**Test statistic:** 
+
+- for one-sided: $W^+=\sum_{i:D_i>0}R_i$
+-for two-sided: $W=min(W^+,W^-)$
+
+**Observed test statistic:** 
+
+- for one-sided: $t_0=w^+=`r t0`$
+- for two-sided: $t_0=min(w^+,w^-)=`r t0`$
+
+**P-value:**
+
+- $H_1:\mu<\mu_0$ - $P(W^+ \leq `r t0`)=`r round(pval,4)`$
+- $H_1:\mu>\mu_0$ - $P(W^+ \geq `r t0`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$- $2P(W^+ \leq `r t0`)=`r round(pval,4)`$
+
+**Conclusion:**
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+## Using normal approximation
+
+For **large enough $n$**, we can use normal distribution to approximate the distribution of the sign rank test statistic: $W^+$~$N(\frac{n(n+1)}{4},\frac{n(n+1(2n+1))}{24})$
+
+```{r fig.cap="Distribution of the data."}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+**Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
+
+**Assumptions:** Observations are independently sampled from a symmetric distribution.
+
+```{r}
+diff = data$uni_work-mu
+n = length(diff)
+mean = n*(n+1)/4
+var = n*(n+1)*(2*n+1)/24
+
+w_calc = data.frame(
+dif = diff,
+absDif = abs(diff),
+rankAbsDif = rank(abs(diff)),
+signrank = sign(diff)*rank(abs(diff))
+)
+
+w_pos = w_calc %>%
+        filter(signrank>0) %>%
+        summarise(sum(signrank)) %>%
+        pull()
+w_neg = w_calc %>%
+        filter(signrank<0) %>%
+        summarise(abs(sum(signrank))) %>%
+        pull()
+
+# for one-sided:
+w = w_pos
+t0 = (w-mean)/(sqrt(var))
+pval = pnorm(t0) # for mu < mu_0
+pval = 1-pnorm(t0) # for mu > mu_0
+
+# for two-sided:
+w = min(c(w_pos,w_neg))
+t0 = (w-mean)/(sqrt(var))
+pval = 2*pnorm(t0)
+```
+
+**Test statistic:** $W=min(W^+,W^-)$ where $W^+=\sum_{i:D_i>0}R_i$, $W^-=\sum_{i:D_i<0}R_i,$ $D_i=X_i-`r mu`$ and $R_i$ are the ranks of $|D_1|,|D_1|,...,|D_n|$. Under $H_0$, the test statistic, with identity $W^+$~$WSR(`r n`)$, follows a symmetric distribution with mean $E(W^+)=\frac{n(n+1)}{4}=`r round(mean,2)`$ and $Var(W^+)=\frac{n(n+1)(2n+1)}{24}=`r round(var,2)`$.
+
+**Observed test statistic:** the test statistic is found by determining differences between observations and `r mu` $D_i=X_i-\mu_0$, followed by assigning the signed ranks of $D_i$. The sum of positive ranks ($w^+$) and the sum of negative ranks ($w^-$) are calculated.
+
+- We have a two-sided alternative, so the test statistic is $w=min(w^+,w^-)=`r w`$.
+- We have a one-sided alternative, so the test statistic is $w=w^+=`r w`$.
+
+By using normal approximation, test statistic can be calculated by: $t_0=\frac{w-E(w^+)}{\sqrt{Var(w^+)}}=\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}=`r round(t0,2)`$
+
+
+**P-value:**
+
+- $H_1:\mu<\mu_0$ - $P(W^+ \leq `r round(t0,2)`)\approx P(Z\leq\frac{`r w`-E(W^+)}{\sqrt{Var(W^+)}})=P(Z\leq\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}) =P(Z\leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu>\mu_0$ - $P(W^+ \geq `r round(t0,2)`)=1-P(W^+ \leq `r round(t0,2)`)\approx 1-P(Z\leq\frac{`r w`-E(W^+)}{\sqrt{Var(W^+)}})=1-P(Z\leq\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}) =1-P(Z\leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$- $2P(W^+ \leq `r round(t0,2)`)\approx 2P(Z\leq\frac{`r w`-E(W^+)}{\sqrt{Var(W^+)}})=2P(Z\leq\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}) =2P(Z\leq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Conclusion:**
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+
+# Wilcoxon rand-sum test - for two samples
 # Plots
 
 ## Single histogram + boxplot
