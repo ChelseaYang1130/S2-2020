@@ -523,7 +523,7 @@ etab >=5
 
 ```{r}
 df = (r-1)*(c-1)
-
+chisq.test(tab, correct=FALSE)
 t0 = chisq.test(tab, correct=FALSE)$statistic
 pval = chisq.test(tab, correct=FALSE)$p.value
 ```
@@ -562,7 +562,7 @@ etab >=5
 
 ```{r}
 df = (r-1)*(c-1)
-
+chisq.test(tab, correct=FALSE)
 t0 = chisq.test(tab, correct=FALSE)$statistic
 pval = chisq.test(tab, correct=FALSE)$p.value
 ```
@@ -595,9 +595,9 @@ pval = chisq.test(tab, correct=FALSE)$p.value
 
 ```{r}
 tab = table(data$parents,data$gender)
-fisher = fisher.test(tab)  # two-sided
-fisher = fisher.test(tab,alternative = "greater")
-fisher = fisher.test(tab,alternative = "less")
+# fisher = fisher.test(tab)  # two-sided
+(fisher = fisher.test(tab,alternative = "greater"))
+# fisher = fisher.test(tab,alternative = "less")
 pval = fisher$p.value 
 ```
 
@@ -621,7 +621,7 @@ tab = table(data$parents,data$gender)
 r=nrow(tab)
 c=ncol(tab)
 df = (r-1)*(c-1)
-yate = chisq.test(tab,correct=TRUE)
+(yate = chisq.test(tab,correct=TRUE))
 t0 = yate$statistic
 pval = yate$p.value
 ```
@@ -649,7 +649,7 @@ To calculate the p-value, a Monte Carlo simulation is performe, with 10000 simul
 
 ```{r}
 tab = table(data$parents,data$gender)
-sim = chisq.test(tab, simulate.p.value = TRUE, B = 10000)
+(sim = chisq.test(tab, simulate.p.value = TRUE, B = 10000))
 t0 = sim$statistic
 pval = sim$p.value
 ```
@@ -665,17 +665,18 @@ pval = sim$p.value
 - As p-value $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
 - As p-value $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
 
-# Testing mean
+# T-test
 
 ## One sample t-test
 
 ```{r fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
+mu = 30
 p1 = ggplot(data, aes(x= uni_work)) +
   geom_histogram(bins = 12, show.legend = F) +
   theme_linedraw(base_size = 18) +
   labs(y = "Count", x = "Uni Work (hours)") +
   geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
-  geom_vline(xintercept= 35,colour = "blue",linetype = "dashed") # the tested mean
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
 
 p2 = ggqqplot(data, x = "uni_work") +
   theme_linedraw(base_size = 18) + theme(legend.position = "none")
@@ -683,12 +684,13 @@ p2 = ggqqplot(data, x = "uni_work") +
 grid.arrange(p1, p2, ncol=2)
 ```
 The data doesn't follow a normal distriution if:
+
 - A lower bend of zero exist?
 - Not clase enought to the line to be considered 'normal'.
 
 From Figure \@ref(fig:box), ...
 
-**Hypothesis:** $H_0: \mu =130$ vs $H_1: \mu ><\neq130$
+**Hypothesis:** $H_0: \mu =`r mu`$ vs $H_1: \mu ><\neq `r mu`$
 
 **Assumptions:** 
 
@@ -699,19 +701,19 @@ From Figure \@ref(fig:box), ...
 n = length(data$uni_work)
 df = n-1
 mean = mean(data$uni_work)
-mu = 130
+mu = 30
 S = sd(data$uni_work)
 t.test(data$uni_work,mu = 130,alternative = "two.sided")
 
 t0 = t.test(x,mu = mu,alternative = "two.sided")$statistic
 pval = t.test(x,mu = mu,alternative = "two.sided")$p.value
 
-# for greater or less than 130:
-t0 = t.test(x,mu = mu,alternative = "greater")$statistic
-pval = t.test(x,mu = mu,alternative = "greater")$p.value
-
-t0 = t.test(x,mu = mu,alternative = "less")$statistic
-pval = t.test(x,mu = mu,alternative = "less")$p.value
+# for greater or less than 30:
+# t0 = t.test(x,mu = mu,alternative = "greater")$statistic
+# pval = t.test(x,mu = mu,alternative = "greater")$p.value
+# 
+# t0 = t.test(x,mu = mu,alternative = "less")$statistic
+# pval = t.test(x,mu = mu,alternative = "less")$p.value
 ```
 
 **Test statistic:** $T=\frac{\bar{X}-\mu_0}{s/\sqrt{n}}$. Under $H_0$, the data tends to follow t distribution with $n-1=$ `r df` degree of freedom.
@@ -759,6 +761,7 @@ ggqqplot(data %>% filter(gender != "Non-binary"), x = "exercise", color = "gende
 ```
 
 The data doesn't follow a normal distriution if:
+
 - A lower bend of zero exist?
 - Not clase enought to the line to be considered 'normal'.
 
@@ -833,8 +836,9 @@ The data doesn't follow a normal distriution if:
 n = length(df$diff)
 sd = sd(df$diff)
 dbar = mean(df$diff)
-t0 = t.test(df$diff,mu=0)$statistic
-pval = t.test(df$diff,mu=0)$p.value
+t.test(after,before, data = df,paired = TRUE)
+pval = t.test(after,before, data = df,paired = TRUE)$p.value
+t0 = t.test(after,before, data = df,paired = TRUE)$statistic
 df = n-1
 ```
 
@@ -847,6 +851,96 @@ df = n-1
 **Decision:** 
 
 - As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
+
+# Sign test
+
+**Sign test:** is used to test $H_0:\mu = \mu_0$ and paired data when normaility is not satisfied. 
+
+- drawback: it ignores all the information on magnitude and hence has low power.
+
+- If $H_0$ is true, the probability $p_+$, of getting a positive $D_i$ where $D_i=X_i-\mu_0$.
+- The sign test reduces to a binomail test of proportions.
+- The sign test is a nonparametric test as no assumption on the data distribution is made except symmetry.
+
+## Sign test for one-sample mean
+```{r fig.cap="Distribution of the data."}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+```{r}
+diff = data$uni_work-mu
+n = length(sign(diff)[sign(diff) != 0])
+freq = as.vector(table(sign(diff)[sign(diff) != 0]))
+binom.test(freq,p=0.5,alternative="greater")
+t0 =  length(diff[diff>0])
+pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
+```
+
+**Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
+
+**Assumptions:** Observations are indeendently sampled from a symmetric distribution.
+
+**Test statistic:** $$T=number~of (D_i>0)$$ where $D_i=X_i-`r mu`$. Under $H_0$, the test statistic follows a binomial distribution with identity $B(n,\frac{1}{2})$ where n is the number of non-zero differences.
+
+**Observed test statistic:** $t_0=number~of(d_i>0)=`r round(t0,2)`$
+
+**P-value:**
+
+- $H_1:\mu<\mu_0$ - $P(T \leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu>\mu_0$ - $P(T \geq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$ & $t_0<\frac{n}{2}$ - $2P(T \leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$ & $t_0>\frac{n}{2}$ - $2P(T \geq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Conclusion:**
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+## Sign test for paired data
+
+**Sign test** can be used to test differences between paried data when normality is not satified.
+
+**Hypothesis:** $H_0:p_+=\frac{1}{2}$ vs $H_1:p_+>\frac{1}{2}$
+
+**Assumptions:** Differences $D_i$ are independent.
+
+```{r}
+before = c(27, 25, 27, 44, 30, 67, 53, 53, 52)
+after = c(27, 29, 37, 36, 46, 82, 57, 80, 61)
+df = data.frame(before,after, diff = after-before)
+
+n = length(df$diff)
+
+freq = as.vector(table(sign(df$diff)[sign(df$diff) != 0]))
+
+t0 =  sum(df$diff>0)
+
+binom.test(t0,n,p=0.5,alternative="greater")
+
+pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
+```
+
+**Test statistic:** Let $T$ be the number of positive differenceso out of the `r n` non-zero differences. Under $H_0$, the test statistic follows a binomial distribution with the identity $B(`r n`,\frac{1}{2})$.
+
+**Observed test statistic:** We observed $t_0=`r t0`$ positive differences in the sample.
+
+**P-value:** probability of getting a test statistic as or more extreme than what we observed, $P(T \geq `r t0`)=1-P(T \leq `r t0-1`)=1-pbinom(`r t0-1`,size=`r n`,prob=\frac{1}{2})\approx `r round(pval,4)`$
+
+**Conclusion:**
+
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+
 - As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
 
 # Plots
