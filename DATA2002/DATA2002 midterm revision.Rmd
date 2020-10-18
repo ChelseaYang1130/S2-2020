@@ -947,6 +947,7 @@ pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
 
 **Wilcoxon signed-rank test:**
 
+- The ranks are summed over positive side of the differences.
 - The hypotheses can bbe stated interms of *mean* or *median* since we assume that the distribution is symmetric
 - The p-value will typically be smaller than the p-value of a sign test. Using the information in the ranks, the test becomes much more **powerful** in detecting differences from $\mu_0$ and almost as the powerful as the one sample t-test.
 
@@ -977,7 +978,7 @@ diff = data$uni_work-mu
 test = wilcox.test(y,x,alternative="greater",paried=TRUE)
 
 # without continuity correction
-test = wilcox.test(DIFF,alternative="greater",correct = FALSE)
+test = wilcox.test(diff,alternative="greater",correct = FALSE)
 
 # for one-sample 
 (test=wilcox.test(diff, alternative = "greater"))
@@ -1087,6 +1088,131 @@ By using normal approximation, test statistic can be calculated by: $t_0=\frac{w
 
 
 # Wilcoxon rand-sum test - for two samples
+
+**Wilcoxon rand-sum test / Mann-Whitney U test:**
+
+- A non-parametric test to compare means of two independent samples.
+- The ranks are summed over one of the samples.
+- Relaxes assumptions of normality and symmetry. It is valid for data from any distribution, and is much less sensitive to outliers than the two-sample t-test.
+- If the assumptions of the two-sample t-test hold, the Wilcoxon rank-sum test is less powerful.
+- **Disadvantage:** if one is primarily interested in differences in location between the two distributions, the Wilcoxon test has the disadvantage of also reacting to other differences between the distriutions such as differences in shape.
+
+## Using wilcox.test - without ties
+
+```{r message = F, warning = F, fig.cap = "Comparison of number of hours per week exercised between females and males"}
+# ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+#   geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+#   facet_grid(rows = vars(gender)) +
+#   theme_linedraw(base_size = 18) +
+#   labs(y = "Count", x = "Exercise per week (hours)") +
+#   geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+#   geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+
+ggplot(data %>% filter(gender != "Non-binary"),aes(x = exercise, fill = gender))+geom_density(alpha = 0.5)
+```
+
+**Hypothesis:** $H_0:\mu_X=\mu_Y$ vs $H_1:\mu_X\neq \mu_Y$
+
+**Assumptions:** Observations $X_i,Y_i$ are independent and two samples follow the same kind of distribution but differ by a shift.
+
+```{r}
+# without ties
+male = data %>% filter(gender =="Male") %>% select(exercise)
+male = male$exercise
+female = data %>% filter(gender =="Female") %>% select(exercise)
+female = female$exercise
+(test = wilcox.test(male,female))
+nA=length(male)
+nB=length(female)
+N=nA+nB
+nRatio = nA*(N+1)/2
+t0 = test$statistic
+pval = test$p.value
+```
+
+**Test statistic:** $W=R_1+R_2+...+R_{n_X}$. Under $H_0$, the test statistic follows the $WRS(`r nA`,`r nB`)$ distribution.
+
+**Observed test statistic:** $w=r_1+r_2+...+r_{n_x}=`r t0`$
+
+**P-value:** 
+
+- for $H_1:\mu_x>\mu_y$: $P(W\geq w)$
+- for $H_1:\mu_x<\mu_y$: $P(W\leq w)$
+- for $H_1:\mu_x \neq \mu_y$ and $w>\frac{n_x(N+1)}{2}$: because $w=`r t0`>\frac{n_x(N+1)}{2}=`r nRatio`$, so we are looking in the upper tail, $2P(W\geq w)=`r round(pval,4)`$
+- for $H_1:\mu_x \neq \mu_y$ and $w<\frac{n_x(N+1)}{2}$: because $w=`r t0`<\frac{n_x(N+1)}{2}=`r nRatio`$, so we are looking in the lower tail, $2P(W\leq w)=`r round(pval,4)`$
+
+**Decision:** 
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the same.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are different.
+
+## Normal approximation - with ties
+
+```{r}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+  facet_grid(rows = vars(gender)) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Exercise per week (hours)") +
+  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```
+
+
+**Hypothesis:** $H_0:\mu_X=\mu_Y$ vs $H_1:\mu_X\neq \mu_Y$
+
+**Assumptions:** Observations $X_i,Y_i$ are independent and two samples follow the same kind of distribution but differ by a shift.
+
+```{r}
+rank = data %>% dplyr::mutate(
+r = rank(exercise))
+
+rank_sum = rank %>%
+filter(gender != "Non-binary") %>%
+dplyr::group_by(gender) %>%
+dplyr::summarise(
+w = sum(r),
+xbar = mean(exercise),
+s = sd(exercise),
+n = n()
+)
+
+nA = rank_sum$n[rank_sum$gender=="Male"]
+nB = rank_sum$n[rank_sum$gender=="Female"]
+N = nA+nB
+w = rank_sum$w[rank_sum$gender=="Male"]
+EW = nA * (N+1)/2
+sumsqrank = sum(rank$r^2)
+g = N*(N+1)^2/4
+var = nA*nB*(sumsqrank-g)/(N*(N-1))
+t0 = (w-EW)/sqrt(var)
+
+# for muX > muY:
+pval = 1-pnorm(t0)
+
+# for muX < muY:
+pval = pnorm(t0)
+
+# for two-sided:
+
+pval = 2*(1-pnorm(abs(t0)))
+```
+
+**Test statistic:** when there are ties, the p-value can be calculated using normal approximation to distribution of test statistic. The statistic follows a normal distribution with identity of $N(0,1)$, and can be calculated by $T=\frac{W-E(W)}{\sqrt{Var(W)}}$, where $E(W)=\frac{n_x(N+1)}{2}=`r round(EW,2)`$ and $Var(W)=\frac{n_xn_y}{N(N-1)}(\sum^N_{i=1}r^2-\frac{N(N+1)^2}{4})=`r round(var,4)`$.
+
+**Observed test statistic:** $w=r_1+r_2+...+r_{n_x}=`r w`$
+
+**P-value** As the exact $WRS'(`r nA`,`r nB`)$ distribution with ties is unknown, we use a normal approximation to this distribution with $E(W)=$
+
+- for $H_1:\mu_x>\mu_y$: $P(W\geq `r round(t0,2)`)\approx P(Z\geq \frac{W-E(W)}{\sqrt{Var(W)}})=P(Z\geq `r round(t0,0.2)`)= `r round(pval,4)`$
+- for $H_1:\mu_x<\mu_y$: $P(W\leq `r round(t0,2)`)\approx P(Z\leq \frac{W-E(W)}{\sqrt{Var(W)}})=P(Z\leq `r round(t0,0.2)`)= `r round(pval,4)`$
+- for $H_1:\mu_x \neq \mu_y$: $2P(W\geq `r round(t0,2)`)\approx P(Z\geq |\frac{W-E(W)}{\sqrt{Var(W)}}|)=2P(Z\geq `r round(t0,0.2)`)= `r round(pval,4)`$
+
+**Decision:** 
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the same.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are different.
+
 # Plots
 
 ## Single histogram + boxplot
@@ -1109,6 +1235,22 @@ ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
   labs(y = "Count", x = "Exercise per week (hours)") +
   geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
   geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```
+
+## Notched boxplot
+
+The upper and lower edges of the notches are at $median \pm 1.58\times \frac{IQR}{\sqrt n}$
+
+**Rule of thumb:** if the notches of the two boxes do not overlap, this sugests that hte medians are significantly different.
+
+```{r}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x = gender, y = exercise)) +
+geom_boxplot(notch = TRUE) +
+geom_dotplot(stackdir = "center",
+binaxis = "y") +
+theme_linedraw(base_size = 34) +
+labs(y = "Heat of fusion (cal/g)",
+x = "Method")
 ```
 
 ## Q-Q plot
