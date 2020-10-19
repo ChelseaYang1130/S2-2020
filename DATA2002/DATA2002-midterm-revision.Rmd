@@ -28,6 +28,7 @@ library(plotly)
 library(ggpubr)
 library(kableExtra)
 library(gridExtra)
+library(e1071)
 mykable <- function(dt, ...) {
   kbl(dt, ...) %>% kable_material(c("striped", "hover", "condensed", "responsive"), full_width = F)
 }
@@ -703,7 +704,7 @@ df = n-1
 mean = mean(data$uni_work)
 mu = 30
 S = sd(data$uni_work)
-(test = t.test(data$uni_work,mu = 130,alternative = "two.sided"))
+(test = t.test(data$uni_work,mu = mu,alternative = "two.sided"))
 
 t0 = test$statistic
 pval = test$p.value
@@ -730,6 +731,8 @@ pval = test$p.value
 ## Two-sample t-test
 
 **Two-sample t-test:** test whether the population mean of two samples are different. 
+
+- The two-sample t-test is a parametric test where the test statistic is assumed to follow some distribution.
 
 **Welch two-sample t-test:** does not assume equal population variances.
 
@@ -948,7 +951,7 @@ pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
 **Wilcoxon signed-rank test:**
 
 - The ranks are summed over positive side of the differences.
-- The hypotheses can bbe stated interms of *mean* or *median* since we assume that the distribution is symmetric
+- The hypotheses can be stated interns of *mean* or *median* since we assume that the distribution is symmetric
 - The p-value will typically be smaller than the p-value of a sign test. Using the information in the ranks, the test becomes much more **powerful** in detecting differences from $\mu_0$ and almost as the powerful as the one sample t-test.
 
 ## Using wilcox.test
@@ -1087,15 +1090,15 @@ By using normal approximation, test statistic can be calculated by: $t_0=\frac{w
 - The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
 
 
-# Wilcoxon rand-sum test - for two samples
+# Wilcoxon rank-sum test - for two samples
 
-**Wilcoxon rand-sum test / Mann-Whitney U test:**
+**Wilcoxon rank-sum test / Mann-Whitney U test:**
 
 - A non-parametric test to compare means of two independent samples.
 - The ranks are summed over one of the samples.
 - Relaxes assumptions of normality and symmetry. It is valid for data from any distribution, and is much less sensitive to outliers than the two-sample t-test.
 - If the assumptions of the two-sample t-test hold, the Wilcoxon rank-sum test is less powerful.
-- **Disadvantage:** if one is primarily interested in differences in location between the two distributions, the Wilcoxon test has the disadvantage of also reacting to other differences between the distriutions such as differences in shape.
+- **Disadvantage:** if one is primarily interested in differences in location between the two distributions, the Wilcoxon test has the disadvantage of also reacting to other differences between the distributions such as differences in shape.
 
 ## Using wilcox.test - without ties
 
@@ -1213,10 +1216,293 @@ pval = 2*(1-pnorm(abs(t0)))
 - The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the same.
 - The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are different.
 
-# Plots
+# Permutation test for continuous data
 
-## Single histogram + boxplot
+```{r}
+ggplot(data %>% filter(gender!="Non-binary"),
+aes(y = exercise, x = gender,
+colour = gender)) +
+geom_boxplot(coef = 10) +
+geom_jitter(width=0.1, size = 5) +
+theme_bw(base_size = 36) +
+theme(legend.position = "none") +
+labs(y = "Exercise(h)",x = "Gender")
+```
+
+- use **t-test statistic** when no outliers exist, use **Wilcoxon rank-sum test** or **median test** statistic when outliers exists.
+- The permutation test uses the t-test test statistic but it does not use the t distribution.
+- The two-sample t-test is a parametric test where the test statistic is assumed to follow some distribution.
+The permutation test considers the $(n_1+n_2)!$ permutations of the labels from a single instance of the data.
+
+## Using t-test - without outliers
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ 
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x},Y_1,Y_2,...,Y_{n_y}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** There is no outliers exist in the samples, the t-test statistic is used in the permutation test. The t-test test statistic is calculated by $T=\frac{\bar{X}-\bar{Y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}$. Note that although t-test statistic is used, the permutation test does not use the t distribution.
+
+```{r}
+set.seed(100)
+dat = data %>% filter(gender %in% c("Female","Male"))
+
+# without outliers
+ttest_t0 = t.test(exercise ~ gender, data = dat, var.equal=TRUE)$statistic
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$gender = sample(dat$gender)
+  t_null[i]=t.test(exercise ~ gender, data = permuted_dat)$statistic
+}
+pval = mean(abs(t_null)>=abs(ttest_t0))
+```
+
+**Observed test statistic:** the original test statistic is $t_0=\frac{\bar{x}-\bar{y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}=`r round(ttest_t0,2)`$.
+
+Data is permuted by 10000 times and feed into t-test. The test statistics are recorded and distributed as below.
+
+```{r fig.cap="Distribution of test statistics."}
+p1 = data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 0.1) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+
+p2 = data.frame(abs_t_null = abs(t_null)) %>%
+ggplot(aes(x = abs_t_null)) +
+geom_histogram(binwidth = 0.1) +
+geom_vline(xintercept = abs(ttest_t0),
+col = "red", lwd = 0.5)+
+labs(y = "Count",x = "Absolute test statistic")
+grid.arrange(p1,p2,nrow=2)
+```
+
+**P-value:** the p-value, $P(T\geq |`r round(ttest_t0,2)`|)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+## Using Wilcoxon rank-sum - with outliers
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ 
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x},Y_1,Y_2,...,Y_{n_y}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** there are outliers within samples, t-test testing the mean can be significantly affected by these outliers. Therefore, instead of t-test, the wilcoxon rank-sum test statistic which is robust to outliers is applied in the permutation test. The wilcoxon test statistic is calculated by $W=R_1+R_2+...+R_{n_X}$
+
+```{r}
+set.seed(100)
+dat = data %>% filter(gender %in% c("Female","Male"))
+
+# with outliers
+wilcox_t0 = wilcox.test(exercise ~ gender, data = dat)$statistic
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$gender = sample(dat$gender)
+  t_null[i]=wilcox.test(exercise ~ gender, data = permuted_dat)$statistic
+}
+pval = mean(t_null>=abs(wilcox_t0))
+
+```
+
+**Observed test statistic:** the original test statistic is $w=r_1+r_2+...+r_{n_x}=`r wilcox_t0`$
+
+Data is permuted by 10000 times and feed into wilcoxon rank-sum test. The test statistics are recorded and distributed as below.
+
+```{r fig.cap="Distribution of test statistics."}
+data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 10) +
+geom_vline(xintercept = wilcox_t0,col = "red", lwd = 0.5) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+```
+**P-value:** the p-value, $P(T\geq`r round(ttest_t0,2)`)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+## Using MAD - with outliers
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ 
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x},Y_1,Y_2,...,Y_{n_y}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** there are outliers within samples, t-test testing the mean can be significantly affected by these outliers. Therefore, instead of t-test, MAD (median-absolute-deviation) test statistic which is robust to outliers is applied in the permutation test. The wilcoxon test statistic is calculated by $T=\widetilde X-\widetilde Y$.
+
+```{r}
+set.seed(100)
+dat = data %>% filter(gender %in% c("Female","Male"))
+
+# with outliers
+mad_t0 = median(dat$exercise[dat$gender=="Male"])-median(dat$exercise[dat$gender=="Female"])
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$gender = sample(dat$gender)
+  t_null[i]=median(permuted_dat$exercise[permuted_dat$gender=="Male"])-median(permuted_dat$exercise[permuted_dat$gender=="Female"])
+}
+pval = mean(t_null>=abs(mad_t0))
+
+```
+
+**Observed test statistic:** the original test statistic is $t_0=\widetilde x-\widetilde y=`r mad_t0`$
+
+Data is permuted by 10000 times and feed into MAD test. The test statistics are recorded and distributed as below.
+
+```{r fig.cap="Distribution of test statistics."}
+data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 0.4) +
+geom_vline(xintercept = mad_t0,col = "red", lwd = 0.5) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+```
+
+**P-value:** the p-value, $P(T\geq`r round(ttest_t0,2)`)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+## For one sample
+
 ```{r box,fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
+ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= 35,colour = "blue",linetype = "dashed") # the tested mean
+```
+
+```{r}
+n = length(data$uni_work)
+mu = 30
+```
+
+**Hypothesis:** $H_0: \mu =`r mu`$ vs $H_1: \mu ><\neq `r mu`$
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** the wilcoxon signed-rank test statistic is used, calculated by  $T=\sum^n_{i:d_i>0}r_i\times sign(d_i)$
+
+```{r}
+# t.test
+test = t.test(data$uni_work,mu = mu)
+diff = data$uni_work - mu
+t0 = mean(diff)/sd(diff)*sqrt(n)
+
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  sign_permute = sample(c(-1,1),n,replace=TRUE)
+  d_permute = diff*sign_permute
+  t_null[i]=mean(d_permute)/sd(d_permute)*sqrt(n)
+}
+pval = mean(abs(t_null)>=abs(t0))
+```
+
+**Observed test statistic:** the original test statistic is `r t0`
+
+```{r fig.cap="Distribution of test statistics."}
+p1 = data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 0.1) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+
+p2 = data.frame(abs_t_null = abs(t_null)) %>%
+ggplot(aes(x = abs_t_null)) +
+geom_histogram(binwidth = 0.1) +
+geom_vline(xintercept = abs(t0),
+col = "red", lwd = 0.5)+
+labs(y = "Count",x = "Absolute test statistic")
+grid.arrange(p1,p2,nrow=2)
+```
+
+**P-value:** the p-value, $P(T\geq|`r round(ttest_t0,2)`|)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+# Confidence intervals
+
+**Estimation:** vs **Hypothesis testing:**:
+
+- **Estimation:** a population parameter is *unknown*. Use the sample statistics to generate estimates of the population parameter.
+
+- **Hypothesis testing:** explicit statement regarding the population parameter. Test statistics are generated which will either support or reject the null hypothesis.
+
+**Confidence interval:** a statement about the underlying population parameter. *(NB: confidence $\neq$probability)
+
+- for a 95% CI, 95% of all possible random samples will contain the population mean, leading to 95% **confidence** that a single interval contains the true mean.
+
+for a 95% CI (a,b):
+
+- if we draw a large number of random samples and compute for each sample a 95% CI, about 95% of these CIs will contain $\mu$.
+- CI is a range of plausible values for the population parameter.
+
+# Bootstrapping
+
+**Bootstrapping**: 
+
+- repeatedly resample from the sample (with *replacement*).
+- allows us to as make inferences about the population where no information is available about the population.
+
+**Bootstrapping is useful when:**
+
+- the theoretical distribution of a statistic is complicated or unknown.
+- the sample size is too small to make any sensible parametric inferences about the parameter.
+
+**Advantages:**
+
+- Bootstrapping frees us from making parametric assumptions to carry out inferences.
+- Provides answers to problems for which analytic solutions are impossble.
+- Can be used to verify, or check the stability of results.
+- Asymptotically consistent.
+
+```{r}
+set.seed(100)
+mean(data$uni_work)
+
+B=10000
+result = vector("numeric", length=B)
+for(i in 1:B){
+  newData = sample(data$uni_work,replace=TRUE)
+  result[i] = mean(newData)
+}
+
+(CI = quantile(result,c(0.025,0.975)))
+```
+
+The data is resampled by 10000 times from the sample with replacement. Based on the bootstrapping result, our 95% confidence interval is between `r round(CI[1],2)` and `r round(CI[2],2)`.
+
+```{r fig.cap="Histogram of boostraping results"}
+data.frame(result) %>%
+ggplot(aes(x = result)) +
+geom_histogram(binwidth = 0.5) +
+geom_vline(xintercept = CI,
+col = "red", lwd = 0.5) +
+labs(y = "Count",x = "Mean")
+```
+
+
+# Plots 
+## Single histogram + boxplot
+```{r fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
 
 ggplot(data, aes(x= uni_work)) +
   geom_histogram(bins = 12, show.legend = F) +
@@ -1241,7 +1527,7 @@ ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
 
 The upper and lower edges of the notches are at $median \pm 1.58\times \frac{IQR}{\sqrt n}$
 
-**Rule of thumb:** if the notches of the two boxes do not overlap, this sugests that hte medians are significantly different.
+**Rule of thumb:** if the notches of the two boxes do not overlap, this suggests that the medians are significantly different.
 
 ```{r}
 ggplot(data %>% filter(gender != "Non-binary"), aes(x = gender, y = exercise)) +
