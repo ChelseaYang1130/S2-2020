@@ -1,0 +1,194 @@
+---
+title: "DATA2002 Quiz"
+output:  html_document
+---
+
+SID: 480110301
+
+```{r timestamp, echo=FALSE}
+time = format(Sys.time())
+cat("This document was compiled on:", time)
+```
+
+
+<br>
+
+### Instructions
+
+1. Put your Student ID at the top of the Rmd file (NOT your name). 
+2. Replace `123456789` with your SID below:
+
+```{r}
+sid = 123456789
+```
+
+3. This is an open book quiz, and you are allowed to search the internet and the unit webpage to access any descriptions and R code that may help you to solve the questions.
+4. We suggest you begin by **knitting** your work to make sure the template works on your system.
+5. It's a good idea to submit your work **regularly** to Canvas - if you end up submitting the final version late, the marker can go back and mark only the on-time submission. 
+6. You have **1 hour** to complete the quiz (50 min quiz + 10 min for uploading). If you submit after 1 hour, there will be 5% penalty, however, no submissions will be accepted more than 10 minutes late (i.e. the upload portal closes after 1 hour and 10 mins).
+7. Students often find keeping an eye on the time challenging. We suggest you set an alarm on your phone and give yourself plenty of time for submission. 
+
+<br>
+
+You will need the following libraries:
+
+```{r load_libraries, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+library(tidyr)
+library(pwr)
+
+library(tidyverse)
+library(lubridate)
+library(forcats)
+library(skimr)
+library(plotly)
+library(ggpubr)
+library(kableExtra)
+library(gridExtra)
+library(e1071)
+mykable <- function(dt, ...) {
+  kbl(dt, ...) %>% kable_material(c("striped", "hover", "condensed", "responsive"), full_width = F)
+}
+```
+
+### Data
+
+We will use the data collected from [CensusAtSchool NZ in 2019](https://new.censusatschool.org.nz/random-sampler/). You can see the question form [here](https://new.censusatschool.org.nz/wp-content/uploads/2019/01/CensusAtSchool-New-Zealand-2019.pdf) and the variable descriptions [here](https://new.censusatschool.org.nz/wp-content/uploads/2019/01/2019Questions-and-Vars.xls).
+
+The data is collected and reported using surveys at school – students between Year 5 and Year 13 in schools which participate in the program complete and submit an online survey about themselves. The data is then uploaded to an online database to be compiled by the CensusAtSchool NZ program. 
+
+Not all the data collected in 2019 is used in this quiz. The file `stratified_7_8_9_10.csv` represents a **stratified sample** of 100 students from each of year 7, 8, 9 and 10. 
+
+```{r, message = FALSE}
+data = read_csv("stratified_7_8_9_10.csv")
+data = janitor::clean_names(data)
+colnames(data) = stringr::str_replace(string = colnames(data),pattern = "how_true_i_",replacement = "")
+colnames(data) = stringr::str_replace(string = colnames(data),pattern = "how_wrong_",replacement = "")
+colnames(data) = stringr::str_replace(string = colnames(data),pattern = "how_true_it_is_",replacement = "")
+colnames(data) = stringr::str_replace(string = colnames(data),pattern = "physical_activity",replacement = "activity")
+colnames(data) = stringr::str_replace(string = colnames(data),pattern = "feeling_without_phone",replacement = "without_phone")
+colnames(data) = stringr::str_replace(string = colnames(data),pattern = "caregivers_parents",replacement = "caregivers")
+
+colnames(data)[34]="scheduled_activities"
+colnames(data)[44]="check_message"
+colnames(data)[45]="respond message"
+colnames(data)[56]="screen_time_phone"
+colnames(data)[57]="screen_time_social_media"
+colnames(data)[58]="screen_time_video_games"
+colnames(data)[66]="first_thing"
+colnames(data)[67]="cant_stop_myself"
+colnames(data)[70]="stand_up_for_myself"
+colnames(data)[68]="talk_out_problem"
+```
+
+<!-- All of the above code will be given again in the quiz rmd file that you will download from Canvas. This is the same data file that will be used in the quiz. Do not activate code folding and do not change the style of the Rmd file. -->
+
+```{r}
+# visdat::vis_miss(data)+theme(axis.text.x = element_text(angle = 90))
+# data %>% drop_na()
+# data
+```
+
+### Question 1 - Some sort of bootstrap question (X marks)
+
+### Question 2 - Some sort of permutation test question (X marks)
+
+> This is an example question to show how the questions will be structured and how much guidance will be given. It's not the actual quiz question!
+
+The variable `bag_weight` represents the weight of the school bag the student brought to school on the day of the survey (in kg). The variable `travel_method_to_school` represents the travel method the student took to get to school. In this question we explore if students who walk to school tend to pack a lighter bag than students who catch the bus.
+
+#### (a) Generate side-by-side boxplots to visualise `bag_weight` against `travel_method_to_school` for year 7 students. (2 mark)
+
+```{r 2a}
+## Answer
+data1 = data %>% filter(year==7)
+ggplot(data1, aes(x= travel_method_to_school,y=bag_weight,fill=travel_method_to_school))+
+  geom_boxplot(aes(x = travel_method_to_school, y = bag_weight), outlier.alpha = 0.5)+labs(y = "Count", x = "Bag weight (kg)")
+```
+
+#### (b) Create a new data frame that contains only year 7 students who either walk or take the bus to school. Report how many students there are in each group. (2 marks)
+
+There are 29 students taking bus and 17 students walking to school.
+```{r 2b}
+## Answer
+year7 = data %>% filter(travel_method_to_school %in% c("bus","walk") & year==7)
+
+sum = year7 %>% group_by(travel_method_to_school) %>%
+      summarise(
+      n = n())
+sum
+```
+
+##### (c) Perform a two sample t-test to test whether the population mean bag weight of year 7 students who walk to school is significantly less than the population mean bag weight of students who take the bus to school. Report the test statistic, p-value and your conclusion. (3 marks)
+
+
+```{r 2c}
+## Answer
+dat = year7 %>% select(travel_method_to_school, bag_weight) %>% drop_na()
+walk = (dat %>% filter(travel_method_to_school=="walk"))$bag_weight
+bus = (dat %>% filter(travel_method_to_school=="bus"))$bag_weight
+(ttest = t.test(walk,bus, alternative = "less"))
+t0 = ttest$statistic
+pval = ttest$p.value
+```
+
+```{r}
+
+dat = year7 %>% select(travel_method_to_school, bag_weight) %>% drop_na()
+x = (dat %>% filter(travel_method_to_school=="walk"))$bag_weight
+y = (dat %>% filter(travel_method_to_school=="bus"))$bag_weight
+
+nx = length(x)
+ny = length(y)
+sx = sd(x)
+sy = sd(y)
+sp2 = ((nx-1)*(sx^2)+(ny-1)*(sy^2))/(nx+ny-2)
+sp = sqrt(sp2)
+xbar = mean(x)
+ybar = mean(y)
+(test = t.test(x,y, alternative="less"))
+df = nx+ny-2
+t0 = test$statistic
+pval = test$p.value
+```
+
+**Test statistic:** $T=\frac{\bar{X}-\bar{Y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}$. Under $H_0$, the data tend to follow a t distribution with `r df` degree of freedom.
+
+**Observed test statistic:** $t_0=\frac{`r round(xbar,2)` - `r round(ybar,2)`}{`r round(sp,2)` \sqrt{\frac{1}{`r nx`}+\frac{1}{`r ny`}}}$, where $S^2_p=\frac{(`r nx` -1)`r round(sx,2)`^2+(`r ny`-1)`r round(sy,2)`^2}{`r nx`+`r ny` -2}=`r round(t0,2)`$
+
+**P-value:** $P(t_{`r df` \leq |`r round(t0,2)`|})=`r round(pval,4)`$
+
+**Decision:** As p-value is greater than 0.05, we do not reject the null hypothesis. The population mean of two samples are the same.
+
+
+
+##### (d) Perform a permutation test using the two-sample t-test statistic to test the same hypothesis in (d). Use 1000 permutations. Report the p-value. Do you arrive at the same conclusion as in (d). (3 marks)
+
+```{r 2d}
+## Answer
+set.seed(sid) # leave this line of code here
+
+# without outliers
+ttest_t0 = t.test(x,y, alternative="less")$statistic
+B = 1000
+permuted_dat = dat
+t_null = vector("numeric",B)
+
+for(i in 1:B){
+  permuted_dat$travel_method_to_school = sample(dat$travel_method_to_school)
+  x = (permuted_dat %>% filter(travel_method_to_school=="walk"))$bag_weight
+  y = (permuted_dat %>% filter(travel_method_to_school=="bus"))$bag_weight
+  t_null[i]=t.test(x,y, alternative="less")$statistic
+}
+pval = mean(abs(t_null)>=abs(ttest_t0))
+pval
+```
+The p-value is `r pval` which is greater than 0.05. We do not reject the null hypothesis and conclude that the mean bag weights for students taking bus and walking are the same. This conclusion is the same as that from two-sample t-test.
+
+### Question 3 - Some sort of chi-square test (X marks)
+
+### Question 4 - Something related to power, effect size, sample size calculations (X marks)
+

@@ -789,21 +789,25 @@ sp2 = ((nx-1)*(sx^2)+(ny-1)*(sy^2))/(nx+ny-2)
 sp = sqrt(sp2)
 xbar = mean(x)
 ybar = mean(y)
-t.test(x,y, alternative="two.sided")
+(test = t.test(x,y, alternative="two.sided"))
 df = nx+ny-2
-t0 = t.test(x,y, alternative="two.sided")$statistic
-pval = t.test(x,y, alternative="two.sided")$p.value
+t0 = test$statistic
+pval = test$p.value
 ```
 
 **Test statistic:** $T=\frac{\bar{X}-\bar{Y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}$. Under $H_0$, the data tend to follow a t distribution with `r df` degree of freedom.
 
-**Observed test statistic:** $t_0=\frac{`r round(xbar,2)` - `r round(ybar,2)`}{`r round(sp,2)` \sqrt{\frac{1}{`r nx`}+\frac{1}{`r ny`}}}$, where $S2_p=\frac{(`r nx` -1)`r round(sx,2)`^2+(`r ny`-1)`r round(sy,2)`^2}{`r nx`+`r ny` -2}=`r round(t0,2)`$
+**Observed test statistic:** $t_0=\frac{`r round(xbar,2)` - `r round(ybar,2)`}{`r round(sp,2)` \sqrt{\frac{1}{`r nx`}+\frac{1}{`r ny`}}}$, where $S^2_p=\frac{(`r nx` -1)`r round(sx,2)`^2+(`r ny`-1)`r round(sy,2)`^2}{`r nx`+`r ny` -2}=`r round(t0,2)`$
 
-**P-value:** $2P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$ or $P(t_{`r df` \leq |`r t0`|})=`r round(pval,4)`$ or $P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$
+**P-value:** 
+
+- $2P(t_{`r df` \geq |`r round(t0,2)`|})=`r round(pval,4)`$
+-$P(t_{`r df` \leq |`r round(t0,2)`|})=`r round(pval,4)`$
+-$P(t_{`r df` \geq |`r round(t0,2)`|})=`r round(pval,4)`$
 
 **Decision:** 
 
-- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+- As p-value is greater than 0.05, we do not reject the null hypothesis. The population mean of two samples are the same.
 - As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
 
 ## Paired samples t-test
@@ -1501,8 +1505,30 @@ labs(y = "Count",x = "Mean")
 
 
 # Plots 
+
+## Summary table
+
+```{r}
+sum = data %>% group_by(gender) %>%
+      summarise(Mean = mean(exercise), 
+      Median = median(exercise),
+      SD = sd(exercise),
+      Variance = var(exercise),
+      n = n())
+
+colnames(sum)=c("Gender","Mean","Median","SD","Variance","Counts")
+knitr::kable(sum,digits = 1, align="cccccc",caption = "Statistics of number of hours spent on exercising by different genders.") %>% kable_paper(full_width = F, html_font = "Cambria")
+```
+
+## Side-by-side boxplot
+
+```{r warning=FALSE}
+ggplot(data, aes(x= gender,y=exercise,fill=gender))+
+  geom_boxplot(aes(x = gender, y = exercise), outlier.alpha = 0.5)+labs(y = "Count", x = "Exercise")
+```
+
 ## Single histogram + boxplot
-```{r fig.cap="Distribution of data with blue line indicating the tested mean of ..."}
+```{r}
 
 ggplot(data, aes(x= uni_work)) +
   geom_histogram(bins = 12, show.legend = F) +
