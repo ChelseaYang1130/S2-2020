@@ -1527,6 +1527,39 @@ ggplot(data, aes(x= gender,y=exercise,fill=gender))+
   geom_boxplot(aes(x = gender, y = exercise), outlier.alpha = 0.5)+labs(y = "Count", x = "Exercise")
 ```
 
+## Barcharts
+
+
+```{r}
+# stack barcharts
+media_f = as.data.frame(table(data$social_media))
+sort = arrange(media_f, Freq)
+data %>% ggplot() + 
+  aes(x = social_media,fill = gender, stat = "count")   +
+  geom_bar() + 
+  scale_x_discrete(name=" ", limits=as.character(sort$Var1)) +
+  labs(y = "Count", x = "")+theme(plot.title = element_text(hjust = 0.5)) +
+  coord_flip()
+
+# grouped barcharts
+
+data %>% ggplot() + 
+  aes(x = social_media,fill = gender, stat = "count")   +
+  geom_bar(position=position_dodge()) + 
+  scale_x_discrete(name=" ", limits=as.character(sort$Var1)) +
+  labs(x = "", y = "Count")+theme(plot.title = element_text(hjust = 0.5))+
+  coord_flip()
+
+```
+## Histogram
+
+```{r}
+ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)")
+```
+  
 ## Single histogram + boxplot
 ```{r}
 
@@ -1570,6 +1603,12 @@ x = "Method")
 ```{r}
 ggqqplot(data, x = "uni_work") +
   theme_linedraw(base_size = 18) + theme(legend.position = "none")
+```
+
+## Q-Q plot for ANOVA
+
+```{r}
+ggplot(data, aes(sample=exercise,color=gender)) + geom_qq() + geom_qq_line()+facet_wrap(~ gender)+theme_classic()+theme_linedraw() + theme(legend.position = "none")
 ```
 
 ## Barchart

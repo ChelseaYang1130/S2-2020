@@ -1,0 +1,205 @@
+---
+title: "DATA2002 lab8"
+author: "Jing Yang \ 480110301"
+date: "10/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+library(tidyr)
+library(pwr)
+
+library(tidyverse)
+library(lubridate)
+library(forcats)
+library(skimr)
+library(plotly)
+library(ggpubr)
+library(kableExtra)
+library(gridExtra)
+library(e1071)
+mykable <- function(dt, ...) {
+  kbl(dt, ...) %>% kable_material(c("striped", "hover", "condensed", "responsive"), full_width = F)
+}
+```
+
+# Questions
+
+## Critical flicker frequency
+```{r message=FALSE}
+library(tidyverse)
+flicker = read_tsv("https://raw.githubusercontent.com/DATA2002/data/master/flicker.txt")
+glimpse(flicker)
+flicker
+```
+a. Generate side by side boxplots as well as normal QQ plots for the flicker data. Do your plots support the assumptions required for an ANOVA test to be valid? Explain.
+
+```{r}
+ggplot(flicker, aes(x= Colour,y=Flicker,fill=Colour))+
+  geom_boxplot(aes(x= Colour,y=Flicker), outlier.alpha = 0.5)+labs(y = "Count", x = "Exercise")
+
+
+ggplot(flicker, aes(sample=Flicker,color=Colour)) + geom_qq() + geom_qq_line()+facet_wrap(~ Colour)+theme_classic()+theme_linedraw() + theme(legend.position = "none")
+```
+
+b. Use the aov() function to perform an ANOVA test for the equality of means flicker level across each of the three eye colours.
+
+```{r}
+(aov = summary(aov(Flicker ~ Colour, data = flicker)))
+n = length(flicker$Flicker)
+g = length(unique(flicker$Colour))
+df1 = aov[[1]][["Df"]][1]
+df2 = aov[[1]][["Df"]][2]
+ms1 = aov[[1]][["Mean Sq"]][1]
+ms2 = aov[[1]][["Mean Sq"]][2]
+t0 = ms1/ms2
+pval = aov[[1]][["Pr(>F)"]][1]
+```
+
+c. Using the output, write out the hypothesis test in full. Be sure to state the null and alternative hypothesis, assumptions, test statistic (with distribution), observed test statistic, p-value and an appropriate conclusion.
+
+**Hypothesis:** $H_0:\mu_1=\mu_2=\mu_3$ vs $H_1:$ at least one $\mu_i \neq \mu_j$ for $i\neq j$.
+
+**Assumptions:** Observations are independent within each of the 3 samples. Each of the 3 populations are normally distributed with the common variance $\sigma$.
+```{r message=FALSE}
+ggplot(flicker, aes(x= Colour,y=Flicker,fill=Colour))+
+  geom_boxplot(aes(x= Colour,y=Flicker), outlier.alpha = 0.5)+labs(y = "Count", x = "Flicker")
+
+ggplot(flicker, aes(sample=Flicker,color=Colour)) + geom_qq() + geom_qq_line()+facet_wrap(~ Colour)+theme_classic()+theme_linedraw() + theme(legend.position = "none")
+```
+
+**Test statsitic:** $T=\frac{Treatment~Mean~Sq}{Residual~Mean~Sq}$. Under $H_0$, $T$~$F_{`r df1`,`r df2`}$ with `r g` groups of eye colours and `r n` observations.
+
+**Observed test statistic:** $t_0=\frac{`r round(ms1,2)`}{`r round(ms2,2)`}=`r round(t0,2)`$
+
+**P-value:** $P(T\geq 4.8)=P(F_{`r df1`,`r df2`}\geq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Decision:** 
+
+- As the p-value is less than 0.05, we reject the null hypothesis and conclude that the population mean of at least one group is significantly diffferent to the others.
+- As the p-value is greater than 0.05, we do not reject the null hypothesis and conclude that the population means of three groups are the same.
+
+## Blonds
+
+```{r}
+pain = read_tsv("https://raw.githubusercontent.com/DATA2002/data/master/blonds.txt")
+# glimpse(pain)
+factor(pain$HairColour)
+unique(pain$HairColour)
+```
+
+1. Change HairColour so that the ordering is preserved from lightest to darkest. Hint use: factor()
+
+```{r}
+# ordering data
+pain = pain %>% mutate(
+  HairColour = factor(HairColour, levels = c("LightBlond","DarkBlond","LightBrunette","DarkBrunette"))
+)
+```
+
+
+2. Generate boxplots and QQ plots to check the ANOVA assumptions.
+```{r}
+ggplot(pain, aes(x= HairColour,y=Pain,fill=HairColour))+
+  geom_boxplot(aes(x = HairColour, y = Pain), outlier.alpha = 0.5)+labs(y = "Count", x = "Exercise")
+
+ggplot(pain, aes(sample=Pain,color=HairColour)) + geom_qq() + geom_qq_line()+facet_wrap(~ HairColour)+theme_classic()+theme_linedraw() + theme(legend.position = "none")
+```
+3. What do the boxplots suggest about the null hypothesis that pain thresholds are the same regardless of hair colour?
+
+The boxplot shows that the variance and distribution of pain is different for different hair colour. The means of pain for four groups are different therefore the null hypothesis is incorrect.
+
+4. Test this hypothesis formally using ANOVA. Does there seem to be a relationship between hair colour and pain threshold?!
+
+```{r}
+(aov = summary(aov(Pain ~ HairColour, data = pain)))
+n = length(pain$HairColour)
+g = length(unique(pain$Pain))
+df1 = aov[[1]][["Df"]][1]
+df2 = aov[[1]][["Df"]][2]
+ms1 = aov[[1]][["Mean Sq"]][1]
+ms2 = aov[[1]][["Mean Sq"]][2]
+t0 = ms1/ms2
+pval = aov[[1]][["Pr(>F)"]][1]
+```
+
+**Hypothesis:** $H_0:\mu_1=\mu_2=\mu_3$ vs $H_1:$ at least one $\mu_i \neq \mu_j$ for $i\neq j$.
+
+**Assumptions:** Observations are independent within each of the `r g` samples. Each of the `r g` populations are normally distributed with the common variance $\sigma$.
+```{r}
+ggplot(pain, aes(x= HairColour,y=Pain,fill=HairColour))+
+  geom_boxplot(aes(x = HairColour, y = Pain), outlier.alpha = 0.5)+labs(y = "Count", x = "Exercise")
+
+ggplot(pain, aes(sample=Pain,color=HairColour)) + geom_qq() + geom_qq_line()+facet_wrap(~ HairColour)+theme_classic()+theme_linedraw() + theme(legend.position = "none")
+```
+
+**Test statsitic:** $T=\frac{Treatment~Mean~Sq}{Residual~Mean~Sq}$. Under $H_0$, $T$~$F_{`r df1`,`r df2`}$ with `r g` groups of eye colours and `r n` observations.
+
+**Observed test statistic:** $t_0=\frac{`r round(ms1,2)`}{`r round(ms2,2)`}=`r round(t0,2)`$
+
+**P-value:** $P(T\geq 4.8)=P(F_{`r df1`,`r df2`}\geq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Decision:** 
+
+- As the p-value is less than 0.05, we reject the null hypothesis and conclude that the population mean of at least one group is significantly diffferent to the others.
+- As the p-value is greater than 0.05, we do not reject the null hypothesis and conclude that the population means of three groups are the same.
+
+## Hedenfalk data
+
+```{r}
+library(sgof)
+data(Hedenfalk)
+pvals <- Hedenfalk$x
+```
+
+a. How many p-values are in the data set?
+
+```{r}
+length(pvals)
+```
+
+b. Generate a histogram of the (unadjusted) Hedenfalk p-values.
+
+```{r}
+ggplot(Hedenfalk, aes(x= x)) +
+  geom_histogram(boundary=0, binwidth = 0.05) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "unadjusted p values")
+```
+
+c. How many (unadjusted) p-values are significant at the 5% level of significance? What proportion of all p-values in the data set is this?
+```{r}
+sum(Hedenfalk$x < 0.05)
+mean(Hedenfalk$x < 0.05)
+```
+
+d.it allows us to controll false dicovery rate.
+
+e. Using p.adjust() find the Bonferroni and BH p-values. Plot histograms of each and find the number of significant results after adjustment for both.
+
+```{r}
+Hedenfalk = Hedenfalk %>% 
+  mutate(
+    bonf_p = p.adjust(x, method = "bonferroni"),
+    BH_p = p.adjust(x, method = "BH")
+  )
+
+p1 = Hedenfalk %>% ggplot() + aes(x = bonf_p) + geom_histogram(boundary=0, binwidth = 0.05) + theme_bw() + labs(x = "Bonferroni adjusted p-value", y="Count") + scale_y_log10()
+
+p2 = Hedenfalk %>% ggplot() + aes(x = BH_p) +
+  geom_histogram(boundary=0, binwidth = 0.05) + labs(x = "BH adjusted p-value", y="Count") 
+
+gridExtra::grid.arrange(p1,p2,ncol=2)
+
+Hedenfalk %>% summarise_at(
+  .vars = vars(bonf_p,BH_p),
+  .funs = list(n_sig = function(x) sum(x<0.05),
+               prop_sig = function(x) mean(x<0.05))
+)
+```
+
