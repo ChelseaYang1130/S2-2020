@@ -367,7 +367,7 @@ summary {
 
 
 <p>SID: 480110301</p>
-<pre><code>## This document was compiled on: 2020-10-19 16:05:15</code></pre>
+<pre><code>## This document was compiled on: 2020-10-22 10:13:39</code></pre>
 <p><br></p>
 <div id="instructions" class="section level3">
 <h3>Instructions</h3>
@@ -471,23 +471,6 @@ sum</code></pre>
 <h5>(c) Perform a two sample t-test to test whether the population mean bag weight of year 7 students who walk to school is significantly less than the population mean bag weight of students who take the bus to school. Report the test statistic, p-value and your conclusion. (3 marks)</h5>
 <pre class="r"><code>## Answer
 dat = year7 %&gt;% select(travel_method_to_school, bag_weight) %&gt;% drop_na()
-walk = (dat %&gt;% filter(travel_method_to_school==&quot;walk&quot;))$bag_weight
-bus = (dat %&gt;% filter(travel_method_to_school==&quot;bus&quot;))$bag_weight
-(ttest = t.test(walk,bus, alternative = &quot;less&quot;))</code></pre>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  walk and bus
-## t = 0.63429, df = 18.599, p-value = 0.7332
-## alternative hypothesis: true difference in means is less than 0
-## 95 percent confidence interval:
-##      -Inf 2.446878
-## sample estimates:
-## mean of x mean of y 
-##  3.960000  3.303846</code></pre>
-<pre class="r"><code>t0 = ttest$statistic
-pval = ttest$p.value</code></pre>
-<pre class="r"><code>dat = year7 %&gt;% select(travel_method_to_school, bag_weight) %&gt;% drop_na()
 x = (dat %&gt;% filter(travel_method_to_school==&quot;walk&quot;))$bag_weight
 y = (dat %&gt;% filter(travel_method_to_school==&quot;bus&quot;))$bag_weight
 

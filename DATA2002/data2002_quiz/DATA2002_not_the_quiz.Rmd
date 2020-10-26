@@ -124,19 +124,8 @@ sum
 
 ##### (c) Perform a two sample t-test to test whether the population mean bag weight of year 7 students who walk to school is significantly less than the population mean bag weight of students who take the bus to school. Report the test statistic, p-value and your conclusion. (3 marks)
 
-
 ```{r 2c}
 ## Answer
-dat = year7 %>% select(travel_method_to_school, bag_weight) %>% drop_na()
-walk = (dat %>% filter(travel_method_to_school=="walk"))$bag_weight
-bus = (dat %>% filter(travel_method_to_school=="bus"))$bag_weight
-(ttest = t.test(walk,bus, alternative = "less"))
-t0 = ttest$statistic
-pval = ttest$p.value
-```
-
-```{r}
-
 dat = year7 %>% select(travel_method_to_school, bag_weight) %>% drop_na()
 x = (dat %>% filter(travel_method_to_school=="walk"))$bag_weight
 y = (dat %>% filter(travel_method_to_school=="bus"))$bag_weight

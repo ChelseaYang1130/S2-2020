@@ -1,0 +1,299 @@
+---
+title: "DATA2002 Computer Quiz"
+author: "480110301"
+output:  html_document
+---
+
+```{r timestamp, echo=FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, fig.height = 3)
+time = format(Sys.time())
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(janitor)
+library(tidyr)
+library(pwr)
+cat("This document was compiled on:", time)
+
+library(tidyverse)
+library(lubridate)
+library(forcats)
+library(skimr)
+library(plotly)
+library(ggpubr)
+library(kableExtra)
+library(gridExtra)
+library(e1071)
+mykable <- function(dt, ...) {
+  kbl(dt, ...) %>% kable_material(c("striped", "hover", "condensed", "responsive"), full_width = F)
+}
+
+```
+
+<br>
+
+### Instructions
+
+1. Put your Student ID at the top of the Rmd file (NOT your name). 
+2. Replace `123456789` with your SID below:
+
+```{r}
+sid = 480110301
+```
+
+### Data
+
+We will use the data collected from [CensusAtSchool NZ in 2019](https://new.censusatschool.org.nz/random-sampler/). You can see the question form [here](https://new.censusatschool.org.nz/wp-content/uploads/2019/01/CensusAtSchool-New-Zealand-2019.pdf) and the variable descriptions [here](https://new.censusatschool.org.nz/wp-content/uploads/2019/01/2019Questions-and-Vars.xls).
+
+The data is collected and reported using surveys at school - students between Year 5 and Year 13 in schools which participate in the program complete and submit an online survey about themselves. The data is then uploaded to an online database to be compiled by the CensusAtSchool NZ program. 
+
+Not all the data collected in 2019 is used in this quiz. The file `stratified_7_8_9_10.csv` represents a **stratified sample** of 100 students from each of year 7, 8, 9 and 10, i.e. we sampled 100 year 7 students, 100 year 8 students, 100 year 9 students and 100 year 10 students.
+
+```{r, message = FALSE}
+data = read_csv("stratified_7_8_9_10.csv")
+# if you can't get the data loaded locally, you can try uncommenting the 
+# line of code below which downloads the data file from Ed
+# data = read_csv("https://static.edusercontent.com/files/MyhIpztaJjSdgXdBvOnqj8n6")
+data = janitor::clean_names(data)
+# glimpse(data)
+# dim(data)
+```
+
+### Question 1 - Bootstrap (10 marks)
+
+> One of the variables `memory_time` in CensusAtSchool NZ data measures the students memory by asking the students to match all the pairs of the picture shown in the questionnaire. The online survey then measures the time the students took (in seconds). 
+
+#### (a) Create a data frame called `q1` with _only_ variables `year` and `memory_time`. Remove any rows with missing values and keep only students in year 8. Report how many observations remain. Do not print out the new data frame. (2 marks)
+
+```{r}
+## Answer
+q1 =data %>% select(year, memory_time) %>% drop_na() %>% filter(year ==8)
+length(q1$memory_time)
+```
+
+There are 90 observations remain.
+
+#### (b) Calculate a 95% bootstrap confidence interval for the mean `memory_time` of Year 8 students. Use $B=1000$ bootstrap resamples. Report the confidence interval to 2 decimal places. (4 marks)
+
+```{r }
+## Answer
+set.seed(sid)
+B=1000
+result = vector("numeric", length=B)
+for(i in 1:B){
+  newData = sample(q1$memory_time,replace=TRUE)
+  result[i] = mean(newData)
+}
+
+(CI = round(quantile(result,c(0.025,0.975)),2))
+```
+
+The 95% confidence interval is between `r round(CI[1],2)` and `r round(CI[2],2)`.
+
+#### (c) Construct a histogram to visualise the distribution of bootstrap estimates. Add the the upper and lower bounds of the bootstrap confidence interval as vertical lines to the histogram. _You can use base graphics or ggplot._  (2 marks)
+
+```{r }
+## Answer
+data.frame(result) %>%
+ggplot(aes(x = result)) +
+geom_histogram(binwidth = 0.5) +
+geom_vline(xintercept = CI,
+col = "red", lwd = 0.5) +
+labs(y = "Count",x = "Mean")
+```
+
+
+
+#### (d) Using the original data frame, report the sample mean of memory time for **year 9** students. Assuming the estimated value is representative of the population mean of year 9 students, does this suggest there is a significant difference in the mean of memory time between year 8 and year 9 students at the 5% level of significance? Justify your answer with reference to the confidence interval found above. (2 marks)
+
+```{r}
+## Answer
+q1d = data %>% filter(year==9) %>% select(memory_time) %>% drop_na()
+(mean = mean(q1d$memory_time))
+```
+
+The popultation mean of memory time for year 9 students is 47.17. This mean is outside the confidence interval calculated above, therefore it suggests that there is a significant difference in the mean of memory time between year 8 and year 9 students at the 5% level of significance.
+
+
+### Question 2 - Permutation test (8 marks)
+
+> In this question, we will look specifically at **Year 8** students and investigate if there is a difference in the time students spent doing scheduled activities outside of school time last week across the students using different methods to travel to school. (Scheduled activities outside of school include sport practices and games, swimming lessons, music lessons, scout clubs, church, youth group.) The time spent in scheduled activities is reported in `scheduled_activities_in_last_week` (in hours). The variable `travel_method_to_school` indicates the students' main ways to get to school.
+
+##### (a) Create a data frame called `q2` that contains only Year 8 students with variables `travel_method_to_school` and `scheduled_activities_in_last_week`. Remove any observations with missing values and report how many complete observations remain. (1 mark)
+
+```{r }
+## Answer
+q2 = data %>% filter(year==8) %>% select(travel_method_to_school,scheduled_activities_in_last_week) %>% drop_na()
+length(q2$travel_method_to_school)
+```
+
+94 complete observations remain.
+
+##### (b) Create side-by-side boxplots to visualise the time spent by different methods of travel to school for year 8 students. (1 mark)
+	
+```{r }
+## Answer
+q2b = data %>% filter(year==8) %>% select(travel_method_to_school,
+travel_time_to_school) %>% drop_na()
+ggplot(q2b, aes(x= travel_method_to_school,y=travel_time_to_school,fill=travel_method_to_school))+
+  geom_boxplot(aes(x = travel_method_to_school, y = travel_time_to_school), outlier.alpha = 0.5)+labs(y = "Count", x = "Travel time to school")
+```
+
+
+
+##### (c) Restricting attention to year 8 students who take the bus to school (`bus`) and those who travel by car (`motor`). Generate a QQ plot of scheduled activities in the last week for each mode of transport. Does it appear that the data are normally distributed. Explain why or why not. (2 marks)	
+	
+```{r warning=FALSE}
+## Answer
+q2c = q2 %>% filter(travel_method_to_school %in% c("bus","motor"))
+
+ggqqplot(data, x = "scheduled_activities_in_last_week") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+```
+
+As there is a lower bend of zero  and the tail is not close enough to the line to be considered 'normal'. The data are not normally distributed.
+
+##### (d) Still restricting attention to year 8 students, perform a Wilcoxon rank-sum test to test whether the mean of hours of scheduled activities for students who travel by bus (`bus`) is **significantly less** than students who travel by car (`motor`). Report the p-value and your conclusion. (2 marks)
+
+
+```{r , warning=FALSE}
+## Answer
+bus = q2 %>% filter(
+travel_method_to_school =="bus") %>% select(scheduled_activities_in_last_week)
+bus = bus$scheduled_activities_in_last_week
+
+motor = data %>% filter(
+travel_method_to_school =="motor") %>% select(scheduled_activities_in_last_week)
+motor = motor$scheduled_activities_in_last_week
+
+(test = wilcox.test(bus,motor, alternative = "less"))
+nA=length(bus)
+nB=length(motor)
+N=nA+nB
+nRatio = nA*(N+1)/2
+t0 = test$statistic
+pval = test$p.value
+```
+The p-value is $P(W\leq w)$
+- for $H_1:\mu_x \neq \mu_y$ and $w>\frac{n_x(N+1)}{2}$: because $w=`r t0`>\frac{n_x(N+1)}{2}=`r nRatio`$, so we are looking in the upper tail, $2P(W\geq w)
+=`r round(pval,4)`$.
+
+The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of scheduled activities for students taking bus and motor are the same.
+
+##### (e) Perform a permutation test (1000 resamples) using the Wilcoxon rank-sum test statistic to test the same hypothesis in (d). Report the p-value. Do you get the same conclusion as above at the 5% level of significance? (2 marks)
+
+```{r , warning=FALSE}
+## Answer
+set.seed(sid)
+q2e = q2 %>% filter(travel_method_to_school %in% c("bus","motor"))
+
+# with outliers
+wilcox_t0 = wilcox.test(
+scheduled_activities_in_last_week
+ ~ travel_method_to_school, data = q2e, alternatives="less")$statistic
+B = 10000
+permuted_dat = q2e
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$travel_method_to_school = sample(q2e$travel_method_to_school)
+  t_null[i]=wilcox.test(
+scheduled_activities_in_last_week
+ ~ travel_method_to_school, data = permuted_dat,alternatives="less")$statistic
+}
+pval = mean(t_null>=abs(wilcox_t0))
+```
+
+The p-value is `r pval`, which is greater than 0.05. The null hypothesis is not rejected. We conclude that the means of two samples are the same. This is inline with the result from the last question.
+
+### Question 3 - Chi-squared test (7 marks)
+
+> The variable `feeling_without_phone_frustrated` records whether the students feeling frustrated if they were told they had to spend all weekend without their phones. In this question, we will explore the difference in feeling frustrated across different year groups (years 7 to 10).
+
+##### (a) Create a data frame called `q3` with variables `year` and `feeling_without_phone_frustrated` and remove any observations with missing values. Calculate the proportion of students feeling frustrated with no phone for each year group. Report the year group that has the largest proportion. (2 marks)	
+	
+```{r }
+## Answer
+q3 = data %>% select(year,feeling_without_phone_frustrated) %>% drop_na()
+
+N = length(q3$year)
+(sum = q3 %>% group_by(year) %>%
+      summarise(
+      n = n(),
+      proportion = round(sum(feeling_without_phone_frustrated=="yes")/N,4)))
+
+```
+
+The proportions of students feeling frustrated with no phone are 3.64% for year 7, 3.12% for year 8, 7.53% for year 9 and 5.71% for year 10 respectively.
+
+##### (b) Generate a stacked barplot using `ggplot2` with year group on the x-axis and  where the y-axis represents the proportion of students who feel frustrated without phone within each year. (2 marks)
+	
+```{r }
+## Answer
+
+# sum%>% ggplot() + 
+#   aes(x = year,fill = gender, stat = "count")   +
+#   geom_bar() + 
+#   scale_x_discrete(name=" ", limits=as.character(sort$Var1)) +
+#   labs(y = "Count", x = "")+theme(plot.title = element_text(hjust = 0.5)) +
+#   coord_flip()
+```
+
+
+
+##### (c) Using the `chisq.test()` function to perform a Monte-Carlo simulation to see if there is a statistically significant difference in feeling frustrated when they're without their phone across year groups. Use 1000 resamples. Report the p-value and your conclusion. Comment on whether this is a test for homogeneity or a test for independence. (2 marks)
+	
+```{r }
+## Answer
+set.seed(sid)
+tab = table(q3$year,q3$feeling_without_phone_frustrated)
+(sim = chisq.test(tab, simulate.p.value = TRUE, B = 1000))
+t0 = sim$statistic
+pval = sim$p.value
+```
+The p-value is $P(T\geq$ `r round(t0,2)`) = $P(\chi^2\geq$ `r round(t0,2)`) = `r round(pval,4)`, which is smaller than 0.05. This is a test of independent as it is testing whether there is an association between year and students' feeling frustrated when they're without their phone, using one population. As p-value $<0.05$, $H_0$ is rejected therefore there is an association between year and students' feeling frustrated when they're without their phone.
+
+##### (d) Repeat (c), but restict the data to years 9 and 10 only. Report the p-value and your conclusion. (1 mark)
+	
+```{r }
+## Answer
+set.seed(sid)
+q3d = q3 %>% filter(year %in% c(9,10))
+tab = table(q3d$year,q3d$feeling_without_phone_frustrated)
+(sim = chisq.test(tab, simulate.p.value = TRUE, B = 1000))
+t0 = sim$statistic
+pval = sim$p.value
+```
+
+The p-value is $P(T\geq$ `r round(t0,2)`) = $P(\chi^2\geq$ `r round(t0,2)`) = `r round(pval,4)`. $H_0$ is not rejected therefore there is no association between year and students' feeling frustrated when they're without their phone.
+
+### Question 4 - Power, effect size and sample size (5 marks)
+
+> In this question, we will investigate the power, effect size and sample size of a t-test using the time standing on left leg (`time_standing_on_left_leg`) of all students.
+
+##### (a) Use the `pwr.t.test()` function from the **pwr** package to calculate the minimum sample size $n$ required to achive 85% power when testing $H_0:\mu = 60$ against the alternative $\mu \neq 60$ using a 1% level of significance. Assume that the sample mean and standard deviation are the same as the population mean (under the alternative hypothesis) and standard deviation. (2 marks)
+
+```{r}
+# Answer
+time = data %>% select(time_standing_on_left_leg) %>% drop_na()
+mean=mean(time$time_standing_on_left_leg)
+sd = sd(time$time_standing_on_left_leg)
+res = pwr.t.test(n = NULL, d = (mean-60)/sd, sig.level = 0.01, power = 0.85, type = "one.sample", alternative = "two.sided")
+res$n
+```
+The minimum sample size required is 893.
+
+
+##### (b) Using the same settings as above, calculate the sample size $n$ required as the power changes from 0.2 to 0.9 (in increments of 0.01). Plot the power (y-axis) against the required sample size (x-axis). (3 marks)
+
+```{r}
+# # Answer
+seq = c(seq(0.2, 0.9, by=0.01))
+n =c()
+for(i in seq){
+res = pwr.t.test(n = NULL, d = (mean-60)/sd, sig.level = 0.01, power = i, type = "one.sample", alternative = "two.sided")
+n[i]=res$n
+}
+hist(x = seq,y=n)
+```
+
+

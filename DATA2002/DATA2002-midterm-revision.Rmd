@@ -368,9 +368,8 @@ library(pwr)
 res = pwr.t.test(n = 6, d = NULL, sig.level = 0.05, power = 0.8, type = "one.sample", alternative = "two.sided")
 res$d*0.294
 
-# mu = 374.87, population sd=0.294, power: 80% sure of "detecting" that mu is not equal 75, two-sided, what sample size n would be needed?
-res = pwr.t.test(n = NULL, d = (374.87-375)/0.294, sig.level = 0.05, power = 0.8,
-type = "one.sample", alternative = "two.sided")
+# mu = 374.87, population sd=0.294, power: 80% sure of "detecting" that mu is not equal 375, two-sided, what sample size n would be needed?
+res = pwr.t.test(n = NULL, d = (374.87-375)/0.294, sig.level = 0.05, power = 0.8, type = "one.sample", alternative = "two.sided")
 res$n
 
 ```
@@ -503,7 +502,7 @@ tab = table(data$parents,data$gender)
 
 **Test of homogeneity:** Test whether the probability distributions of the categories are the same over **the different populations**.
 
-## Chi-sqaured test
+## Chi-squared test
 
 **Hypothesis:** $H_0:p_{1j}=p_{2j}$ for $j=1,2,3$ vs $H_1: p_{11}\neq p_{21}, p_{21}\neq p_{22}$.
 
@@ -549,6 +548,7 @@ tab = table(data$parents,data$gender)
 **Hypothesis:** $H_0:p_{ij}=p_ip_j$ for $i=1,2,...,r,j=1,2,...,c$ vs $H_1:$ Not all equalities hold.
 
 ```{r}
+tab = table(data$parents,data$gender)
 n=sum(tab)
 r = nrow(tab)
 c = ncol(tab)
@@ -757,6 +757,7 @@ ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
   geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
   geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
 ```
+
 ```{r fig.cap="Q-Q plots of data in different groups."}
 ggqqplot(data %>% filter(gender != "Non-binary"), x = "exercise", color = "gender") +
   facet_grid(rows = vars(gender)) + 
@@ -885,13 +886,14 @@ p2 = ggqqplot(data, x = "uni_work") +
 
 grid.arrange(p1, p2, ncol=2)
 ```
+
 ```{r}
 diff = data$uni_work-mu
 n = length(sign(diff)[sign(diff) != 0])
 freq = as.vector(table(sign(diff)[sign(diff) != 0]))
-binom.test(freq,p=0.5,alternative="greater")
+(test = binom.test(freq,p=0.5,alternative="greater"))
 t0 =  length(diff[diff>0])
-pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
+pval = test$p.value
 ```
 
 **Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
@@ -979,13 +981,14 @@ grid.arrange(p1, p2, ncol=2)
 **Assumptions:** Observations are independently sampled from a symmetric distribution.
 
 ```{r}
+mu = 30
 diff = data$uni_work-mu
 
 # for paired data
 test = wilcox.test(y,x,alternative="greater",paried=TRUE)
 
 # without continuity correction
-test = wilcox.test(diff,alternative="greater",correct = FALSE)
+test = wilcox.test(y,x,alternative="greater",correct = FALSE)
 
 # for one-sample 
 (test=wilcox.test(diff, alternative = "greater"))
@@ -1039,6 +1042,7 @@ grid.arrange(p1, p2, ncol=2)
 **Assumptions:** Observations are independently sampled from a symmetric distribution.
 
 ```{r}
+mu = 30
 diff = data$uni_work-mu
 n = length(diff)
 mean = n*(n+1)/4
@@ -1126,8 +1130,10 @@ ggplot(data %>% filter(gender != "Non-binary"),aes(x = exercise, fill = gender))
 # without ties
 male = data %>% filter(gender =="Male") %>% select(exercise)
 male = male$exercise
+
 female = data %>% filter(gender =="Female") %>% select(exercise)
 female = female$exercise
+
 (test = wilcox.test(male,female))
 nA=length(male)
 nB=length(female)
@@ -1150,8 +1156,8 @@ pval = test$p.value
 
 **Decision:** 
 
-- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the same.
-- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are different.
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the different.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are the same.
 
 ## Normal approximation - with ties
 
@@ -1480,7 +1486,6 @@ for a 95% CI (a,b):
 
 ```{r}
 set.seed(100)
-mean(data$uni_work)
 
 B=10000
 result = vector("numeric", length=B)
@@ -1599,6 +1604,11 @@ x = "Method")
 ```
 
 ## Q-Q plot
+
+The data doesn't follow a normal distribution if:
+
+- A lower bend of zero exist?
+- Not close enough to the line to be considered 'normal'.
 
 ```{r}
 ggqqplot(data, x = "uni_work") +
