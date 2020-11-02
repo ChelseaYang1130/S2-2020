@@ -1,0 +1,62 @@
+---
+title: "DATA2X02 Group Assignment"
+author: "W13A_early_8"
+
+# Abstract
+#abstract: |
+# Paper size for the document, values of letter and a4
+papersize: letter
+
+# Font size of the document, values of 9pt (default), 10pt, 11pt and 12pt
+fontsize: 12pt
+
+# Optional: Force one-column layout, default is two-column
+one_column: true
+
+# Optional: Enables lineo mode, but only if one_column mode is also true
+#lineno: true
+
+# Optional: Enable one-sided layout, default is two-sided
+#one_sided: true
+
+# Optional: Specify the depth of section number, default is 5
+secnumdepth: 3
+
+# Optional: include-after
+#include-after: somefile.tex
+
+# Optional: Skip inserting final break between acknowledgements, default is false
+skip_final_break: true
+
+# Optional: Bibliography 
+bibliography: pinp
+
+# Customize footer, eg by referencing the vignette
+footer_contents: "DATA2X02 Group Assignment"
+
+# Produce a pinp document
+output: 
+  pinp::pinp:
+    latex_engine: xelatex
+
+# Required: Vignette metadata for inclusion in a package.
+vignette: >
+  %\VignetteIndexEntry{YourPackage-vignetteentry}
+  %\VignetteKeywords{YourPackage, r, anotherkeyword}
+  %\VignettePackage{YourPackage}
+  %\VignetteEngine{knitr::rmarkdown}
+  
+header-includes: 
+   \usepackage{wrapfig,subcaption,array,tabularx,multirow,caption} 
+   \usepackage[utf8]{inputenc} 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+message = FALSE
+warning = FALSE
+```
+
+\captionsetup[figure]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
+\captionsetup[table]{labelfont={it,bf,scriptsize},textfont={it,scriptsize},labelsep=colon}
+\captionsetup[FLOAT_TYPE]{labelformat=simple, labelsep=colon}

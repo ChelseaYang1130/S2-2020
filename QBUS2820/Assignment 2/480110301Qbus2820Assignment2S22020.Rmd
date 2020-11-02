@@ -73,11 +73,11 @@ By comparing the root mean squared errors of predictions, the lasso regression m
 
 # Data processing and exploratory data analysis
 
-There are 36 numeric variables and 43 categorical variables in the housing data. By calculating the correlation coefficient, 12 numeric variables are found to be potentially linearly related to sale price, as the absolute values of corresponsing carrelation coefficients are greater than 0.5. The distributions of these variables are visualised in figure \ref{fig:scatter}. 'TotRms AbvGrd', 'Garage Area', '1st Fir SF' and 'SalePrice' are shown to be right-skewed while 'Garage Yr Blt' and 'Overall Qual' are left-skewed, but these distributions are significantly influenced by outliers in several columns. Moreover, some variables, such as 'TotRms AbvGrd', tend to have linear relationships with other variables except sale price, leading to multi-collinearity. This could violate the assumption of some predictive models, such as multiple linear regression, thus robustness to multi-collinearity should be carefully considered when developing predictive models.
+There are 36 numeric variables and 43 categorical variables in the housing data. By calculating the correlation coefficient, 12 numeric variables are found to be potentially linearly related to sale price, as the absolute values of corresponding correlation coefficients are greater than 0.5. The distributions of these variables are visualized in figure \ref{fig:scatter}. 'TotRms AbvGrd', 'Garage Area', '1st Fir SF' and 'SalePrice' are shown to be right-skewed while 'Garage Yr Blt' and 'Overall Qual' are left-skewed, but these distributions are significantly influenced by outliers in several columns. Moreover, some variables, such as 'TotRms AbvGrd', tend to have linear relationships with other variables except sale price, leading to multi-collinearity. This could violate the assumption of some predictive models, such as multiple linear regression, thus robustness to multi-collinearity should be carefully considered when developing predictive models.
 
-Figure \ref{fig:boxplots} shows the distribution of sale price with regard to different categorical features. For most categorical features, sale prices tend to largely different for different groups of the categorical feature, except 'BsmtFin Type 2' and 'Land Slope'. However, although medians sale prices look similar for different groups of 'BsmtFin Type 2' and 'Land Slope', the distribution of sale prices are not identical. Hence, it can still be worthwhile to includue these two variables as features to predict sale price. In addition, the boxplots also highlight the ouliers of sale price existing in diifferent categorical groups. 
+Figure \ref{fig:boxplots} shows the distribution of sale price with regard to different categorical features. For most categorical features, sale prices tend to largely different for different groups of the categorical feature, except 'BsmtFin Type 2' and 'Land Slope'. However, although medians sale prices look similar for different groups of 'BsmtFin Type 2' and 'Land Slope', the distribution of sale prices are not identical. Hence, it can still be worthwhile to include these two variables as features to predict sale price. In addition, the boxplots also highlight the outliers of sale price existing in different categorical groups. 
 
-Besides affecting the shapes of data distribution, the existing outliers of numeric variables can also post a significant effect on predictive performance when making sale price predicions.Therefore data pre-processing needs to be considered in the stage of feature engineering in order to overcome issues caused by outliers.
+Besides affecting the shapes of data distribution, the existing outliers of numeric variables can also post a significant effect on predictive performance when making sale price predictions.Therefore data pre-processing needs to be considered in the stage of feature engineering in order to overcome issues caused by outliers.
 
 # Feature engineering
 
@@ -98,41 +98,55 @@ After feature engineering, there are 74 informative features, with 36 features b
 
 # Methodology
 
-Five regression models are trained by two sets of data where one training set contains numeric features only and the other set includes both categorical and numeric features. With regards to the issue of multi-collinearity mentioned before, all of the five regression techniques used are capable for addressing multi-collinearity. As such, the features surviving in feature engineering are all fed into predictive models.
+Five regression models are trained by two sets of data where one training set contains numeric features only and the other set includes both categorical and numeric features. With regards to the issue of multi-collinearity mentioned before, all of the five regression techniques used are capable for addressing multi-collinearity. Therefore there is no need to eliminate features suffering from multi-collinearity, and all features surviving in the feature engineering stage are involved in predictive models development.
 
-To develope the best parameter set for each regression models, hyperparameters of are tunned with 5-fold cross validation. The performance of models with different value of hyperparameters is estimated by negative mean squared error, where a larger score indicates better predictive performance.
+To develop the best parameter set for each regression models, hyperparameters are tuned with 5-fold cross validation. The performance of models with different values of hyperparameters is estimated by negative mean squared error, where a larger score indicates better predictive performance. For each machine learning model, the value of hyperparameter resulting in the best performance is selected to be optimal.
 
 ## Random forest regression
 
-Random Forest uses bootstrap sampling and feature sampling, i.e row sampling and column sampling. Therefore Random Forest is not affected by multicollinearity that much since it is picking different set of features for different models and of course every model sees a different set of data points.
+A random forest regression model, which is an extension of decision tree, is developed. It is a supervised learning techniques which applies ensemble learning method for regression. With this technique, decision trees are created in parallel by bagging (i.e. reduce the variance of predictions by resampling). In this case, the mean predicted sale price of the individual trees is reported. 
 
-This tells us the most important settings are the number of trees in the forest (n_estimators) and the number of features considered for splitting at each leaf node (max_features).
+As random forest applies bootstrap sampling, multi-collinearity is not a concern because it is simply selecting different features from training set to develop models.  In addition, the splits of each tree are randomly sampled from the training set so that with the randomness, overfitting can be avoided.
+
+The number of features being spitted on at each leaf node which is a hyperparameter is the main focus to find the optimal random forest model. Another determinant parameter is the number of trees in random forest. To tun the random forest model, 10 values of  number of trees ('n_estimators'), ranging from 200 to 2000, are fed into models. The maximum number of features being spitted, which is presented as 'max_feature' in python, is obtained by taking a square root of the number of feature.
+
+The optimal number of fetures being splitted is 1200 for the training set with numeric features only. The optimal number changes to 200 when the model involves both categorical and numeric features.
 
 ## Lasso Regression
 
-Least absolute shrinkage and selection operator (Lasso), as an extension of liner regression analysis, conducts both feature selection and regularization. This helps to enhance the predictive performance and interpretability of the model developed.
+A lasso regression model is developed as it is able to deal with multi-collinearity as well as feature selection. As such it is a highly automate technique with satisfactory predictive performance and interpretability. 
 
-The objective of a lasso regression model is to minimize $\sum^n_{i=1}(y_i-\sum_jx_{ij}\beta_j)^2+\alpha\sum^p_{j=1}|\beta_j|$, where $\alpha$ is a tuning parameter which represents how strong the L1 regularization penalize coefficients of the lasso regression model. Changing the value of $\alpha$ influences the number of features eliminated. When $\alpha=0$, coefficients of features are not Palisades such that no feature is removed. As the value of $\alpha$ increases, L1 penalty gets stronger and therefore more features are eliminated, vice versa. Furthermore, the value of $\alpha$ also affects the bias-variance trade-off. An increase of $\alpha$ leads to increase in bias while a decrease of $\alpha$ results in increase in variance.
+The key component of the lasso model is to perform L1 regularization. Hence the objective is to minimize $\sum^n_{i=1}(y_i-\beta_0-\sum_jx_{ij}\beta_j)^2+\lambda\sum^p_{j=1}|\beta_j|$, where $\lambda$ is the hyperparameter which is tuned to control the strength of L1 regularization penalize. Increasing $\lambda$ results in higher level of L1 penalty and thus more features are eliminated. This also affects the bias-variance tradeoff as a increase of $\lambda$ leads to a increase in bias and a decrease in variance.
+
+It might be challenging to initialize a list of lambdas  to tun the model as there is no strict upper boundary of lambdas. Fortunately, the `LassoCV` package in python can fit the data and automatically find out the optimal $\lambda$ among 100 different values. For the numeric training set, the optimal value of $\lambda$ is 921.2 while it is 130.6 for model including both numeric and categorical features. 
 
 ## Ridge Regression
 
-Ridge Regression is a technique for analyzing multiple regression data that suffer from multicollinearity. When multicollinearity occurs, least squares estimates are unbiased, but their variances are large so they may be far from the true value.
+A ridge regression which is similar with the lasso regression, is constructed. In stead of L1 regularization, the ridage regression applies L2 regularization which does not help selecting features but it can still overcome the issue of multi-collinearity.
 
-can do certain level of feature selection
+The hyperparameter is $\lambda$, being similar with that of lasso regression, to minimize
+$\sum^n_{i=1}(y_i-\beta_0-\sum_jx_{ij}\beta_j)^2+\lambda\sum^p_{j=1}\beta_j^2$. The `RidgeCV` package in python helps to fit data and select the optimal value of lambda from 100 values. The optimal lambdas for numeric training set and full training set are 113.2 and 9.6 respectively, which are largely different.
 
 ## Elastic Nets
 
-Several researchers and data scientists have worked hard to explore the value of procedures like ElasticNets to help resolve the L1/L2 debate to multicollinearity correction. Through this technique, we are able to combine the strengths of both Ridge and LASSO regression, while minimizing the negative impact of either of these procedures. Some advantages of Elastic Net is that it is able to (1) enforce sparsity, (2) it has no limitation on the number of selected variables, and (3) it encourages a grouping effect in the presence of highly correlated predictors. A main disadvantage of this technique is that a naïve elastic net can suffer from double shrinkage, therefore, one needs to be careful when employing this option. If a naïve elastic net is found, a correction does exist to help control for this
+An elastic nets model performs both L1 and L2 regularization, and integrates the strength of ridge regression and lasso regression. As such, it is able to perform certain level of feature selection as well as placing no restriction on the numer of selected variables. 
 
-## Stepwise regression with Forward Selection
+The hyperparameter $\lambda$ is tuned to minimize $\sum^n_{i=1}(y_i-\beta_0-\sum_jx_{ij}\beta_j)^2+\lambda\sum^p_{j=1}(\alpha \beta_j^2+(1-\alpha)|\beta_j|)$. Being similar to `RidgeCV` and `LassoCV`, the `ElasticNetCV` package in python selects the optimal value of $\lambda$ from 100 different values for the fitted data. The optimal lambdas are both 65.6 for numeric set and full set.
 
+## Stepwise regression 
+
+The stepwise regression is simply a multiple linear regression with feature selection. The farward selection approach starts from a null model which contains only the constant, and iterate to add different number of features to the model. For each iteration, all predictors are add individually to the model to construct $p-k-1$ models, where $p$ is the total number of predictors available, and $k$ is the number of predictors involved in models. For a specific value of $k$, the best model is selected based on residual sum of square (RSS). Finally, the optimal stepwise model is selected by comparing the negative root mean squred error from cross validation, in order to estimate predictive performance of models involving different number of predictors.
+
+The optimal model with numeric features contains 17 predictors while the best model including both categorical and numeric variables contains 73 features.
+
+\hspace{1cm}
 
 \begin{wraptable}{r}{8cm}
 \begin{tabular}{ |c|c|c| } 
 \hline
 \textbf{Model / Features} & \textbf{Numeric} & \textbf{Numeric and Categorical} \\
 \hline
-\textbf{Forward selection} & 34470.77 & $5.21\times 10^{15}$ \\ 
+\textbf{Forward stepwise} & 34470.77 & $5.21\times 10^{15}$ \\ 
 \textbf{Lasso} & 34543.61 & 29628.07 \\
 \textbf{Ridge} & 34475.68 & 30082.79 \\
 \textbf{Elastic net} & 35380.58 & 32844.26 \\
@@ -140,13 +154,36 @@ Several researchers and data scientists have worked hard to explore the value of
 \hline
 \end{tabular}
 \centering
-\caption{Summary of predictive performance for regression models. The performance measurement metric is the root mean squared error from cross validation.}
+\caption{Summary of predictive performance for regression models. The performance assessement metric is the root mean squared error from cross validation.}
 \label{table:cv_errors}
 \end{wraptable}
 
-# Validation set results
+The predictive performance of models developed are validated by root mean squared error (RMSE) from 5-fold cross validation. Table \ref{table:cv_errors} summaries the predictive performances of five regression models for the two training sets. For models including only numeric features, random forest regressio has the best performance with the lowest RMSE while other 4 models have similar peroformance. For models with both numeric and categorical variables, random forest regression still has the most accurate predictions, followed by lasso regression. 
+
+# Validation set results from kaggle
+
+\begin{wraptable}{r}{8cm}
+\begin{tabular}{ |c|c|c| } 
+\hline
+\textbf{Model / Features} & \textbf{Numeric} & \textbf{Numeric and Categorical} \\
+\hline
+\textbf{Forward stepwise} & 40672.34  & 46984.44 \\ 
+\textbf{Lasso} & 39910.50 & 29628.07 \\
+\textbf{Ridge} & 40141.87 & 38481.91 \\
+\textbf{Elastic net} & 38249.77 &  37679.12\\
+\textbf{Random forest} & 25405.28 & 28276.96\\
+\hline
+\end{tabular}
+\centering
+\caption{Summary of validation set results from kaggle. The performance assessement metric is the root mean squared error from cross validation.}
+\label{table:kaggle_results}
+\end{wraptable}
+
+Table \ref{table:kaggle_results} summirizes the validation set results from kaggle, assessing the predictive performance of five regression models by root mean squared errors. It is inline with table \ref{table:cv_errors} that random forest and lasso model regression have the best predictive performance for both training sets. Moreover, random forest tends to have more accurate predictions for numeric sets compared to models with both categorical and numeric variables.
 
 # Conclusion
+
+It is noticable from table \ref{table:cv_errors} that the stepwise regression with forward selection has a poor predictions with a very large RMSE for training set involving categorical variables, whereas the predictive performance for numeric set is relatively satisfactory. This is because when perforaming stepwise regression, the dummy variables representing categorical variables are treated as numeric variable when fitting multiple linaer regression. 
 
 # References
 
@@ -169,7 +206,7 @@ Several researchers and data scientists have worked hard to explore the value of
 \label{fig:timeseries}
 \end{wrapfigure}
 
-The time series plot figure \ref{fig:timeseries} shows an upward trend from 1991 to 2016, with a seasonal pattern as symtematic changes occur in short periods which are fixed. Furthermore, the variation of number of visitors within the fixed period becomes greater as time moves. As such, a multiplicative forecasting model may be more suitable for this data compared to an additive model.
+The time series plot figure \ref{fig:timeseries} shows an upward trend from 1991 to 2016, with a seasonal pattern as systematic changes occur in short periods which are fixed. Furthermore, the variation of number of visitors within the fixed period becomes greater as time moves. As such, a multiplicative forecasting model may be more suitable for this data compared to an additive model.
 
 # Forecasting models
 
