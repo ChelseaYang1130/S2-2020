@@ -92,7 +92,7 @@ As shown in Figure \ref{fig:miss}, there are huge amounts of missing values in s
 
 Besides, there are 19 columns containing missing values but the percentages of missing values are less than 20%. This can be deal with by imputation. The missing values are imputed by using the most frequent value of each column.
 
-As mentioned before, outliers exist with most of numeric features, which could be a big concern for predictive performance. Data standardization is therefore performed for numeric variables by subtracting the mean, followed by dividing the standard deviation of the corresponding columns. 
+From EDA analysis, the numeric variables tend to have different scales. Therefore, data standardization is performed prior to model development for numeric variables by subtracting the mean, followed by dividing the standard deviation of the corresponding columns. 
 
 After feature engineering, there are 74 informative features, with 36 features being numeric and 38 features being categorical. There are 1570 observations in the training set and 1210 observations in the testing set. For regression models involving categorical features, dummy variables are created for each categorical feature.
 
@@ -200,21 +200,48 @@ It is noticable from table \ref{table:cv_errors} that the stepwise regression wi
 # Exploratory data analysis
 
 \begin{wrapfigure}{r}{0.5\textwidth}
-\includegraphics[width=1\linewidth]{timeseries.png}
+\includegraphics[width=1\linewidth]{decomposition.png}
 \centering
-\caption{Time series of number of visitors from 1991 to 2016.}
+\caption{Time series decomposition of number of visitors from 1991 to 2016.}
 \label{fig:timeseries}
 \end{wrapfigure}
 
-The time series plot figure \ref{fig:timeseries} shows an upward trend from 1991 to 2016, with a seasonal pattern as systematic changes occur in short periods which are fixed. Furthermore, the variation of number of visitors within the fixed period becomes greater as time moves. As such, a multiplicative forecasting model may be more suitable for this data compared to an additive model.
+The time series decomposition figure \ref{fig:timeseries} shows an upward trend from 1991 to 2016, with a seasonal pattern as systematic changes occur in short periods which are fixed. Furthermore, the variation of number of visitors within the fixed period becomes greater as time moves. As such, a multiplicative forecasting model may be more suitable for this data compared to an additive model.
 
 # Forecasting models
 
-## Seasonal random walk
+To capture both the trend and seasonal pattern of number of visitors, two exponential smoothing, Holt-Winters and Daped trend, are developed.
 
-## Drift model
+In order to capture both the upward trend and seasonal pattern of the number of visitors, a Holt-Winters exponential smoothing model is developed.
 
-## Exponential smoothing
+## Holt-Winters exponential smoothing 
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+\includegraphics[width=1\linewidth]{HW_es.png}
+\centering
+\caption{Smoothed time series by Holt-Winter exponential smoothing.}
+\label{fig:hw_es}
+\end{wrapfigure}
+
+As an extension of the Holt exponential smoothing, the Holt-Winters exponential smoothing capture not only the trend but also the seasonal pattern of number of visitors. It is available for both additive and multiplicative models. In this case, as mentioned before, the variance of number of visitors increases as time goes by, a multiplicative model is considered.
+
+The model involves three paramters $l_t,b_t$ and $S_t$ which represent the level, trend and seasonal indices respectivey for the time series of number of visitors. The forecast equation of the multiplicative model is $\hat y_{t+h}=(\hat l_t+h\hat b_t \times S_{t-L+(h~mod~L)}$ where mod is the modulo operator, $I_{i,L}=0$ if $h~mod~L\neq i$ and $I_{i,L}=1$ if $h~mod~L=i$.
+
+The estimated paramters of Holt-winters exponential smoothing are $\alpha=0.31,\beta=0.012,\delta=0.362$ for this data.
+
+### Model diagnostics
+
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{diagnostic_plot.png}
+\centering
+\caption{Residual plot, residual ACF, residual distribution plot and normal Q-Q plot for Holt-Winter exponential smoothing model.}
+\label{fig:diagnostic_plot}
+\end{figure}
+
+## Model validation
+
+## Forecasting results
+
 
 # Appendix
 

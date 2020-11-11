@@ -150,11 +150,10 @@ percentages of missing values are less than 20\%. This can be deal with
 by imputation. The missing values are imputed by using the most frequent
 value of each column.
 
-As mentioned before, outliers exist with most of numeric features, which
-could be a big concern for predictive performance. Data standardization
-is therefore performed for numeric variables by subtracting the mean,
-followed by dividing the standard deviation of the corresponding
-columns.
+From EDA analysis, the numeric variables tend to have different scales.
+Therefore, data standardization is performed prior to model development
+for numeric variables by subtracting the mean, followed by dividing the
+standard deviation of the corresponding columns.
 
 After feature engineering, there are 74 informative features, with 36
 features being numeric and 38 features being categorical. There are 1570
@@ -395,30 +394,67 @@ fitting multiple linaer regression.
 \section{Exploratory data analysis}\label{exploratory-data-analysis}}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
-\includegraphics[width=1\linewidth]{timeseries.png}
+\includegraphics[width=1\linewidth]{decomposition.png}
 \centering
-\caption{Time series of number of visitors from 1991 to 2016.}
+\caption{Time series decomposition of number of visitors from 1991 to 2016.}
 \label{fig:timeseries}
 \end{wrapfigure}
 
-The time series plot figure \ref{fig:timeseries} shows an upward trend
-from 1991 to 2016, with a seasonal pattern as systematic changes occur
-in short periods which are fixed. Furthermore, the variation of number
-of visitors within the fixed period becomes greater as time moves. As
-such, a multiplicative forecasting model may be more suitable for this
-data compared to an additive model.
+The time series decomposition figure \ref{fig:timeseries} shows an
+upward trend from 1991 to 2016, with a seasonal pattern as systematic
+changes occur in short periods which are fixed. Furthermore, the
+variation of number of visitors within the fixed period becomes greater
+as time moves. As such, a multiplicative forecasting model may be more
+suitable for this data compared to an additive model.
 
 \hypertarget{forecasting-models}{%
 \section{Forecasting models}\label{forecasting-models}}
 
+In order to capture both the upward trend and seasonal pattern of the
+number of visitors, a Holt-Winters exponential smoothing model is
+developed.
+
 \hypertarget{seasonal-random-walk}{%
 \subsection{Seasonal random walk}\label{seasonal-random-walk}}
 
-\hypertarget{drift-model}{%
-\subsection{Drift model}\label{drift-model}}
+\hypertarget{holt-winters-exponential-smoothing}{%
+\subsection{Holt-Winters exponential
+smoothing}\label{holt-winters-exponential-smoothing}}
 
-\hypertarget{exponential-smoothing}{%
-\subsection{Exponential smoothing}\label{exponential-smoothing}}
+\hypertarget{methodology-1}{%
+\subsubsection{Methodology}\label{methodology-1}}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+\includegraphics[width=1\linewidth]{HW_es.png}
+\centering
+\caption{Smoothed time series by Holt-Winter exponential smoothing.}
+\label{fig:hw_es}
+\end{wrapfigure}
+
+As an extension of the Holt exponential smoothing, the Holt-Winters
+exponential smoothing capture not only the trend but also the seasonal
+pattern of number of visitors. It is available for both additive and
+multiplicative models. In this case, as mentioned before, the variance
+of number of visitors increases as time goes by, therefore a
+multiplicative Holt-Winter exponential smoothing is considered.
+
+The Holt-Winters exponential smoothing
+
+\hypertarget{model-diagnostics}{%
+\subsubsection{Model diagnostics}\label{model-diagnostics}}
+
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{diagnostic_plot.png}
+\centering
+\caption{Residual plot, residual ACF, residual distribution plot and normal Q-Q plot for Holt-Winter exponential smoothing model.}
+\label{fig:diagnostic_plot}
+\end{figure}
+
+\hypertarget{model-validation}{%
+\subsection{Model validation}\label{model-validation}}
+
+\hypertarget{forecasting-results}{%
+\subsection{Forecasting results}\label{forecasting-results}}
 
 \hypertarget{appendix}{%
 \section{Appendix}\label{appendix}}

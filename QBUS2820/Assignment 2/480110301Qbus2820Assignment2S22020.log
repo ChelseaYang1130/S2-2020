@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.11.1)  3 NOV 2020 20:27
+This is XeTeX, Version 3.14159265-2.6-0.999992 (TeX Live 2020) (preloaded format=xelatex 2020.11.1)  10 NOV 2020 14:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1379,8 +1379,7 @@ Package: multirow 2019/05/31 v2.5 Span multiple rows of a table
 \multirow@cntb=\count364
 \multirow@dima=\skip156
 \bigstrutjot=\dimen341
-)
-No file 480110301Qbus2820Assignment2S22020.aux.
+) (./480110301Qbus2820Assignment2S22020.aux)
 \openout1 = `480110301Qbus2820Assignment2S22020.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
@@ -1438,11 +1437,10 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 48.
 LaTeX Info: Redefining \pageref on input line 48.
 LaTeX Info: Redefining \nameref on input line 48.
+(./480110301Qbus2820Assignment2S22020.out) (./480110301Qbus2820Assignment2S2202
+0.out)
 \@outlinefile=\write5
 \openout5 = `480110301Qbus2820Assignment2S22020.out'.
-
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -1646,21 +1644,8 @@ print.def
 File: se-ascii-print.def 2019/11/29 v1.12 stringenc: Printable ASCII characters
 
 )
-LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
-(Font)              scaled to size 11.52008pt on input line 100.
-
-LaTeX Warning: Reference `fig:scatter' on page 1 undefined on input line 100.
-
-
-LaTeX Warning: Reference `fig:boxplots' on page 1 undefined on input line 110.
-
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
 (Font)              scaled to size 6.18097pt on input line 128.
-LaTeX Font Info:    Font shape `T1/mdbch/b/n' will be
-(Font)              scaled to size 6.72005pt on input line 128.
-
-LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 128.
-
 [1
 
 ]
@@ -1683,20 +1668,17 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <8> not available
 LaTeX Font Info:    Font shape `T1/phv/m/sl' will be
 (Font)              scaled to size 7.06396pt on input line 133.
 
-LaTeX Warning: Reference `fig:miss' on page 2 undefined on input line 137.
-
-
 Underfull \hbox (badness 1509) in paragraph at lines 148--152
 []\T1/mdbch/m/n/12 Besides, there are 19 columns con-tain-ing
  []
 
 
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
-(hyperref)                be the same. Added a new anchor on input line 186.
+(hyperref)                be the same. Added a new anchor on input line 185.
 
 [2]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-33.
+32.
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
@@ -1706,77 +1688,61 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 [3]
 LaTeX Font Info:    Font shape `T1/phv/m/n' will be
-(Font)              scaled to size 6.62247pt on input line 291.
-LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 291.
+(Font)              scaled to size 6.62247pt on input line 290.
+LaTeX Font Info:    Calculating math sizes for size <7.5> on input line 290.
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `OT1/mdbch/m/n' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `OML/mdbch/m/it' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `OMS/mdbch/m/n' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `OMX/mdbch/m/n' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `OML/mdbch/m/n' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `MDA/mdbch/m/n' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
-(Font)              scaled to size 7.20004pt on input line 291.
+(Font)              scaled to size 7.20004pt on input line 290.
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
-(Font)              scaled to size 5.04pt on input line 291.
+(Font)              scaled to size 5.04pt on input line 290.
 LaTeX Font Info:    Font shape `MDB/mdbch/m/n' will be
-(Font)              scaled to size 3.60002pt on input line 291.
+(Font)              scaled to size 3.60002pt on input line 290.
 LaTeX Font Info:    Font shape `T1/phv/b/n' will be
-(Font)              scaled to size 6.62247pt on input line 293.
-
-LaTeX Warning: Reference `table:cv_errors' on page 4 undefined on input line 30
-9.
-
-
-LaTeX Warning: Reference `table:kaggle_results' on page 4 undefined on input li
-ne 338.
-
-
-LaTeX Warning: Reference `table:cv_errors' on page 4 undefined on input line 34
-1.
-
-
-LaTeX Warning: Reference `table:cv_errors' on page 4 undefined on input line 34
-9.
-
+(Font)              scaled to size 6.62247pt on input line 292.
 LaTeX Font Info:    Trying to load font information for TS1+mdbch on input line
- 363.
+ 362.
 
 (/Users/chelseayeung/Library/TinyTeX/texmf-dist/tex/latex/mathdesign/mdbch/ts1m
 dbch.fd
 File: ts1mdbch.fd 2013/08/29 Fontinst v1.933 font definitions for TS1/mdbch.
 )
 LaTeX Font Info:    Font shape `TS1/mdbch/m/n' will be
-(Font)              scaled to size 11.52008pt on input line 363.
+(Font)              scaled to size 11.52008pt on input line 362.
 Package microtype Info: Character `texttwelveudash ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -1799,6 +1765,58 @@ Package microtype Info: Character `textcelsius ' is missing
 (microtype)             in font `TS1/mdbch/m/n/12'.
 (microtype)             Ignoring protrusion settings for this character.
 [4]
-Overfull \hbox (13.03339pt too wide) in paragraph at lines 385--389
+Overfull \hbox (13.03339pt too wide) in paragraph at lines 384--388
 \T1/phv/m/n/12 184029 / what-[]is-[]elastic-[]net-[]regularization-[]and-[]how-
-[]doesits
+[]doesitsolve-[]the-[]drawbacks-[]of-[]ridge / 184031 # 184031$[][][]\T1/mdbch/
+m/n/12 . 
+ []
+
+File: decomposition.png Graphic file (type bmp)
+<decomposition.png>
+
+Package hyperref Warning: The anchor of a bookmark and its parent's must not
+(hyperref)                be the same. Added a new anchor on input line 418.
+
+LaTeX Font Info:    Font shape `T1/phv/m/n' will be
+(Font)              scaled to size 9.6688pt on input line 425.
+LaTeX Font Info:    Font shape `T1/phv/b/n' will be
+(Font)              scaled to size 9.6688pt on input line 425.
+LaTeX Font Info:    Font shape `T1/phv/b/it' in size <10.95> not available
+(Font)              Font shape `T1/phv/b/sl' tried instead on input line 425.
+LaTeX Font Info:    Font shape `T1/phv/b/sl' will be
+(Font)              scaled to size 9.6688pt on input line 425.
+
+Package hyperref Warning: The anchor of a bookmark and its parent's must not
+(hyperref)                be the same. Added a new anchor on input line 425.
+
+File: HW_es.png Graphic file (type bmp)
+<HW_es.png>
+File: diagnostic_plot.png Graphic file (type bmp)
+<diagnostic_plot.png>
+[5]
+File: scatter.png Graphic file (type bmp)
+<scatter.png>
+File: boxplot.png Graphic file (type bmp)
+<boxplot.png>
+No file 480110301Qbus2820Assignment2S22020.bbl.
+
+Package caption Warning: Unused \captionsetup[FLOAT_TYPE] on input line 63.
+See the caption package documentation for explanation.
+
+
+AED: lastpage setting LastPage
+[6] [7] [8] (./480110301Qbus2820Assignment2S22020.aux)
+Package rerunfilecheck Info: File `480110301Qbus2820Assignment2S22020.out' has 
+not changed.
+(rerunfilecheck)             Checksum: 74CE37281EF0643D5CEF47CB57405174;1555.
+ ) 
+Here is how much of TeX's memory you used:
+ 30095 strings out of 479426
+ 536204 string characters out of 5879575
+ 877086 words of memory out of 5000000
+ 48827 multiletter control sequences out of 15000+600000
+ 599808 words of font info for 110 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 122i,12n,124p,477b,568s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on 480110301Qbus2820Assignment2S22020.pdf (8 pages).
