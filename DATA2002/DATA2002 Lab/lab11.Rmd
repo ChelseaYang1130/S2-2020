@@ -1,0 +1,83 @@
+---
+title: "Lab 10"
+author: "Jing Yang \ 480110301"
+date: "11/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+# Questions
+
+```{r}
+pollut = read_csv("https://raw.githubusercontent.com/DATA2002/data/master/pollut.txt")
+glimpse(pollut)
+```
+
+1. Generate a pairs plot of the data using pairs() or the ggpairs() function from the GGally package.
+
+```{r}
+library(GGally)
+ggpairs(pollut)
+```
+2. Perform a multiple regression of ozone on the other variables using lm().
+
+```{r}
+full = lm(O~.,data=pollut)
+round(summary(full)$coef,3)
+```
+
+3. Does it look like any variables can be dropped from the model? If you were doing backwards selection using the drop1() function which would you drop first? Write down a the workflow for a formal hypothesis test to see if the coefficient for insolation is significantly different to zero.
+
+`In` is dropped.
+```{r}
+drop1(step.back.aic,test="F")
+```
+
+
+
+4. Rather than dropping variables using their individual p-values, we can instead consider using an information criterion. Use the step() function to perform selection using the AIC starting from the full model.
+```{r}
+library(sjPlot)
+step.back.aic = step(full,
+                     direction = "backward",
+                     trace = FALSE)
+(lm_b = drop1(step.back.aic,test="F"))
+```
+
+
+5. Write down the fitted model for the model selected by the step-wise procedure.
+
+```{r}
+# remotes::install_github("datalorax/equatiomat")
+# library(equatiomatic)
+# extract_eq(lm2)
+library(equatiomatic)
+extract_eq(lm_b)
+```
+
+6. Check the linear regression assumptions for the stepwise model.
+
+```{r}
+full$fitted.values
+pollut = pollut %>%
+mutate(
+lfitted = lm_b$fitted.values,
+lresid = lm_b$residuals
+)
+
+library(ggfortify)
+p2 = ggplot(pollut, aes(x = Temp,
+y = lresid)) +
+geom_point(size = 3) +
+theme_classic(base_size = 30) +
+labs(x = "Temperature (°F)",
+y = "Residual") +
+geom_hline(yintercept = 0)
+p2
+```
+
