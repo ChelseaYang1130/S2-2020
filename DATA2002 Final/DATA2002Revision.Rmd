@@ -1,0 +1,2013 @@
+---
+title: "DATA2002 midterm review"
+author: "Jing Yang \ 480110301"
+date: "10/12/2020"
+output: 
+  bookdown::html_document2:
+    code_folding: hide
+    theme: readable
+    toc: true
+    toc_float: true
+    number_sections: true
+    highlight: kate
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message=FALSE)
+# some packages required for this to run 
+# install.packages("ggpubr")
+# install.packages("kableExtra")
+```
+
+```{r warning=F, message=F}
+library(tidyverse)
+library(lubridate)
+library(forcats)
+library(skimr)
+library(plotly)
+library(ggpubr)
+library(kableExtra)
+library(gridExtra)
+library(e1071)
+mykable <- function(dt, ...) {
+  kbl(dt, ...) %>% kable_material(c("striped", "hover", "condensed", "responsive"), full_width = F)
+}
+```
+
+```{r load, message=F}
+rawdata <- readr::read_csv("DATA2X02 class survey 2020 (Responses) - Form responses 1.csv")
+data <- rawdata %>%
+  janitor::clean_names() %>%
+  mutate(
+    timestamp = lubridate::dmy_hms(timestamp)
+  ) %>%
+  rename(
+    covid = how_many_times_have_you_been_tested_for_covid,
+    postcode = postcode_of_where_you_live_during_semester,
+    dentist = how_long_has_it_been_since_you_last_went_to_the_dentist,
+    uni_work = on_average_how_many_hours_per_week_did_you_spend_on_university_work_last_semester,
+    social_media = what_is_your_favourite_social_media_platform,
+    dog_cat = did_you_have_a_dog_or_a_cat_when_you_were_a_child,
+    parents = do_you_currently_live_with_your_parents,
+    exercise = how_many_hours_a_week_do_you_spend_exercising,
+    eye_colour = what_is_your_eye_colour,
+    asthma = do_you_have_asthma,
+    paid_work = on_average_how_many_hours_per_week_did_you_work_in_paid_employment_in_semester_1,
+    season = what_is_your_favourite_season_of_the_year,
+    shoe = what_is_your_shoe_size,
+    height = how_tall_are_you,
+    floss = how_often_do_you_floss_your_teeth,
+    glasses = do_you_wear_glasses_or_contacts,
+    hand = what_is_your_dominant_hand,
+    steak = how_do_you_like_your_steak_cooked,
+    stress = on_a_scale_from_0_to_10_please_indicate_how_stressed_you_have_felt_in_the_past_week
+  ) %>%
+  mutate(
+    gender = case_when(
+      grepl("f", tolower(gender), fixed=T) ~ "Female",
+      grepl("m", tolower(gender), fixed=T) ~ "Male",
+      TRUE ~ "Non-binary"
+    ) %>% as.factor(),
+    dentist = factor(dentist, levels = c("Less than 6 months", "Between 6 and 12 months", 
+                                             "Between 12 months and 2 years", "More than 2 years", NA),
+                         ordered = T) %>% 
+            recode(
+                `Less than 6 months` = "< 6 months",
+                `Between 6 and 12 months` = "6 - 12 months",
+                `Between 12 months and 2 years` = "12 months - 2 years", 
+                `More than 2 years` = "> 2 years"
+            ),
+    dog_cat = as_factor(dog_cat),
+    parents = as_factor(parents),
+    postcode = as.factor(postcode),
+    asthma = as_factor(asthma),
+    season = factor(season, levels = c("Summer", "Autumn", "Winter", "Spring"), ordered = T),
+    floss = factor(floss, levels = c("Less than once a week", "Weekly", "Most days", 
+                                        "Every day", NA), ordered = T),
+    glasses = as_factor(glasses),
+    hand = case_when(
+      hand == "Right handed" ~ "Right",
+      hand == "Left handed" ~ "Left",
+      TRUE ~ "Ambidextrous"
+    ) %>% as_factor(),
+    steak = factor(steak, levels = c(
+      "Rare", "Medium-rare", "Medium", "Medium-well done", "Well done",
+      "I don't eat beef"
+    ), ordered = T)
+  )
+```
+
+```{r}
+data <- data %>%
+  mutate(
+    # Some heights were given in metres instead of centimetres
+    height  = case_when(
+      height < 2.3 ~ height * 100,
+      T ~ height
+    ),
+    # some eye colours are misspelt 
+    eye_colour = tolower(eye_colour),
+    eye_colour = stringr::str_replace(eye_colour, pattern="dark ",
+                                      replacement = ""),
+    eye_colour = case_when(
+      eye_colour == "balck" ~ "black",
+      TRUE ~ eye_colour
+    ) %>% forcats::fct_lump_n(5, other_level="other"),
+    # fix up social media by taking the first three characters as an identifier
+    social_media = case_when(
+      grepl("ess", social_media, fixed=T) ~ "messenger",
+      T ~ social_media
+    ),
+    social_media = tolower(social_media) %>%
+      stringr::str_sub(1, 3),
+    social_media = case_when(
+        social_media == "fac" ~ "Facebook",
+        social_media == "ins" ~ "Instagram",
+        social_media == "mes" ~ "Messenger",
+        social_media == "red" ~ "Reddit",
+        social_media == "tik" ~ "Tiktok",
+        social_media == "twi" ~ "Twitter",
+        social_media == "wec" ~ "WeChat",
+        social_media == "you" ~ "YouTube",
+        T ~ social_media
+      ) %>%
+      forcats::fct_lump_n(8, other_level="Other")
+  ) %>%
+  filter(
+    exercise < 60 | is.na(exercise),
+    !(is.na(exercise) & is.na(parents) & is.na(covid) & is.na(dentist))
+  )
+
+```
+
+# Experiment design
+
+## Bias
+
+- **Selection bias / Sampling bias:** the sample does not accurately represent the population. (e.g. As the class survey is published on Ed, students who spend more time on checking Ed post are more likely to complete the survey.)
+
+- **Non-response bias:** certain groups are under-represented because they elect not to participate
+
+- **Measurement or designed bias:** bias factors in the sampling method influence the data obtained.
+
+## Controlled experiments vs Observational studies
+
+**randomized controlled double-blind study:** 
+
+- investigator randomly allocate the subject into a **treatment group** and a **control group**. The **control group** is given a **placebo** but both the subject and investigators don't know the identity of the groups.
+
+- the design is **good** because we expect the 2 groups to be similar thus any difference in the responses is likely to be caused by the treatment.
+
+**controlled** vs **observational:**
+
+- A *good randomized controlled experiment* can establish **causation**
+
+- An *observational study* can only establish **association**. It may suggest causation but **can't** prove causation.
+
+## Confounding
+
+**Confounding** occurs when the treatment group and control group differ by some *third variable* than the treatment) which influences the response that is studied.
+
+- if **any** of the subjects **drop out**, causing **selection bias** or **survivor bias**.
+- if **not all** subjects keep taking treatment or placebo, the confounding of **adherers** and **non-adherers occurs**.
+
+**Controlling for confounding:** make groups more comparable by dividing them into subgroups with respect to the confounders. (e.g. if alcohol consumption is a potential confounding factor, then divide subjects into *heavy drinkers*, *medium drinkers* and *light drinkers*)
+
+- **limitation** of controlling: 
+  - this can be limited by our ability to **identify all confounders** and then divide the study by the confounders.
+  - This explains the long time to establish that smoking causes lung cancer. Researchers needed to
+control for factors such as health, nests, diet, lifestyle, environment etc.
+
+## Simpson's Paradox
+
+- A clear trend in individual groups of data disappears when the groups are pooled together.
+- It occurs when relationships between percentages in subgroups are reversed when the subgroups are combined, because of a confounding or lurking variable.
+
+```{r}
+data = data %>% drop_na()
+```
+
+# Performance evaluation
+
+- $D_+$: the event that an individual has a particular disease
+- $D_-$: the event that an individual does not have a particular disease
+- $S_+$: represent a positive screening test result.
+- $S_-$: represent a negative screening test result.
+
+- False negative rate: $\frac{FN}{TP+FN}$
+- False positive rate: $\frac{FP}{FP+TN}$
+- Sensitivity / Recall: $\frac{TP}{TP+FP}$
+- Specificity: $\frac{TN}{TN+FN}$
+- Precision / Positive predictive: $\frac{TP}{TP+FN}$
+- Negative predictive: $\frac{TN}{FP+TN}$
+- Accuracy: $\frac{TP+TN}{TP+FN+FP+TN}$
+
+# Measure of risk
+
+**Prospective / cohort study**: subjects are initially identified as disease-free and classified by presence or absence of a risk factor.
+
+- one sample from the risk factor group $R^+$
+- another sample from the non-risk factor group $R^-$
+
+**Retrospective / case control study**: take random samples from each of the two outcome categories which are followed back to determine the presence or absence of the risk factor.
+
+- one sample from the disease group $D^+$
+- another sample from the non-disease group $D^-$
+
+**Relative risk:** The relative risk is the ratio of the probability of having the disease in the group with the risk factor to the
+probability of having the disease in the group without the risk factor. $RR=\frac{P(D^+|R^+)}{P(D^+|R^-)}$
+
+- For **Prospective study** only. 
+- Not for Retrospective study because the proportions of cases with $D^+$ and $D^-$ were decided by the investigator, which means we cannot estimate $P(D^+|R^+)$ and $P(D^+|R^-)$.
+- *RR = 1* - there is no difference between the two groups; *RR < 1* the disease is less likely to occur in the group with the risk factor; *RR > 1* the disease is more likely to occur in the group with the risk factor; 
+
+**Odds ratio:** 
+
+- for both **Prospective** and **Retrospective** studies
+- *OR = 1* if and only if risk factor and disease are independent; *OR > 1* the disease is less likely to occur in the group with the risk factor; *OR < 1* the disease is less likely to occur in the group with the risk factor;
+- **standard error** = $\sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}}$
+- **confidence interval** (at 95%): if CI includes 1, risk factor & disease are independent. $CI = exp(log(\hat{OR})\pm 1.96\times\sqrt{\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}})$
+```{r}
+data(kyphosis, package = "rpart")
+# dplyr::glimpse(kyphosis)
+truth = kyphosis$Kyphosis
+prediction = ifelse(kyphosis$Start >= 9,
+"Predict absent (S+)",
+"Predict present(S-)")
+tab = table(prediction, truth)
+
+a = tab[1,1]
+b = tab[1,2]
+c = tab[2,1]
+d = tab[2,2]
+
+rr = (a*(c+d))/(c*(a+b))
+or = (a*d)/(b*c)
+
+se = sqrt(1/a+1/b+1/c+1/d)
+CI = exp(log(or)+c(-1,1)*1.96*se)
+```
+
+# Random variables
+
+**Expectations of random variable:**
+
+- $E(X)=\mu$ - $\mu$ is the population mean
+- $Var(X)=\sigma^2$ - $\sigma^2$ is the population variance
+- $SD(X)=\sigma$
+- $E(cX)=cE(X)$
+- $Var(cX)=c^2Var(X)$
+
+For $T=\sum^n_{i=1}X_i$:
+
+- $E(T)=E(X_1+...+X_n)=E(X_1)+...+E(X_n)=\mu+...+\mu=n\mu$
+- $Var(T)=Var(X_1+...+X_n)=Var(X_1)+...+Var(X_n)=\sigma^2+...+\sigma^2=n\sigma^2$
+
+**Sampling:**
+
+- sample mean: $E(\bar X)=E(\frac{1}{n}T)=\frac{1}{n}E(T)=\frac{1}{n}n\mu=\mu$.
+- sample variance: $Var(\bar X)=Var(\frac{1}{n}T)=(\frac{1}{n})^2 Var(T)=\frac{1}{n^2}n\sigma^2=\frac{\sigma^2}{n}$
+- standard error: $SE=SD(\bar X)=\sqrt{Var(\bar X)}=\frac{\sigma}{\sqrt n}$
+- estimated SE: $\hat{SE}=\frac{s}{\sqrt n}$, where $s^2=\frac{1}{n-1}\sum^n_{i=1}(x_i-\bar x)^2$
+
+**Importance of SE:** it tells us the likely size of the estimation error so that we know how accurate or reliable the estimate is.
+
+# Confidence Intervals
+
+**Confidence interval:** a statement about the underlying population parameter (NB: confidence $\neq$ probability).
+
+- As sample size **increases**: 1) CI gets **narrower**; 2) Standard error decreases; 
+
+- 99% CI is wider than 95% CI
+- **Converge probability = $1-\alpha$**: the "true" value of the unknown parameter lies inside the confidence interval.
+
+**Interpret Confidence interval:**
+
+- It is a range of **plausible values** for the **null hypothesis**.
+- If you perform a large number of identically designed experiments and for each experiment you calculated a 95% confidence interval then **95% of those intervals** would contain the **true population mean**.
+- 95% **confidence** that a **single interval** contains the true mean.
+
+**Estimation** vs **Hypothesis testing**:
+
+- **Estimation:** a population parameter is *unknown*. Use the sample statistics to generate estimates of the population parameter.
+- **Hypothesis testing:** explicit statement regarding the population parameter. Test statistics are generated which will either support or reject the null hypothesis.
+
+# Critical value
+
+**If critical value is greater than $t_0$, reject $H_0$.**
+
+Two-sided discrepancies of interest:
+
+- **t-test:** $|\bar x-\mu_0|>c\frac{c}{\sqrt n}$
+- **Confidence interval:** $\bar x \pm c\frac{s}{\sqrt n}$
+
+**False alarm rate / Significance level:** a given value $\mu_0$ is rejected incorrectly.
+
+**Normal population: use the t-distribution:** under the special statistical model where the data are modeled as values taken by iid normal random variables, if the true population mean is indeed $\mu_0$, then the ratio $\frac{\bar X-\mu_0}{S/ \sqrt n}$~$t_{n-1}$. Thus we choose c such that $P(|\bar X-\mu_0|>c\frac{S}{\sqrt n})=P(\frac{|\bar X-\mu_0|}{S/\sqrt n}>c)=P(t_{n-1}>c)=\alpha$.
+
+**Reject null: $t_0$ > critical value**
+
+## Finding quantiles in R
+
+```{r results='hide'}
+p = 0.05
+n = 10
+qt(p, n-1) # for t distribution
+qnorm(p) # for normal distribution
+qchisq(p, n-1) # for chi-sqaured distribution
+```
+
+## Critical value decision rule
+
+For a test of $H_0:\mu=\mu_0$ vs $H_1:\mu>\mu_0$:
+
+- for $H_1:\mu>\mu_0$, reject $H_0$ if $t_0\geq t_{n-1}(1-\alpha)$
+- for $H_1:\mu<\mu_0$, reject $H_0$ if $t_0\leq t_{n-1}(\alpha)$
+- for $H_1:\mu\neq\mu_0$, reject $H_0$ if $|t_0|\geq |t_{n-1}(\alpha/2)|$; don't reject $H_0$ if $|t_0|< |t_{n-1}(\alpha/2)|$
+
+## Hypothesis test using rejection region
+
+**Hypothesis:** $H_0:\mu=\mu_0$ vs $H_1:\mu\neq \mu_0,\mu<\mu_0,\mu>\mu_0$
+
+**Assumptions:** $X_i$ are independently and identically distributed and follow $N(\mu,\sigma^2)$
+
+```{r}
+n = length(data$uni_work)
+df = n-1
+mu = 130
+S = sd(data$uni_work)
+t_0.05 = qt(0.05,n)
+xbar = mu - t_0.05*S/sqrt(n)
+pop_mean = mean(data$uni_work)
+```
+
+**Test statistic:** 
+- **$\sigma$ is known:** $T=\frac{\bar X-\mu_0}{S/ \sqrt n}$. Under $H_0$, test statistic follows a t distribution with $n-1=`r df`$ degree of freedom.
+- **$\sigma$ is unknown:** $Z=\frac{\bar X-\mu_0}{\sigma/ \sqrt n}$. Under $H_0$, test statistic follows a normal distribution $N(0,1)$.
+
+$\mu_0=`r mu`, df = `r df`, S=`r round(S,2)`, n = `r n`$
+
+**Rejection region:**
+$critial~value = t_{n-1}(\alpha) / t_{n-1}(\alpha/2)$
+- **$\sigma$ is unknown:** $H_1:\mu\neq \mu_0,\mu<\mu_0,\mu>\mu_0$: $|t_0|\geq |t_{n-1}(\alpha/2)|,~t_0\leq t_{n-1}(\alpha),~t_0\geq t_{n-1}{\alpha}$
+- **$\sigma$ is known:** $H_1:\mu\neq \mu_0,\mu<\mu_0,\mu>\mu_0$: $|z_0|\geq |z(\alpha/2)|,~z_0\leq z(\alpha),~z_0\geq z(\alpha)$
+
+**Decision:** 
+- The observed test statistic, $t_0=..$ is greater than the critical value $t_{n-1}(\alpha)=..$. So we do not reject $H_0$ and conclude that $\mu=..$.
+- The observed test statistic, $t_0=..$ is smaller than the critical value $t_{n-1}(\alpha)=..$. So we do reject $H_0$ and conclude that $\mu\neq/>/<..$.
+
+# Power & sample size
+
+```{r results='hide'}
+library(pwr)
+
+# population sd = 0.294, sample size = 6,  power: 80% sure of "detecting" that mu is not equal to 375, two-sided, significant level=0.05, how much lower than 375 does mu need to be? 
+res = pwr.t.test(n = 6, d = NULL, sig.level = 0.05, power = 0.8, type = "one.sample", alternative = "two.sided")
+res$d*0.294
+
+# mu = 374.87, population sd=0.294, power: 80% sure of "detecting" that mu is not equal 375, two-sided, what sample size n would be needed?
+res = pwr.t.test(n = NULL, d = (374.87-375)/0.294, sig.level = 0.05, power = 0.8, type = "one.sample", alternative = "two.sided")
+res$n
+
+```
+
+# Goodness of fit test 
+
+### Do the data obtained in line with the claim?
+
+**Hypothesis:** $H_0:p_1=p_{10},p_2=p_{20},...,p_k=p_{k0}$ vs $H_1:$ at least one equality does not hold.
+
+**Assumptions:** 
+
+- independent observations
+- expected counts are all greater than 5 (i.e. $e_i=np_{i0}\geq 5$)
+```{r results='hide'}
+y = c(102, 32, 12, 4)
+# y = as.data.frame(table(x$covid_test))$Freq
+p = c(0.69, 0.21, 0.07,0.03)
+  
+y_i = c(y[1:2],sum(y[3:4]))
+p_i = c(p[1:2],sum(p[3:4]))
+n = sum(y_i)
+
+e_i = n * p_i
+
+e_i >=5
+```
+**Test statistic:** $T = \sum_{i=0}^k\frac{(Y_{i} - e_{i})^2}{e_{i}}$. Under $H_0$, the test statistic follows a chi-square distribution with $k-p-1$ degree of freedom.
+
+```{r}
+t0 = sum((y_i - e_i)^2/e_i)
+```
+
+**Observed test statistic:** $t_0 = \sum_{i=0}^k\frac{(y_{i} - e_{i})^2}{e_{i}}$ = `r round(t0,2)`
+
+```{r}
+chisq.test(y_i,p = p_i)
+pval = chisq.test(y_i,p = p_i)$p.value
+```
+
+**P-value:**$P(T\geq t_0)=P(X^2_{`k-1-q`}\geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:** 
+
+- Since the p-value < 0.05, there is strong evidence in the data against $H_0$.
+- Since the p-value > 0.05, the null hypothesis is not rejected.
+
+### Whether the data follows a Poisson distribution
+
+With the identity of a Poisson distribution that $$X \sim \text{Poisson}(\lambda) \Longrightarrow E[X] = \lambda$$ 
+The estimated lambda is calculated by:
+$$
+\hat{\lambda} = \bar{x} = \sum_{k=1}^n\frac{x_k}n
+$$
+
+```{r include=FALSE, fig.cap="Data with overlayed Poisson distribution"}
+tab <- table(data$covid) %>% as.data.frame() %>% mutate(
+  Var1 = as.numeric(as.character(Var1)),
+  pois = dpois(Var1, weighted.mean(Var1, Freq)) * sum(Freq)
+)
+
+(ggplot(tab) + geom_bar(aes(x = Var1, y = Freq, fill = "Data"), stat='identity') + 
+  geom_line(aes(x = Var1, y = pois, fill = "Poisson"), colour = "blue") + 
+  theme_linedraw(base_size= 18) + 
+  scale_fill_manual(values = c("Data" = "red", "Poisson" = "blue")) + 
+  labs(fill = "", x = "Number of COVID tests", y = "Count")) %>% 
+  ggplotly()
+```
+
+```{r include=FALSE,message=F, warning=F}
+table <- table(data$covid, dnn=c("num_tests")) %>% as.data.frame() %>% mutate(
+  num_tests = as.numeric(as.character(num_tests)),
+  pois = dpois(num_tests, weighted.mean(num_tests, Freq)) * sum(Freq)
+)
+
+mykable(table, 
+        col.names = c("Number of Tests", "Observed Count", "Expected Counts from Poisson"),
+        digits = 2,
+        caption = "Data and expected counts")
+```
+
+**Hypothesis:** $H_0:p_1=p_{10},p_2=p_{20},...,p_k=p_{k0}$ vs $H_1:$ at least one equality does not hold.
+
+**Assumptions:** 
+
+- independent observations
+- expected counts are all greater than 5 (i.e. $e_i=np_{i0}\geq 5$)
+
+```{r}
+tab = as.data.frame(table(data$covid))
+y = c(tab$Freq)
+x = as.numeric(as.character(tab$Var1))
+n = sum(y)
+k = length(y)
+lam = sum(y*x)/n
+p = dpois(x,lambda=lam)
+ey = n*p
+# ey >=5
+
+# if some Freq < 5:
+ey = c(ey[1:2],sum(ey[3:k]))
+y = c(y[1:2],sum(y[3:k]))
+k = length(y)
+
+q = 1
+df = k-1-q
+```
+
+**Test statistic:** $T = \sum^k_{i=1}\frac{(Y_i-np_i)^2}{np_i}$, under $H_0$, degree of freedom is $k-1-q$ = `r df` , where k is the number of groups and q is the number o f parameters that needs to be estimated from the data.
+
+```{r}
+t0 = sum((y-ey)^2/ey)
+```
+**Observed test statistic:** With the observed frequencies $y_i$ from the data and estimated parameter $\lambda$ =  `r round(lam, 4)`, $t_0$ = `r round(t0,2)`
+
+```{r}
+pval = 1 - pchisq(t0,df=k-1-1)
+```
+
+**P-value:** $P(T\geq t_0)=P(\chi^2_{`r df`}\geq `r round(t0,2)`) = `r round(pval,4)`$
+
+**Decision** 
+
+- Since the p-value is greater than 0.05, we do not reject the null hypothesis. The data are consistent with a Poisson distribution.
+
+- Since the p-value is smaller than 0.05, we reject the null hypothesis. The data does not follow a Poisson distribution.
+
+# Test of homogeneity - Chi-squared test
+
+```{r}
+tab = table(data$parents,data$gender)
+```
+
+**Test of homogeneity:** Test whether the probability distributions of the categorical feature are the same over *the different populations*.
+
+**Hypothesis:** $H_0:p_{1j}=p_{2j}$ for $j=1,2,3$ vs $H_1: p_{11}\neq p_{21}, p_{21}\neq p_{22}$.
+
+```{r}
+n=sum(tab)
+r = nrow(tab)
+c = ncol(tab)
+
+yr = apply(tab, MARGIN = 1, FUN = sum)
+yc = apply(tab, MARGIN = 2, FUN = sum)
+etab = yr %*% t(yc) / n
+# etab >=5
+```
+
+**Assumptions:** $e_{ij}=\frac{y_iy_j}{n} \geq 5$.
+
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{Y_{ij}-e_{ij}^2}{e_{ij}}$. Under $H_0$, the degree of freedom is $(r-1)(c-1)$ = `r df`, where r is the number of rows and c is the number of columns in contingency table.
+
+```{r}
+df = (r-1)*(c-1)
+chisq.test(tab, correct=FALSE)
+t0 = chisq.test(tab, correct=FALSE)$statistic
+pval = chisq.test(tab, correct=FALSE)$p.value
+```
+
+**Observed test statistic:** $\sum^{`r r`}_{i=1}\sum^{`r c`}_{j=1}\frac{y_{ij}-e_{ij}^2}{e_{ij}}$.
+
+**P-value:** $P(T \geq `r round(t0,2)`) = P(\chi^2_{`r df`} \geq `r round(t0,2)`) = `r round(pval,4)`$
+
+**Decision:** 
+
+- Since the p-value is greater than 0.05, we do not reject the null hypothesis. There is no significant difference in ... between .. and ..
+- Since the p-value is smaller than 0.05, we reject the null hypothesis. There is significant difference in ... between .. and ..
+
+# Test of independence - Chi-squared test
+
+**Test of independence:** observations are collected from one population and two categorical variables are observed from each unit.
+```{r}
+tab = table(data$parents,data$gender)
+```
+
+**Hypothesis:** $H_0:p_{ij}=p_ip_j$ for $i=1,2,...,r,j=1,2,...,c$ vs $H_1:$ Not all equalities hold.
+
+```{r}
+tab = table(data$parents,data$gender)
+n=sum(tab)
+r = nrow(tab)
+c = ncol(tab)
+
+yr = apply(tab, MARGIN = 1, FUN = sum)
+yc = apply(tab, MARGIN = 2, FUN = sum)
+etab = yr %*% t(yc) / n
+# etab >=5
+```
+
+**Assumptions:** all expected counts are greater or equal to 5 (i.e.$e_{ij}=\frac{y_iy_j}{n} \geq 5$)
+
+```{r}
+df = (r-1)*(c-1)
+test=chisq.test(tab, correct=FALSE)
+t0 = chisq.test(tab, correct=FALSE)$statistic
+pval = chisq.test(tab, correct=FALSE)$p.value
+```
+
+**t0=qchisq(0.05, 1:6, lower.tail = FALSE)**
+**pval = pchisq(t0, 1:6, lower.tail = FALSE)**
+
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(Y_{ij}-e_{ij})^2}{e_{ij}}$. Under $H_0$, the degree of freedom is $(r-1)(c-1)=$ `r df`, where c is the number of columns and r is the number of rows in the contingency table.
+
+**Observed statistic:** $t_0=\sum^{`r r`}_{i=1}\sum^{`r c`}_{j=1}\frac{(y_{ij}-{y_iy_j/n})^2}{y_iy_j/n}=$ `r round(t0,2)`
+
+**P-value:** $P(T\geq `r round(t0,2)`) = P(\chi^2_{`r df`}\geq `r round(t0,2)`) = `r round(pval,4)`$
+
+**Decision:**
+
+- Since the p-value is greater than 0.05, we do not reject the null hypothesis. There is no association between ... and ...
+- Since the p-value is smaller than 0.05, we reject the null hypothesis. There is no an association between ... and ...
+
+# Test in small samples (cell counts < 5)
+
+## Fisher's exact test - 2 by 2 table
+
+**Fisher's exact test:** Consider all possible permutations of 2 by 2 contingency table with the **same marginal totals**. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test **does not** require the expected cell counts to be $\geq 5$.
+
+**Drawbacks:**
+
+- It assumes that row and column margins are fixed.
+- Need to use Monte Carlo for large contingency tables.
+
+**Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
+
+**Assumptions:** Consider all possible permutations of 2 by 2 contingency table with the same marginal totals. Then calculate how many of these were equal to or "more extreme" than what we observed. As such, the Fisher's exact test does not require the expected cell counts to be $\geq 5$.
+
+```{r}
+tab = table(data$parents,data$gender)
+# fisher = fisher.test(tab)  # two-sided
+(fisher = fisher.test(tab,alternative = "greater"))
+# fisher = fisher.test(tab,alternative = "less")
+pval = fisher$p.value 
+```
+
+The degrees of freedom is not calculated as it is not relevant to fisher's exact test.
+
+**Decision:** 
+
+- P-value = `r round(pval,4)` $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
+- P-value = `r round(pval,4)` $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
+
+## Yate's corrected chi-squared test
+
+**Yate's correction:** Apply continuity correction with a chi-squared test, using the identity $P(X\leq x) \approx P(Y\leq x+0.5)$ and $P(X\geq x) \approx P(Y\geq x-0.5)$.
+
+**Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
+
+**Assumption:** Yate's correction applies continuity correction to approximate integer-valued variable, therefore, it does not restrict the cell counts. 
+
+```{r}
+tab = table(data$parents,data$gender)
+r=nrow(tab)
+c=ncol(tab)
+df = (r-1)*(c-1)
+(yate = chisq.test(tab,correct=TRUE))
+t0 = yate$statistic
+pval = yate$p.value
+```
+
+**Test statistic:** $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(|Y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$, which approximately follows a $\chi^2_{(r-1)(c-1)}$ distribution under $H_0$. The degree of freedom is $(r-1)(c-1)=$ `r df`, where r is the number of rows and c is the number of columns in the contingency table.
+
+**Observed test statistic:** $t_0=\sum^{`r r`}_{i=1}\sum^{`r c`}_{j=1}\frac{(|y_{ij}-e_{ij}|-0.5)^2}{e_{ij}}$ = `r round(t0,2)`.
+
+**P-value:** $P(T\geq `r round(t0,2)`) = P(\chi^2_{`r df`}\geq `r round(t0,2)`) = `r round(pval,4)`$
+
+**Decision:** 
+
+- As p-value $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
+- As p-value $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
+
+## Monte Carlo simulation
+
+**Monte Carlo simulation:** Resample (i.e. randomly generate contingency tables) and perform chi-squared tests by many times. Calculate the test statistic for each of the resamples and create a sampling distribution of test statistics. P-value is calculated by determining the proportion of the resampled test statistics $\geq$ the observed test statistic.
+
+**Hypothesis:** $H_0:$ there is no association between ... and ... vs $H_1:$ there is an association between ... and ...
+
+**Assumptions:** No assumptions are made about the underlying distribution of the population. The cell counts are also not restricted for Monte Carlo simulation.
+
+To calculate the p-value, a Monte Carlo simulation is perform, with 10000 simulations of chi-squared test. Note that **degree of freedom is not considered** as it is not relevant to the Monte Carlo simulation.
+
+```{r}
+tab = table(data$parents,data$gender)
+(sim = chisq.test(tab, simulate.p.value = TRUE, B = 10000))
+t0 = sim$statistic
+pval = sim$p.value
+```
+
+**Test statistics:** the test statistic is calculated for each of the resamples by $T=\sum^r_{i=1}\sum^c_{j=1}\frac{(Y_{ij}-e_{ij})^2}{e_{ij}}$. 
+
+**Observed test statistic:** $t_0=\sum^r_{i=1}\sum^c_{j=1}\frac{(y_{ij}-e_{ij})^2}{e_{ij}}=$ `r round(t0,2)`
+
+**P-value:** $P(T\geq$ `r round(t0,2)`) = $P(\chi^2\geq$ `r round(t0,2)`) = `r round(pval,4)`
+
+**Decision:** 
+
+- As p-value $<0.05$, $H_0$ is rejected therefore there is an association between ... and ...
+- As p-value $>0.05$, $H_0$ is not rejected therefore there is no association between ... and ...
+
+# T-test
+
+## One sample t-test
+
+```{r}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+# grid.arrange(p1, p2, ncol=2)
+```
+The data doesn't follow a normal distribution if:
+
+- A lower bend of zero exist?
+- Not close enough to the line to be considered 'normal'.
+
+**Hypothesis:** $H_0: \mu =`r mu`$ vs $H_1: \mu ><\neq `r mu`$
+
+**Assumptions:** 
+
+- Each observation is chosen at random from a population. 
+- Variables are independently and identically distributed and follow $N(\mu,\sigma^2)$
+
+```{r}
+n = length(data$uni_work)
+df = n-1
+mean = mean(data$uni_work)
+mu = 30
+S = sd(data$uni_work)
+test = t.test(data$uni_work,mu = mu,alternative = "two.sided")
+
+t0 = test$statistic
+pval = test$p.value
+
+# for greater or less than 30:
+# t0 = t.test(x,mu = mu,alternative = "greater")$statistic
+# pval = t.test(x,mu = mu,alternative = "greater")$p.value
+# 
+# t0 = t.test(x,mu = mu,alternative = "less")$statistic
+# pval = t.test(x,mu = mu,alternative = "less")$p.value
+```
+
+**Test statistic:** $T=\frac{\bar{X}-\mu_0}{s/\sqrt{n}}$. Under $H_0$, the data tends to follow t distribution with **$n-1$ degree of freedom**.
+
+**Observed test statistic:** $t_0=\frac{`r round(mean,2)`-`r mu`}{`r round(S,2)`/\sqrt{`r n`}}=`r round(t0,2)`$
+
+**P-value:** $P(t_{`r df`}\leq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Decision:** 
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+## Two-sample t-test
+
+**Two-sample t-test:** test whether the population mean of two samples are different. 
+
+- The two-sample t-test is a parametric test where the test statistic is assumed to follow some distribution.
+
+**Welch two-sample t-test:** does not assume equal population variances.
+
+```{r results='hide'}
+sum = data %>% group_by(gender) %>%
+      summarise(Mean = mean(exercise), 
+      Median = median(exercise),
+      SD = sd(exercise),
+      Variance = var(exercise),
+      n = n())
+
+colnames(sum)=c("Gender","Mean","Median","SD","Variance","Counts")
+knitr::kable(sum,digits = 1, align="cccccc",caption = "Statistics of number of hours spent on exercising by different genders.") %>% kable_paper(full_width = F, html_font = "Cambria")
+```
+
+```{r include=FALSE}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+  facet_grid(rows = vars(gender)) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Exercise per week (hours)") +
+  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```
+
+```{r include=FALSE}
+ggqqplot(data %>% filter(gender != "Non-binary"), x = "exercise", color = "gender") +
+  facet_grid(rows = vars(gender)) + 
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+```
+
+The data doesn't follow a normal distribution if:
+
+- A lower bend of zero exist?
+- Not close enough to the line to be considered 'normal'.
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ or $\mu_x \leq \mu_y$ or $\mu_x \neq \mu_y$
+
+**Assumptions:**
+
+- Variables $X,Y$ are identically and independently distributed and follow $N(\mu_X,\sigma^2)$ and $N(\mu_Y,\sigma^2)$.
+- Observations are independent to each other
+- Regular two-sample t-test assumes equal population variances of variables while Welch two-sample t-test does not assume equal variance.
+
+```{r results='hide'}
+x = data %>% filter(gender =="Female")
+x= data$exercise
+y = data %>% filter(gender =="Male")
+y = data$exercise
+
+nx = length(x)
+ny = length(y)
+sx = sd(x)
+sy = sd(y)
+sp2 = ((nx-1)*(sx^2)+(ny-1)*(sy^2))/(nx+ny-2)
+sp = sqrt(sp2)
+xbar = mean(x)
+ybar = mean(y)
+test = t.test(x,y, alternative="two.sided")
+df = nx+ny-2
+t0 = test$statistic
+pval = test$p.value
+```
+
+**Test statistic:** $T=\frac{\bar{X}-\bar{Y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}$. Under $H_0$, the data tend to follow a t distribution with **$n_x+n_y-2$** degree of freedom.
+
+**Observed test statistic:** $t_0=\frac{`r round(xbar,2)` - `r round(ybar,2)`}{`r round(sp,2)` \sqrt{\frac{1}{`r nx`}+\frac{1}{`r ny`}}}$, where $S^2_p=\frac{(`r nx` -1)`r round(sx,2)`^2+(`r ny`-1)`r round(sy,2)`^2}{`r nx`+`r ny` -2}=`r round(t0,2)`$
+
+**P-value:** 
+
+- $2P(t_{`r df` \geq |`r round(t0,2)`|})=`r round(pval,4)`$
+- $P(t_{`r df` \leq |`r round(t0,2)`|})=`r round(pval,4)`$
+- $P(t_{`r df` \geq |`r round(t0,2)`|})=`r round(pval,4)`$
+
+**Decision:** 
+
+- As p-value is greater than 0.05, we do not reject the null hypothesis. The population mean of two samples are the same.
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
+
+## Paired samples t-test
+
+**Paired samples t-test:** measure twice with the same population. (e.g. Blood samples from individuals before and after they smoked a cigarette). The differences between two variables are usually calculated to perform one-sample t-test.
+
+```{r}
+before = c(25, 25, 27, 44, 30, 67, 53, 53, 52)
+after = c(27, 29, 37, 36, 46, 82, 57, 80, 61)
+df = data.frame(before,after, diff = after-before)
+
+p1 = ggplot(df, aes(x= diff)) +
+  geom_histogram(bins = 10, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Difference") +
+  geom_boxplot(aes(x = diff, y = 20), outlier.alpha = 0.5, width = 18)
+
+p2 = ggqqplot(df, x = "diff") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+# grid.arrange(p1, p2, ncol=2)
+```
+
+**Hypothesis:**$H_0:\mu_d=0$ vs $H_1:\mu_d\neq 0$
+
+**Assumptions:** differences between two samples are independent and identically distributed, with the identity $N(\mu_d,\sigma^2)$.
+
+```{r}
+n = length(df$diff)
+sd = sd(df$diff)
+dbar = mean(df$diff)
+test = t.test(after,before, data = df,paired = TRUE)
+pval = t.test(after,before, data = df,paired = TRUE)$p.value
+t0 = t.test(after,before, data = df,paired = TRUE)$statistic
+df = n-1
+```
+
+**Test statistic:** $T=\frac{\bar D}{S_d / \sqrt{n}}$. Under $H_0$, test statistic tends to follow a t distribution with **$n-1$ degree of freedom**.
+
+**Observed test statistic:** $t_0=\frac{`r round(dbar,2)`}{`r round(sd,2)`/ \sqrt{`r n`}}$
+
+**P-value:** 
+
+- $2P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$ 
+- $P(t_{`r df` \leq |`r t0`|})=`r round(pval,4)`$ 
+- $P(t_{`r df` \geq |`r t0`|})=`r round(pval,4)`$
+
+**Decision:** 
+
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
+
+# Sign test / Binomial test - violate normality
+
+**Sign test:** is used to test $H_0:\mu = \mu_0$ and paired data when **normality is not satisfied**. 
+
+- If $H_0$ is true, the probability $p_+$, of getting a positive $D_i$ where $D_i=X_i-\mu_0$.
+- The sign test reduces to a binomial test of proportions.
+- The sign test is a **non-parametric test** as **no assumption** on the data distribution is made except symmetry.
+- **Drawback:** it ignores all the information on magnitude and hence has low power.
+
+## Sign test for one-sample mean
+```{r include=FALSE}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+```{r}
+diff = data$uni_work-mu
+n = length(sign(diff)[sign(diff) != 0])
+freq = as.vector(table(sign(diff)[sign(diff) != 0]))
+(test = binom.test(freq,p=0.5,alternative="greater"))
+t0 =  length(diff[diff>0])
+pval = test$p.value
+```
+
+**Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
+
+**Assumptions:** Observations are independently sampled from a symmetric distribution.
+
+**Test statistic:** $$T=number~of (D_i>0)$$ where $D_i=X_i-`r mu`$. Under $H_0$, the test statistic follows a binomial distribution with identity $B(n,\frac{1}{2})$ where n is the number of non-zero differences.
+
+**Observed test statistic:** $t_0=number~of(d_i>0)=`r round(t0,2)`$
+
+**P-value:**
+
+- $H_1:\mu<\mu_0$ - $P(T \leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu>\mu_0$ - $P(T \geq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$ & $t_0<\frac{n}{2}$ - $2P(T \leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$ & $t_0>\frac{n}{2}$ - $2P(T \geq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Conclusion:**
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+## Sign test for paired data
+
+**Sign test** can be used to test differences between paired data when normality is not satisfied.
+
+**Hypothesis:** $H_0:p_+=\frac{1}{2}$ vs $H_1:p_+>\frac{1}{2}$
+
+**Assumptions:** Differences $D_i$ are independent.
+
+```{r}
+before = c(27, 25, 27, 44, 30, 67, 53, 53, 52)
+after = c(27, 29, 37, 36, 46, 82, 57, 80, 61)
+df = data.frame(before,after, diff = after-before)
+
+n = length(df$diff)
+
+freq = as.vector(table(sign(df$diff)[sign(df$diff) != 0]))
+
+t0 =  sum(df$diff>0)
+
+binom.test(t0,n,p=0.5,alternative="greater")
+
+pval = binom.test(t0,n,p=0.5,alternative="greater")$p.value
+```
+
+**Test statistic:** Let $T$ be the number of positive differences out of the `r n` non-zero differences. Under $H_0$, the test statistic follows a binomial distribution with the identity $B(`r n`,\frac{1}{2})$.
+
+**Observed test statistic:** We observed $t_0=`r t0`$ positive differences in the sample.
+
+**P-value:** probability of getting a test statistic as or more extreme than what we observed, $P(T \geq `r t0`)=1-P(T \leq `r t0-1`)=1-pbinom(`r t0-1`,size=`r n`,prob=\frac{1}{2})\approx `r round(pval,4)`$
+
+**Conclusion:**
+
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are the same.
+
+- As p-value is smaller than 0.05, we reject the null hypothesis. The population mean of two samples are different.
+
+# Wilcoxon signed-rank test - for one sample & paired data
+
+**Wilcoxon signed-rank test:**
+
+- The ranks are **summed over positive side** of the differences.
+- The hypotheses can be stated in terms of *mean* or *median* since we **assume that the distribution is symmetric**
+- The p-value will typically **be smaller** than the p-value of a sign test. Using the information in the ranks, the test becomes much more **powerful** in detecting differences from $\mu_0$ and almost as the powerful as the one sample t-test.
+
+## Using wilcox.test
+```{r include=FALSE}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+**Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
+
+**Assumptions:** Observations are independently sampled from a symmetric distribution.
+
+```{r}
+mu = 30
+diff = data$uni_work-mu
+
+# for paired data
+test = wilcox.test(y,x,alternative="greater",paried=TRUE)
+
+# without continuity correction
+test = wilcox.test(y,x,alternative="greater",correct = FALSE)
+
+# for one-sample 
+(test=wilcox.test(diff, alternative = "greater"))
+
+t0 = test$statistic
+pval = test$p.value
+```
+
+**Test statistic:** 
+
+- for one-sided: $W^+=\sum_{i:D_i>0}R_i$
+-for two-sided: $W=min(W^+,W^-)$
+
+**Observed test statistic:** 
+
+- for one-sided: $t_0=w^+=`r t0`$
+- for two-sided: $t_0=min(w^+,w^-)=`r t0`$
+
+**P-value:**
+
+- $H_1:\mu<\mu_0$ - $P(W^+ \leq `r t0`)=`r round(pval,4)`$
+- $H_1:\mu>\mu_0$ - $P(W^+ \geq `r t0`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$- $2P(W^+ \leq `r t0`)=`r round(pval,4)`$
+
+**Conclusion:**
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+## Using normal approximation
+
+For **large enough $n$**, we can use normal distribution to approximate the distribution of the sign rank test statistic: $W^+$~$N(\frac{n(n+1)}{4},\frac{n(n+1(2n+1))}{24})$
+
+```{r include=FALSE}
+mu = 30
+p1 = ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= mu,colour = "blue",linetype = "dashed") # the tested mean
+
+p2 = ggqqplot(data, x = "uni_work") +
+  theme_linedraw(base_size = 18) + theme(legend.position = "none")
+
+grid.arrange(p1, p2, ncol=2)
+```
+
+**Hypothesis:** $H_0:\mu=`r mu`$ vs $H_1:\mu>`r mu`, \mu<`r mu`,\mu \neq `r mu`$
+
+**Assumptions:** Observations are independently sampled from a symmetric distribution.
+
+```{r}
+mu = 30
+diff = data$uni_work-mu
+n = length(diff)
+mean = n*(n+1)/4
+var = n*(n+1)*(2*n+1)/24
+
+w_calc = data.frame(
+dif = diff,
+absDif = abs(diff),
+rankAbsDif = rank(abs(diff)),
+signrank = sign(diff)*rank(abs(diff))
+)
+
+w_pos = w_calc %>%
+        filter(signrank>0) %>%
+        summarise(sum(signrank)) %>%
+        pull()
+w_neg = w_calc %>%
+        filter(signrank<0) %>%
+        summarise(abs(sum(signrank))) %>%
+        pull()
+
+# for one-sided:
+w = w_pos
+t0 = (w-mean)/(sqrt(var))
+pval = pnorm(t0) # for mu < mu_0
+pval = 1-pnorm(t0) # for mu > mu_0
+
+# for two-sided:
+w = min(c(w_pos,w_neg))
+t0 = (w-mean)/(sqrt(var))
+pval = 2*pnorm(t0)
+```
+
+**Test statistic:** $W=min(W^+,W^-)$ where $W^+=\sum_{i:D_i>0}R_i$, $W^-=\sum_{i:D_i<0}R_i,$ $D_i=X_i-`r mu`$ and $R_i$ are the ranks of $|D_1|,|D_1|,...,|D_n|$. Under $H_0$, the test statistic, with identity $W^+$~$WSR(`r n`)$, follows a symmetric distribution with mean $E(W^+)=\frac{n(n+1)}{4}=`r round(mean,2)`$ and $Var(W^+)=\frac{n(n+1)(2n+1)}{24}=`r round(var,2)`$.
+
+**Observed test statistic:** the test statistic is found by determining differences between observations and `r mu` $D_i=X_i-\mu_0$, followed by assigning the signed ranks of $D_i$. The sum of positive ranks ($w^+$) and the sum of negative ranks ($w^-$) are calculated.
+
+- We have a two-sided alternative, so the test statistic is $w=min(w^+,w^-)=`r w`$.
+- We have a one-sided alternative, so the test statistic is $w=w^+=`r w`$.
+
+By using normal approximation, test statistic can be calculated by: $t_0=\frac{w-E(w^+)}{\sqrt{Var(w^+)}}=\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}=`r round(t0,2)`$
+
+
+**P-value:**
+
+- $H_1:\mu<\mu_0$ - $P(W^+ \leq `r round(t0,2)`)\approx P(Z\leq\frac{`r w`-E(W^+)}{\sqrt{Var(W^+)}})=P(Z\leq\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}) =P(Z\leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu>\mu_0$ - $P(W^+ \geq `r round(t0,2)`)=1-P(W^+ \leq `r round(t0,2)`)\approx 1-P(Z\leq\frac{`r w`-E(W^+)}{\sqrt{Var(W^+)}})=1-P(Z\leq\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}) =1-P(Z\leq `r round(t0,2)`)=`r round(pval,4)`$
+- $H_1:\mu \neq \mu_0$- $2P(W^+ \leq `r round(t0,2)`)\approx 2P(Z\leq\frac{`r w`-E(W^+)}{\sqrt{Var(W^+)}})=2P(Z\leq\frac{`r w`-`r round(mean,2)`}{\sqrt{`r round(var,2)`}}) =2P(Z\leq `r round(t0,2)`)=`r round(pval,4)`$
+
+**Conclusion:**
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... is equal to `r mu`.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean ... is not equal to / greater than / less than `r mu`.
+
+
+# Wilcoxon rank-sum test - for two samples
+
+**Wilcoxon rank-sum test / Mann-Whitney U test:**
+
+- A **non-parametric** test to compare means of two independent samples.
+- The ranks are summed **over one of the samples**.
+- **Relaxes assumptions of normality and symmetry.** It is valid for data from any distribution, and is much less sensitive to outliers than the two-sample t-test.
+- If the assumptions of the two-sample t-test hold, the Wilcoxon rank-sum test is **less powerful**.
+- **Disadvantage:** if one is primarily interested in differences in location between the two distributions, the Wilcoxon test has the disadvantage of also reacting to other differences between the distributions such as differences in shape.
+
+## Using wilcox.test - without ties
+
+```{r include=FALSE}
+
+ggplot(data %>% filter(gender != "Non-binary"),aes(x = exercise, fill = gender))+geom_density(alpha = 0.5)
+```
+
+**Hypothesis:** $H_0:\mu_X=\mu_Y$ vs $H_1:\mu_X\neq \mu_Y$
+
+**Assumptions:** Observations $X_i,Y_i$ are independent and two samples follow the same kind of distribution but differ by a shift.
+
+```{r}
+# without ties
+male = data %>% filter(gender =="Male") %>% select(exercise)
+male = male$exercise
+
+female = data %>% filter(gender =="Female") %>% select(exercise)
+female = female$exercise
+
+(test = wilcox.test(male,female))
+nA=length(male)
+nB=length(female)
+N=nA+nB
+nRatio = nA*(N+1)/2
+t0 = test$statistic
+pval = test$p.value
+```
+
+**Test statistic:** $W=R_1+R_2+...+R_{n_X}$. Under $H_0$, the test statistic follows the $WRS(n_A,n_B)$ distribution.
+
+**Observed test statistic:** $w=r_1+r_2+...+r_{n_x}=`r t0`$
+
+**P-value:** 
+
+- for $H_1:\mu_x>\mu_y$: $P(W\geq w)$
+- for $H_1:\mu_x<\mu_y$: $P(W\leq w)$
+- for $H_1:\mu_x \neq \mu_y$ and $w>\frac{n_x(N+1)}{2}$: because $w=`r t0`>\frac{n_x(N+1)}{2}=`r nRatio`$, so we are looking in the upper tail, $2P(W\geq w)=`r round(pval,4)`$
+- for $H_1:\mu_x \neq \mu_y$ and $w<\frac{n_x(N+1)}{2}$: because $w=`r t0`<\frac{n_x(N+1)}{2}=`r nRatio`$, so we are looking in the lower tail, $2P(W\leq w)=`r round(pval,4)`$
+
+**Decision:** 
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the different.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are the same.
+
+## Normal approximation - with ties
+
+```{r include=FALSE}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x= exercise)) +
+  geom_histogram(aes(fill = gender), bins = 12, show.legend = F) +
+  facet_grid(rows = vars(gender)) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Exercise per week (hours)") +
+  geom_boxplot(aes(x = exercise, y = 45), outlier.alpha = 0, width = 18) +
+  geom_jitter(aes(x = exercise, y = 45, colour=gender, alpha = 0.5), height = 8, show.legend=F)
+```
+
+
+**Hypothesis:** $H_0:\mu_X=\mu_Y$ vs $H_1:\mu_X\neq \mu_Y$
+
+**Assumptions:** Observations $X_i,Y_i$ are independent and two samples follow the same kind of distribution but differ by a shift.
+
+```{r}
+rank = data %>% dplyr::mutate(
+r = rank(exercise))
+
+rank_sum = rank %>%
+filter(gender != "Non-binary") %>%
+dplyr::group_by(gender) %>%
+dplyr::summarise(
+w = sum(r),
+xbar = mean(exercise),
+s = sd(exercise),
+n = n()
+)
+
+nA = rank_sum$n[rank_sum$gender=="Male"]
+nB = rank_sum$n[rank_sum$gender=="Female"]
+N = nA+nB
+w = rank_sum$w[rank_sum$gender=="Male"]
+EW = nA * (N+1)/2
+sumsqrank = sum(rank$r^2)
+g = N*(N+1)^2/4
+var = nA*nB*(sumsqrank-g)/(N*(N-1))
+t0 = (w-EW)/sqrt(var)
+
+# for muX > muY:
+pval = 1-pnorm(t0)
+
+# for muX < muY:
+pval = pnorm(t0)
+
+# for two-sided:
+
+pval = 2*(1-pnorm(abs(t0)))
+```
+
+**Test statistic:** when there are ties, the p-value can be calculated using normal approximation to distribution of test statistic. The statistic follows a normal distribution with identity of $N(0,1)$, and can be calculated by $T=\frac{W-E(W)}{\sqrt{Var(W)}}$, where $E(W)=\frac{n_x(N+1)}{2}=`r round(EW,2)`$ and $Var(W)=\frac{n_xn_y}{N(N-1)}(\sum^N_{i=1}r^2-\frac{N(N+1)^2}{4})=`r round(var,4)`$.
+
+**Observed test statistic:** $w=r_1+r_2+...+r_{n_x}=`r w`$
+
+**P-value** As the exact $WRS'(`r nA`,`r nB`)$ distribution with ties is unknown, we use a normal approximation to this distribution with $E(W)=$
+
+- for $H_1:\mu_x>\mu_y$: $P(W\geq `r round(t0,2)`)\approx P(Z\geq \frac{W-E(W)}{\sqrt{Var(W)}})=P(Z\geq `r round(t0,0.2)`)= `r round(pval,4)`$
+- for $H_1:\mu_x<\mu_y$: $P(W\leq `r round(t0,2)`)\approx P(Z\leq \frac{W-E(W)}{\sqrt{Var(W)}})=P(Z\leq `r round(t0,0.2)`)= `r round(pval,4)`$
+- for $H_1:\mu_x \neq \mu_y$: $2P(W\geq `r round(t0,2)`)\approx P(Z\geq |\frac{W-E(W)}{\sqrt{Var(W)}}|)=2P(Z\geq `r round(t0,0.2)`)= `r round(pval,4)`$
+
+**Decision:** 
+
+- The p-value is smaller than 0.05, we reject the null hypothesis. The mean of ... for two samples are the same.
+- The p-value is greater than 0.05, we does not reject the null hypothesis. The mean of ... for two samples are different.
+
+# Permutation test for continuous data
+
+```{r include=FALSE}
+ggplot(data %>% filter(gender!="Non-binary"),
+aes(y = exercise, x = gender,
+colour = gender)) +
+geom_boxplot(coef = 10) +
+geom_jitter(width=0.1, size = 5) +
+theme_bw(base_size = 36) +
+theme(legend.position = "none") +
+labs(y = "Exercise(h)",x = "Gender")
+```
+
+- use **t-test statistic** when no outliers exist, use **Wilcoxon rank-sum test** or **median test** statistic when outliers exists.
+- The permutation test uses the t-test test statistic but it **does not use the t distribution**.
+- The two-sample t-test is a parametric test where the test statistic is assumed to follow some distribution.
+The permutation test considers the $(n_1+n_2)!$ permutations of the labels from a single instance of the data.
+
+## Using t-test - without outliers
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ 
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x},Y_1,Y_2,...,Y_{n_y}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** There is no outliers exist in the samples, the t-test statistic is used in the permutation test. The t-test test statistic is calculated by $T=\frac{\bar{X}-\bar{Y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}$. Note that although t-test statistic is used, the permutation test does not use the t distribution.
+
+```{r}
+set.seed(100)
+dat = data %>% filter(gender %in% c("Female","Male"))
+
+# without outliers
+ttest_t0 = t.test(exercise ~ gender, data = dat, var.equal=TRUE)$statistic
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$gender = sample(dat$gender)
+  t_null[i]=t.test(exercise ~ gender, data = permuted_dat)$statistic
+}
+pval = mean(abs(t_null)>=abs(ttest_t0))
+```
+
+**Observed test statistic:** the original test statistic is $t_0=\frac{\bar{x}-\bar{y}}{S_p \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}$, where $S^2_p=\frac{(n_x-1)S^2_x+(n_y-1)S^2_y}{n_x+n_y-2}=`r round(ttest_t0,2)`$.
+
+Data is permuted by 10000 times and feed into t-test. The test statistics are recorded and distributed as below.
+
+```{r include=FALSE}
+p1 = data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 0.1) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+
+p2 = data.frame(abs_t_null = abs(t_null)) %>%
+ggplot(aes(x = abs_t_null)) +
+geom_histogram(binwidth = 0.1) +
+geom_vline(xintercept = abs(ttest_t0),
+col = "red", lwd = 0.5)+
+labs(y = "Count",x = "Absolute test statistic")
+grid.arrange(p1,p2,nrow=2)
+```
+
+**P-value:** the p-value, $P(T\geq |`r round(ttest_t0,2)`|)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+## Using Wilcoxon rank-sum - with outliers
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ 
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x},Y_1,Y_2,...,Y_{n_y}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** there are outliers within samples, t-test testing the mean can be significantly affected by these outliers. Therefore, instead of t-test, the wilcoxon rank-sum test statistic which is robust to outliers is applied in the permutation test. The wilcoxon test statistic is calculated by $W=R_1+R_2+...+R_{n_X}$
+
+```{r}
+set.seed(100)
+dat = data %>% filter(gender %in% c("Female","Male"))
+
+# with outliers
+wilcox_t0 = wilcox.test(exercise ~ gender, data = dat)$statistic
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$gender = sample(dat$gender)
+  t_null[i]=wilcox.test(exercise ~ gender, data = permuted_dat)$statistic
+}
+pval = mean(t_null>=abs(wilcox_t0))
+
+```
+
+**Observed test statistic:** the original test statistic is $w=r_1+r_2+...+r_{n_x}=`r wilcox_t0`$
+
+Data is permuted by 10000 times and feed into wilcoxon rank-sum test. The test statistics are recorded and distributed as below.
+
+```{r include=FALSE}
+data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 10) +
+geom_vline(xintercept = wilcox_t0,col = "red", lwd = 0.5) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+```
+**P-value:** the p-value, $P(T\geq`r round(ttest_t0,2)`)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+## Using Median-absolute-deviation (MAD) - with outliers
+
+**Hypothesis:** $H_0:\mu_x=\mu_y$ vs $H_1:\mu_x >\mu_y$ 
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x},Y_1,Y_2,...,Y_{n_y}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** there are outliers within samples, t-test testing the mean can be significantly affected by these outliers. Therefore, instead of t-test, MAD (median-absolute-deviation) test statistic which is robust to outliers is applied in the permutation test. The wilcoxon test statistic is calculated by $T=\widetilde X-\widetilde Y$.
+
+```{r}
+set.seed(100)
+dat = data %>% filter(gender %in% c("Female","Male"))
+
+# with outliers
+mad_t0 = median(dat$exercise[dat$gender=="Male"])-median(dat$exercise[dat$gender=="Female"])
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  permuted_dat$gender = sample(dat$gender)
+  t_null[i]=median(permuted_dat$exercise[permuted_dat$gender=="Male"])-median(permuted_dat$exercise[permuted_dat$gender=="Female"])
+}
+pval = mean(t_null>=abs(mad_t0))
+
+```
+
+**Observed test statistic:** the original test statistic is $t_0=\widetilde x-\widetilde y=`r mad_t0`$
+
+Data is permuted by 10000 times and feed into MAD test. The test statistics are recorded and distributed as below.
+
+```{r include=FALSE}
+data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 0.4) +
+geom_vline(xintercept = mad_t0,col = "red", lwd = 0.5) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+```
+
+**P-value:** the p-value, $P(T\geq`r round(ttest_t0,2)`)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+## For one sample
+
+```{r include=FALSE}
+ggplot(data, aes(x= uni_work)) +
+  geom_histogram(bins = 12, show.legend = F) +
+  theme_linedraw(base_size = 18) +
+  labs(y = "Count", x = "Uni Work (hours)") +
+  geom_boxplot(aes(x = uni_work, y = 60), outlier.alpha = 0.5, width = 18) +
+  geom_vline(xintercept= 35,colour = "blue",linetype = "dashed") # the tested mean
+```
+
+```{r}
+n = length(data$uni_work)
+mu = 30
+```
+
+**Hypothesis:** $H_0: \mu =`r mu`$ vs $H_1: \mu ><\neq `r mu`$
+
+**Assumptions:** The observation $X_1,X_2,...,X_{n_x}$ are exchangeable, i.e. swapping labels on observations keeps the data just as likely as the original.
+
+**Test statistic:** the wilcoxon signed-rank test statistic is used, calculated by  $T=\sum^n_{i:d_i>0}r_i\times sign(d_i)$
+
+```{r}
+# t.test
+test = t.test(data$uni_work,mu = mu)
+diff = data$uni_work - mu
+t0 = mean(diff)/sd(diff)*sqrt(n)
+
+B = 10000
+permuted_dat = dat
+t_null = vector("numeric",B)
+for(i in 1:B){
+  sign_permute = sample(c(-1,1),n,replace=TRUE)
+  d_permute = diff*sign_permute
+  t_null[i]=mean(d_permute)/sd(d_permute)*sqrt(n)
+}
+pval = mean(abs(t_null)>=abs(t0))
+```
+
+**Observed test statistic:** the original test statistic is `r t0`
+
+```{r include=FALSE}
+p1 = data.frame(t_null) %>%
+ggplot(aes(x = t_null)) +
+geom_histogram(binwidth = 0.1) +
+# theme_linedraw(base_size = 36) +
+labs(y = "Count",x = "Test statistic")
+
+p2 = data.frame(abs_t_null = abs(t_null)) %>%
+ggplot(aes(x = abs_t_null)) +
+geom_histogram(binwidth = 0.1) +
+geom_vline(xintercept = abs(t0),
+col = "red", lwd = 0.5)+
+labs(y = "Count",x = "Absolute test statistic")
+grid.arrange(p1,p2,nrow=2)
+```
+
+**P-value:** the p-value, $P(T\geq|`r round(ttest_t0,2)`|)=`r round(pval,4)`,$ is the proportion of test statistics from randomly permuted data being more extreme than the test statistic we observed.
+
+**Decision:**
+
+- The p-value is greater than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are the same.
+- The p-value is smaller than 0.05, the null hypothesis is not rejected. We conclude that the means of two samples are different.
+
+# Bootstrapping
+
+**Bootstrapping**: 
+
+- repeatedly resample from the sample (with **replacement**).
+- the **bootstrap confidence interval** is the quantiles from the bootstrap distriution: *quantile(result, c(0.025, 0.975))*
+
+- allows us to as make inferences about the population where no information is available about the population.
+
+**Bootstrapping is useful when:**
+
+- the theoretical distribution of a statistic is complicated or unknown.
+- the sample size is too small to make any sensible parametric inferences about the parameter.
+
+**Advantages:**
+
+- Bootstrapping frees us from making parametric assumptions to carry out inferences.
+- Provides answers to problems for which analytic solutions are impossible.
+- Can be used to verify, or check the stability of results.
+- Asymptotically consistent.
+
+```{r include=FALSE}
+set.seed(100)
+
+B=10000
+result = vector("numeric", length=B)
+for(i in 1:B){
+  newData = sample(data$uni_work,replace=TRUE)
+  result[i] = mean(newData)
+}
+
+(CI = quantile(result,c(0.025,0.975)))
+```
+
+The data is resampled by 10000 times from the sample with replacement. Based on the bootstrapping result, our 95% confidence interval is between `r round(CI[1],2)` and `r round(CI[2],2)`.
+
+```{r include=FALSE,fig.cap="Histogram of boostraping results"}
+data.frame(result) %>%
+ggplot(aes(x = result)) +
+geom_histogram(binwidth = 0.5) +
+geom_vline(xintercept = CI,
+col = "red", lwd = 0.5) +
+labs(y = "Count",x = "Mean")
+```
+
+# Notched boxplot
+
+The upper and lower edges of the notches are at **$median \pm 1.58\times \frac{IQR}{\sqrt n}$**
+
+**Rule of thumb:** if the notches of the two boxes **do not overlap**, this suggests that the medians are significantly different.
+
+```{r}
+ggplot(data %>% filter(gender != "Non-binary"), aes(x = gender, y = exercise)) +
+geom_boxplot(notch = TRUE) +
+geom_dotplot(stackdir = "center",
+binaxis = "y") +
+theme_linedraw(base_size = 34) +
+labs(y = "Heat of fusion (cal/g)",
+x = "Method")
+```
+
+# Q-Q plot
+
+The data doesn't follow a normal distribution if:
+
+- A lower bend of zero exist?
+- Not close enough to the line to be considered 'normal'.
+- Central limit theorem can be applied to give a normal distribution when sample size is large.
+
+# Types of errors
+
+**types of errors:**
+
+- **type I error / false positive:** $\theta$ doesn't equal zero when it does
+- **types II error / false negative:** $\theta$ equals zero when it doesn't
+
+**Error rates:**
+
+- **False positive rate:** the probability at what null results ($\theta$=0) are called significant.
+- **Family wise error rate (FWER):** the probability of at least one false positive, with m tests, $FWER=P(V\geq 1)=1-(1-\alpha)^m$
+- **False discovery rate (FDR):** the rate at which claims of significant are false
+
+## Bonferroni correction - control FWER
+
+- set $\alpha^*=\frac{\alpha}{m}$
+- call all p-values less than $\alpha^*$ significant
+- pros: easy to calculate, conservative
+- cons: maybe very conservative
+
+## Benjamini-Hochberg procedure - control FDR
+
+**steps:**
+
+1. order the p-values from smallest to largest $p_{(1)}\leq p_{(2)}\leq...\leq p_{(m)}$
+2. find $j^*=max~j$ such that $p_{(j)}\leq \frac{j}{m}\alpha$
+3. recall all $H_{0j}$ where $p_{(i)}\leq \frac{j^*}{m}\alpha$
+
+**pros & cons:**
+
+- pros: still pretty easy to calculate, less conservative than bonferroni
+- cons: allows for more false positives, may behave strangely under dependence
+
+# ANOVA
+
+**Hypothesis:** $H_0:\mu_1=\mu_2=...=\mu_g$ vs $H_1:$ at least one $\mu_i \neq \mu_j$.
+
+**Assumptions:**
+
+- Observations are independent within each of the g samples
+- Each of the g populations have the same variance, $\sigma_1^2=\sigma^2_2=...=\sigma_g^2=\sigma$
+- Each of the g populations are normally distributed (or the sample sizes are large enough such that the central limit theorem can be applied.)
+
+**Check assumptions:**
+
+- Independence: Dots are randomly distributed without any pattern in the residual plot, suggesting the independence of observations.
+- Homogeneous variance:  dots are evenly and randomly distributed in the residual, showing constant variance of data for each of the g populations.
+- Normality:  The Q-Q plot shows dots being reasonably close to the Q-Q line; Although the dots are not perfectly close to Q-Q line, the sample sizes are large enough such that the central limit theorem can be applied. 
+
+**Test statistic:** $T=\frac{Treatment~Mean~Sq}{Residual~Mean~Sq}=\frac{\sum^g_{i=1}n_i(\bar Y_{i\bullet}-\bar Y_{\bullet\bullet})^2/(g-1)}{\hat\sigma^2}=\frac{\sum^g_{i=1}n_i(\bar Y_{i\bullet}-\bar Y_{\bullet\bullet})^2/(g-1)}{\sum^g_{i=1}n_i(\bar Y_{ij}-\bar Y_{i\bullet})^2/(N-g)}$. Under $H_0,$ $T$~$F_{g-1,N-g}$ where g is the number of groups.
+
+**Observed test statistics: ** $t_0=\frac{Treatment~Mean~Sq}{Residual~Mean~Sq}=$
+
+**P-value:** $P(T\geq t_0)=P(F_{g-1,N-g}\geq t_0$
+
+**Decision:**
+
+- the p-value is ____, which is less than $\alpha$. We reject the null hypothesis and conclude that the population mean of at least one group is significantly different to the others.
+- the p-value is ___, which is greater than $\alpha$. We do not reject the null hypothesis and conclude that there is no significant difference between the population means.
+
+## Dot notation
+
+- total for sample i is $\sum^{n_i}_{j=1}j_{ij}=\bar{y_{i\bullet}}$
+- average for sample i is $\frac{1}{n_i}\sum^{n_i}_{j=1}y_{ij}=\bar y_{i\bullet}$
+- grand total of all observations is $\sum^g_{i=1}\sum^{n_i}_{j=1}y_{ij}=\bar y_{\bullet\bullet}$, where $N=n_1+...+n_g$ is the total number of observations
+- the i-th group's sample variance: $s^2_i=\frac{1}{n_i-1}\sum^{n_i}_{j=1}(y_{ij}-\bar y_{i\bullet})^2$
+
+## ANOVA decomposition
+
+- **Total Sum of Squares:** $TSS=\sum^g_{i=1}\sum^{n_i}_{j=1}(y_{ij}-\bar y_{\bullet\bullet})^2=Residual~SS+Treatment~SS$
+- **Sample variance:** Under $H_0:\hat \sigma^2_0=\frac{Total~SS}{N-1}=\frac{\sum^g_{i=1}\sum^{n_i}_{j=1}(Y_{ij}-\bar Y_{\bullet\bullet})^2}{N-1}$; Under $H_1:\hat\sigma^2=\frac{\sum^g_{i=1}\sum^{n_i}_{j=1}(Y_{ij}-\bar Y_{i\bullet})^2}{N-g}$=Residual Mean Square
+- **Residual sum of Squares:** $Residual~SS=\sum^g_{i=1}\sum^{n_i}_{j=1}(Y_{ij}-\bar Y_{i\bullet})^2=\sum^g_{i=1}(n_i-1}S^2_i$ ~ $\sigma^2\chi^2_{N-g}$
+- **Residual mean square:** $\hat \sigma^2=\frac{\sum^g_{i=1}\sum^{n_i}_{j=1}(Y_{ij}-\bar Y_{i\bullet})^2}{N-g}$~$(\frac{\sigma^2}{N-g})\chi^2_{N-g}$
+- **Treatment sum of squares:** $\sum^g_{i=1}\sum^{n_i}_{j=1}(Y_{ij}-\bar Y_{\bullet\bullet})^2=\sum^g_{i=1}\sum^{n_i}_{j=1}(Y_{ij}-\bar Y_{i\bullet})^2+\sum^g_{i=1}n_i(\bar Y_{i\bullet}-\bar Y_{\bullet\bullet})^2$
+- **Treatment mean square:** $\frac{Treament~SS}{g-1}=\frac{\sum^g_{i=1}n_i(\bar Y_{i\bullet}-\bar Y_{\bullet\bullet})^2}{g-1}$
+
+## F-statistic
+
+$\frac{Treatment~Mean~Sq}{Residual~Mean~Sq}=\frac{\sum^g_{i=1}n_i(\bar Y_{i\bullet}-\bar Y_{\bullet\bullet})^2/(g-1)}{\hat\sigma^2}=\frac{\sum^g_{i=1}n_i(\bar Y_{i\bullet}-\bar Y_{\bullet\bullet})^2/(g-1)}{\sum^g_{i=1}n_i(\bar Y_{ij}-\bar Y_{i\bullet})^2/(N-g)}$. Under $H_0,$ $T$~$F_{g-1,N-g}$ where g is the number of groups.
+
+- the denominators (**Residual mean square**) is **always an unbiased estimator of $\sigma^2$** regardless of whether $H_0$ is true or not.
+- the numerator (**Treatment mean square**) is only an unbiased estimator of $\sigma^2$ if **$H_0$ is true**, otherwise it tends to be bigger.
+
+## Contrast
+
+A contrast is a linear combination where the coefficients add to 0. In an ANOVA, a contrast is a linear combination of means.
+
+- population contrast: e.g. $\mu_1-\mu_2$
+- sample contrast: e.g. $\bar y_{1\bullet}-\bar y_{2\bullet}$ and $\bar Y_{1\bullet}-\bar Y_{2\bullet}$
+
+Under $H_0:\mu_1=...=\mu_g$:
+
+- all population contrasts are zero: $\sum^g_{i=1}c_i\mu_i=\sum^g_{i=1}c_i\mu=\mu\sum^g_{i=1}c_i=0$
+- all sample contrasts have expectation zero: $E(\sum^g_{i=1}c_i\bar Y_{i\bullet}=\sum^g_{i=1}c_i\mu_i=0$
+- Therefore $H_0$ can be "all population contrasts are zero".
+
+**T-test for individual contrast - generalize the two-sample t-statistic:** $T=\frac{\sum^g_{i=1}c_i\bar Y_{i\bullet}-\sum^g_{i=1}c_i\mu_i}{\hat \sigma \sqrt{\sum^g_{i=1}\frac{c^2_i}{n_i}}}$ ~ $t_{N-g}$, where $\hat \sigma=\sqrt {ResMS}$~$\sqrt{\chi^2_{N-g}/(N-g)}$ under $H_0(\sum^g_{i=1}c_i\mu_i=0)$
+
+- this is **better than an ordinary two-sample t-test** because it has a **smaller standard error** and therefore **better estimate of $sigma$**.
+
+**Standard error of contrasts:** $\hat \sigma \sqrt{\sum_i \frac{c^2_i}{n_i}})$, where $\hat \sigma=\sqrt{Residual~mean~square}$
+
+**Confidence interval of contrasts`:** 
+$\sum_i c_i\bar y_{i\bullet}\pm t^*(\hat \sigma \sqrt{\sum_i \frac{c^2_i}{n_i}})$, where $\hat \sigma=\sqrt{Residual~mean~square}$
+
+## Confidence interval for pairwise comparisons
+
+```{r}
+library(emmeans)
+library(tidyverse)
+path = "https://raw.githubusercontent.com/DATA2002/data/master/flicker.txt"
+flicker = read_tsv(path)
+flicker_anova = aov(Flicker ~ Colour, data = flicker)
+flicker_em = emmeans(flicker_anova, ~ Colour)
+
+p1 = confint(flicker_em, adjust = "none") %>% plot(colors = "black") + theme_classic(base_size = 30)
+
+p2 = confint(pairs(flicker_em, adjust = "none")) %>% plot(colors = "black") +
+geom_vline(xintercept = 0)
+
+ggarrange(p1,p2)
+```
+
+- with the CI plot of each group, if the **CIs don't overlap**, there is **significant difference** between two groups.
+- with the CI plot of difference between groups, if the CI **doesn't include 0**, the difference between groups is significant.
+
+## Post hoc tests
+
+**Multiple comparisons of CIs:**
+
+- Bonferroni correction
+- Tukey's method
+- Scheffe's method
+
+### Bonferroni correction
+
+**How:** Divide the original alpha level (most like set to 0.05) by the number of tests being performed. The output from the equation is a Bonferroni-corrected p value which will be the new threshold that needs to be reached for a single test to be classed as significant.
+
+**Why:** When conducting multiple analyses on the same dependent variable, the chance of committing a Type I error increases, thus increasing the likelihood of coming about a significant result by pure chance. To correct for this, or protect from Type I error, a Bonferroni correction is conducted.
+```
+test(pairs(flicker_em, adjust = "none"))
+test(pairs(flicker_em, adjust = "bonferroni"))
+```
+
+- is generally **conservative**, i.e. p-values and confidence intervals may be **larger** than they really need to be.
+
+### Tukey's method
+
+```
+confint(pairs(flicker_em, adjust = "tukey"))
+test(pairs(flicker_em, adjust = "tukey"))
+```
+- **more accurate and less conservative** than bonferroni when **sample sizes are equal** for simultaneous confidence intervals comparisons
+- when **sample sizes are unequal**, Tukey's procedure in conservative and therefore intervals may be **narrower** than those using Bonferroni method.
+- the smallest p-value is the F-test p-value
+
+### Scheffe's method
+
+```
+confint(pairs(flicker_em, adjust = "scheffe"))
+test(pairs(flicker_em, adjust = "scheffe"))
+```
+
+$t^*_{Sch}(\alpha)=\sqrt{(g-1)F_{g-1,N-g}(\alpha)}=\sqrt{(g-1)*qf(1-\alpha,g-1,N-g)}$
+
+CI: $\sum^g_{i=1}c_i\bar Y_{i\bullet}\pm t^*_{Sch}(\alpha)\hat \sigma \sqrt{\sum^g_{i=1}\frac{c^2_i}{n_i}}$
+
+- With $t^*_{Sch}(\alpha)$, all sample contrasts include their true population values is exactly $1-\alpha$
+- the smallest p-value is the F-test p-value
+
+## Relaxing homogeneous variance
+
+**Pairwise Welch test:** 
+
+- Assumption: t each sample is normal, with possibly different variance $\sigma_X^2,\sigma_Y^2$ and different means, and all random variables are independent
+- Test statistic: $T=\frac{\bar X-\bar Y}{\sqrt{\frac{S^2_X}{M}+\frac{S_Y^2}{n}}}$, which is approximately $t_{d*(m,n,\sigma_X,\sigma_Y)}$ under $H_0$.
+
+## Relaxing normality
+
+A weaker set of assumptions:
+
+- all observations come from the **same distribution**
+
+### Permutation test with ANOVA
+
+Permutation test avoids making normality assumption by resampling.
+
+**How:** randomly permute the observation vector, kepping the factor vector fixed. Repeat the permutation a large number of times. The observed proportion of the times the statistic exceeds observed test statistic becomes an estimate of the exact p-value
+
+### Kruskal-wallis test
+
+- replace each observation by its **global rank**, then compute the F-ratio as usual on the ranks
+- p-value is obtained using a **permutation test** or a **"large-sample" $\chi^2$ approximation**.
+
+**Hypothesis:** $H_0:$ the response variable is distributed identically for all groups vs $H_1:$ the response variable is systematically higher for at least one group
+
+**Assumptions:** Observations are independent within each group and groups are independent of each other. The different groups follow the same distribution (differing only by the location parameter).
+
+**Test statistic:** $T=\frac{Treatment~SS~of~ranks}{Variance~of~all~ranks}$, which has an approximate $\chi^2_{g-1}$ distribution under $H_0$.
+
+**P-value:** $P(T\geq t_0)=P(\chi^2_{g-1}\geq t_0)$
+
+**Decision:**
+
+- the p-value is less than $\alpha$, we reject the null hypothesis and conclude that the population mean of at least one group is significantly different to the others.
+- the p-value is greater than $\alpha$, we do not reject the null hypothesis and conclude that there is no significant difference between the population means.
+
+## Two-way ANOVA
+
+- residual sum of squares **always** follows a $\sigma^2\chi^2_{(n-1)(g-1)}$ distribution
+- **under $H_0$**, the treatment sum of squares follows a $\sigma^2\chi^2_{g-1}$ distribution. Otherwise, it tends to take larger value.
+
+### Blocking:
+- a two-way ANOVA with blocking can be thought of as a generalization of the paired t-test where each pair is a block
+- Although the treatment sum of squares and block sum of squares are mathematically identical, they are playing very different scientific roles.
+
+### Friedman test: adjusting for blocks using ranks
+
+- each observation is replaced by it **within-block rank**
+- a one-way ANOVA F-test is performed on the ranks
+- Test statistic: $T=\frac{Treatment~sum~squares~of~ranks}{Total~sum~of~squares~of~ranks/n(g-1)}$, which follows an approximate $\chi^2_{g-1}$ distribution under $H_0$.
+- Permutation test is applicable
+
+### Two-way ANOVA with interaction
+
+- if the interaction effect is significant while the main effects of treatments are not, we must still **retain the full model**.
+
+**interaction plot:**
+
+- If there is no interaction the traces should be "roughly parallel".
+- If there is an interaction, the traces may cross or deviate from parallelism in some other way
+
+# Linear regression
+
+## Hypothesis
+**Hypothesis:** 
+
+- SLR: $H_0:\beta_1=0$ vs $H_1:\beta_1 \neq 0, \beta_1>0,\beta_1<0$
+- MLR: $H_0:\beta_1=\beta_2=...=\beta_n=0$ vs $H_1:$ at least one of the coefficients is not zero
+
+**Assumptions:** 
+
+- **Linearity:** the relationship between Y and x is linear
+- **Independence:** all the errors are independent of each other
+- **Homoskedasticity:** the errors have constant variance $Var(\epsilon_i)=\sigma^2$ for all $i=1,2,...,n$
+- **Normality:** the errors follow a normal distribution
+
+**Checking assumptions:** 
+
+- **Linearity:** residuals should be symmetrically distributed above and below zero; A cured pattern in the residuals is evidence for non-linearity.
+- **Independence:** data-driven
+- **Homoskedasticity:** residuals should be randomly distributed without any pattern; A spread-out pattern of residuals is evidence for heteroskedasticity.
+- **Normality:** Apart from a few outliers in tails, the majority of points lie close to the diagonal line in the QQ plot. Hence, the normality assumption for residuals is reasonably well satisfied. Additionally, we have quite a large sample size we we can also rely on the central limit theorem to give us approximately valid inferences.
+
+**Test statistic:** $T=\frac{\hat \beta_1}{SE(\hat\beta_1)}$~$t_{n-2}$ under $H_0$.
+
+**P-value:** 
+
+- $P(t_{n-2}\geq t_0)$ for $H_1:\beta_1>0$
+- $P(t_{n-2}\leq t_0)$ for $H_1:\beta_1<0$
+- $2P(t_{n-2}\geq|t_0|)$ for $H_1:\beta_1\neq 0$
+
+**Conclusion:**
+
+- p-value is less than $\alpha$, we reject null hypothesis and conclude that $\beta_1$ is not equal to zero.
+- p-value is greater than $\alpha$, we do not reject null hypothesis and conclude that $\beta_1$ is equal to zero.
+
+## Confidence Interval of coefficient
+
+$\hat \beta_1 \pm t* \times SE(\hat \beta_1)$
+
+## R-squared - in-sample performance
+
+- **Add** variable will **always increases** $R^2$
+- $R^2=0.5$: 50% of the observed variation in y is explained by the model.
+- **Doesn't** protect against overfitting
+
+## Interpreting coefficients
+
+- **Linear-linear:** on average, a one unit increases in x will result in a $\beta$ units increase/decrease in y, with all other variables being constant.
+- **Linear-log:** on average, a one percent increase in x will result in a $\beta_1/100$ units change in y, with all other variables being constant.
+- **Log-linear:** on average, a one unit in x will result in a $\beta_1 \times 100$% change in y, with all other variables being constant.
+- **Log-log:** on average, a one percent increase in x will result in a $\beta$% change in y, with all other variables being constant.
+
+## MLR coefficients
+
+$\hat \beta=(X^TX)^{-1}X^Ty$
+
+## Stepwise selection
+
+**Backward selection:**
+
+1. Start with model containing all possible explanatory variables
+2. For each variable in turn, investigate effect of removing variables
+3. Remove the least informative variables, unless this variable is nonetheless supplying significant information about the response
+4. Repeating step 2-3 until all variables in the current model are important.
+
+**Forward select:**
+
+1. Start with a null model with only the constant.
+2. For each variable not in the current model, investigate effect of including it. 
+3. Include the most statistically significant variable not currently in model (unless no significant variable exists)
+4. repeat step 2-3 until no changes in the model.
+
+## Prediction interval vs Confidence interval
+
+**Prediction interval:** $\hat y_0\pm t^* \sqrt{Var(\hat e)}$
+
+- Used when estimate the **average** y with a given x and give a 95% **estimation interval of this estimate**.
+
+**Confidence interval:** $\hat y_0 \pm t^* \sqrt{Var(\hat y_0)}$
+- Used when predict y **on a day** with a given x and give a 95% prediction interval of the **prediction**.
+
+## Out of sample performance
+
+- **Root mean square error:** $RMSE=\sqrt{\frac{\sum^n_{i=1}(y_i-\hat y_i)^2}{n}}$
+- **Mean absolute error:** $MAE=\frac{\sum^m_{i=1}|y_i-\hat y_i|}{m}$
+
+## K-fold cross validation:
+
+1. Randomly divide data into k subsets of equal size
+2. Estimate the model by leaving one subset out
+3. Use the model to predict observations left out
+4. Compute error rates on the left out set
+5. Repeat k times for each of the subsets average the error rate over the k runs
+
+***NOTE:***
+
+- **Bias-variance trade-off:** a smaller k gives larger bias but smaller variance.
+- CV is **computationally intensive**.
+
+# Logistic regression
+
+**Logistic regression:** used to classify **binary** observations. It **isn't** feasible when:
+
+- we have **high class separation** in data
+- we have a **non-linear** combination of predictors influencing the response
+probability of Y is 1: $P(Y=1|x_0)=\frac{exp(x_i^T\beta)}{1+exp(x_i^T\beta)}$
+
+**Binary decision:**
+
+- if $P(Y=1|x_0)>0.5$, the prediction $\hat Y=1$
+- if $P(Y=1|x_0)<0.5$, the prediction $\hat Y=0$
+- $P(Y=1|x_0)=0.5$ gives the decision boundary
+
+## Hypothesis
+
+**Hypotheses:** $H_0=\beta_{age}=0$ vs $H_1:\beta_{age}\neq 0$
+
+**Test statistic:** $T=\frac{\hat \beta_{age}-\beta_{age}}{SE(\hat \beta_{age})}$~$N(0,1)$
+
+**P-value:** $2P(T\geq|t_0|)=2P(Z\geq t_0)=$
+
+**Conclusion:**
+
+- the p-value is less than $\alpha$, we reject the null hypothesis and conclude that x is a significant predictor for y.
+- the p-value is greater than $\alpha$, we do not reject the null hypothesis and conclude that x is not a significant predictor for y.
+
+## Logit function - interpretation
+
+**Log-odds:** $logit(p)=log(\frac{p}{1-p})$
+
+**Formula:** $logit(p)=\beta_0+\beta_1 x_1+\beta_2 x_2$
+
+**Interpretation:**
+
+**$\beta_0:$** the log-odds of y for an object with $x_1=0,x_2=0$
+
+for **categorical $x_1$**:
+$\beta_1-$ holding all other features constant, $\beta_1$ represents the difference in the log-odds between $x_1=1$ and $x_1=0$. 
+
+- if $\beta_1<0$, the odds of y is lower if $x_1=0$
+- if $\beta_1>0$, the odds of y is higher if $x_1=0$
+
+for **numeric $x_2$**:
+$\beta_2-$ holding all other features constant,
+
+- if $\beta_2<0$, a one unit increase of $x_2$ will result in $\beta_2$ units decrease in y.
+- if $\beta_2>0$, a one unit increase of $x_2$ will result in $\beta_2$ units increase in y.
+
+**Prediction:** round logit(p) to 0 or 1.
+
+## Predictive performance
+
+### Insample performance
+
+**Resubstitution error rate:** measures the proportion of data points we predict **correctly** when trying to predict all the points we used to fit the model - $r=\frac{1}{n}\sum^n_{i=1}(y_i\neq\hat y_i)$
+- interpret: we fail to correctly classify $r\times 100$% of the observations.
+
+- **Sensitivity / Recall**$=\frac{TP}{P}=\frac{TP}{TP+FN}$
+- **Specificity** $=\frac{TN}{N}\frac{TN}{TN+FP}$
+- **Precision / Positive predictive value** $=\frac{TP}{TP+FP}$
+- **Negative predictive value** $=\frac{TN}{TN+FN}$
+
+### Out of sample performance - CV error rate
+
+**CV error rate:** split data into **k-folds**. Treat the fist fold as a testing set, and the method is fit on the remaining k-1 folds. The **misclassification error rate** is calculated on the observations in the held-out fold. Repeat the procedure k times and calculate the average error rate as CV score.
+
+- **Bias-variance trade-off**: a large k has a low bias and high variance.
+
+# Decision tree & Random forest
+
+## Decision tree
+
+**Rationale:** determines the predicted outcome based on series of questions and conditions. Classify observations into 2 or more classes.
+
+**Hyperparameter:** complexity parameter that can be used to determine if a proposed new split sufficiently improves the predictive power or not. It helps to **avoid overfitting**.
+
+**Weakness:** 
+
+1. can be massively **overfitting** the data; 
+2. The selected tree might be very **sensitive to the complexity penalty**; 
+3. Can only make decisions **parallel to axes**.
+
+## Random forest
+
+**Steps:**
+
+1. Choose **hyperparameters**: number of decision trees to grow & number of variables to consider in each tree
+2. Randomly select the rows of the data frame **with replacement**.
+3. Randomly select the appropriate number of variables from the data frame.
+4. Build a decision tree on the resulting data set.
+5. Repeat the above steps a large number of times.
+6. Make a prediction by **majority rule** (i.e. run new observation through all the trees in the forest and see which class is predicted most often.)
+
+**Weakness:** It is a **black-box procedure** and therefore the it is **not interpretable**.
+
+# K-nearest neighbours
+
+- knn works well with a small number of input variables, but struggles when the number of inputs is very large.
+- knn makes no assumptions about the functional form of the problem being solved.
+- knn can be used in both classification and regression.
+- knn performs much better if all of the data have the same scale.
+
+**Algorithm:**
+
+1. Calculate the **Euclidian distance** $d(x,z)=\sqrt{(x_1-z_1)^2+(x_2-z_2)^2+...+(x_p-z_p)^2}$, between any two points.
+2. Find the **k observations** in the training data, that are closest to x according to Euclidian distance.
+3. Define an aggregation function $f$ and compute $\hat y=f(x)$ for the k values of y.
+
+**KNN properties:**
+
+- **Non-parametric** algorithm (doesn't assume the data follows any particular shape).
+- **Adv:** 1) Doesn't require any preprocessing time. 2) Performance improves as the **sample size grows**; 3) Analytically tractable and simple implementation; 4) uses local information, and is highly adaptive; 5) Can be easily parallelised
+- **Disadv:** 1) Computationally intensive when predicting new observations as the distance between every two points need to be calculated and reordered; 2) Usefulness depends on the geometry of the data; 3) Large storage requirement as the whole data set needs to be stored; 
+
+# Checking assumptions:
+
+- **Linearity:** residuals should be symmetrically distributed above and below zero; A cured pattern in the residuals is evidence for non-linearity.
+- **Independence:** data-driven
+- **Homoskedasticity:** residuals should be randomly distributed without any pattern; A spread-out pattern of residuals is evidence for heteroskedasticity.
+- **Normality:** Apart from a few outliers in tails, the majority of points lie close to the diagonal line in the QQ plot. Hence, the normality assumption for residuals is reasonably well satisfied. Additionally, we have quite a large sample size ($n\geq 30$) we we can also rely on the central limit theorem to give us approximately valid inferences.
+
+# What is permutation?
+
+Randomly permute the observation vector, kepping the factor vector fixed. Repeat the permutation a large number of times. The observed proportion of the times the statistic exceeds observed test statistic becomes an estimate of the exact p-value.
+
+# Clustering
+
+## Hierarchical clustering
+
+Hierarchical clustering methods produce a tree or dendrogram.
+
+- bottom-up: agglomerative clustering
+- top-down: divisive clustering
+
+**Advantages of hierarchical clustering:**
+
+- Don't need to know how many clusters you're after.
+- Can cut hierarchy at any level to get any number of clusters.
+- Easy to interpret hierarchy for particular applications.
+- Deterministic.
+
+## K-mean clustering
+
+1. Randomly assign a number, from 1 to K, to each of the observations. (These serve as
+initial cluster assignments for the observations).
+2. Iterate until the cluster assignments stop changing.
+a) For each of the K clusters, computer the cluster centroid. The kth cluster centroid is
+the vector of the p covariate means for the observations in the kth cluster.
+b) Assign each observation to the cluster whose centroid is closest (where closest is
+deemed using Euclidean distance).
+
+**Advantages of k-means clustering:**
+
+- Can be much faster than hierarchical clustering, depending on data.
+- Nice theoretical framework.
+- Can incorporate new data and reform clusters easily.
+
+# PCA
+
+- **Principal component analysis (PCA)** produces a low-dimensional representation of a dataset. It finds
+a sequence of linear combinations of the variables that have *maximal variance*, and are *mutually uncorrelated*.
+- It is an **unsupervised** learning method.
+
+**Why?**
+
+- We may have too many predictors for a regression. Instead, we can use the first few principal components. PCA regression.
+- **Understanding relationships** between variables - similar to a correlation matrix.
+- **Data visualisation:** we can plot a small number of variables more easily than a large number of
+variables
+
+**Interpretation:** examine the magnitude and direction of the coefficients for the original variables. The larger the absolute value of the coefficient, the more important the corresponding variable is in calculating the component. 
